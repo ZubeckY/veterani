@@ -1,7 +1,7 @@
 import 'reflect-metadata'
 import config from './config'
 import logger from "./modules/logger"
-import {Form} from "./entity"
+import * as Data from "./entity"
 import {DataSource} from 'typeorm'
 
 export const AppDataSource: DataSource = new DataSource({
@@ -12,7 +12,7 @@ export const AppDataSource: DataSource = new DataSource({
     password: config.DB_PASSWORD,
     database: config.DB_DATABASE,
     // entities: ["./entity/**/*.ts"],
-    entities: [Form],
+    entities: [...Data],
     synchronize: true,
     logging: false,
 })
