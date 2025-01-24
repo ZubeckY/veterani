@@ -26,6 +26,6 @@ function dbPassword(): string {
 }
 
 function dbDATABASE(): string {
-    return is_prod ? 'main' : 'testForm'
+    return is_prod ? 'UoCV' : 'testForm'
 }
 
