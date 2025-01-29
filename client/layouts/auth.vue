@@ -1,13 +1,8 @@
 <template>
   <v-app>
-    <header>Header</header>
-
-    <v-main>
+    <div class="fullSize d-flex justify-center align-center">
       <Nuxt/>
-    </v-main>
-
-    <footer>Footer</footer>
-
+    </div>
   </v-app>
 </template>
 
@@ -15,7 +10,7 @@
 import {Vue, Component} from 'vue-property-decorator';
 
 @Component({})
-export default class Default extends Vue {
+export default class Auth extends Vue {
 
 }
 </script>
