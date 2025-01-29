@@ -27,6 +27,7 @@
                           v-model="model.middleName"
                           label="Отчество"
                           type="text"
+                          :rules="[rules.required]"
                           outlined/>
 
             <v-text-field class="authCard__input"
