@@ -19,13 +19,19 @@
                           v-model="model.password"
                           label="Пароль"
                           type="password"
+                          :append-icon="showPass ? 'mdi-eye' : 'mdi-eye-off'"
+                          :type="showPass ? 'text' : 'password'"
+                          @click:append="showPass = !showPass"
                           outlined/>
           </div>
 
           <div class="authCard__footer d-flex align-center justify-center flex-column">
 
             <v-btn class="authCard__button" large outlined>Вход</v-btn>
-            <v-btn class="authCard__button my-0 pa-0" small text>Зарегистрироваться</v-btn>
+            <v-btn class="authCard__button my-0 pa-0"
+                   small
+                   @click.prevent="$router.push('/auth/reg')"
+                   text>Зарегистрироваться</v-btn>
 
           </div>
 
@@ -52,8 +58,10 @@ export default class Login extends Vue {
 
   model: any = {
     email: '',
-    password: ''
+    password: '',
   }
+
+  showPass: boolean = false;
 
 }
 </script>
