@@ -63,6 +63,13 @@ export default class Login extends Vue {
 
   showPass: boolean = false;
 
+  async login() {
+    this.$axios.post('/api/auth/login', this.model)
+      .then(res => {
+        localStorage.setItem('accessToken', res.data.tokens.refreshToken);
+      })
+  }
+
 }
 </script>
 

@@ -53,6 +53,17 @@ export class User {
     })
     created!: Date;
 
+    @Column({
+        comment: "Активация",
+        default: false
+    })
+    activated?: boolean;
+
+    @Column({
+        comment: "Код активации"
+    })
+    activatedCode!: string;
+
     @UpdateDateColumn({
         comment: "Дата редактирования"
     })
