@@ -8,7 +8,7 @@ import {Vue, Component} from 'vue-property-decorator';
 @Component({
   head(this: Pages): object  {
     return {
-      title: 'Главная страница'
+      title: 'Главная страница',
     }
   }
 })

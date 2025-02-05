@@ -9,7 +9,7 @@ const userRouter = express.Router();
 
 userRouter.post("/auth/login", async (req, res): Promise<any> => {
     try {
-        const { email, password } = req.body?.model
+        const {email, password} = req.body?.model
         const userRepository = AppDataSource.getRepository(User)
         const userFromDB: User | null = await userRepository.findOneBy({
             email: email,
@@ -34,9 +34,9 @@ userRouter.post("/auth/login", async (req, res): Promise<any> => {
         }
 
         const userDto = new AuthDto(DTO)
-        const tokens = new AuthService().generateTokens({ ...userDto })
+        const tokens = new AuthService().generateTokens({...userDto})
 
-        const { accessToken } = tokens
+        const {accessToken} = tokens
 
         if (!accessToken) {
             return res.status(501).send({
@@ -45,17 +45,16 @@ userRouter.post("/auth/login", async (req, res): Promise<any> => {
         }
 
         return res.send(tokens)
-    }
-    catch (error) {
+    } catch (error) {
 
     }
 })
 
 userRouter.post("/auth/register", async (req, res): Promise<any> => {
     try {
+
         const {model} = req.body
-        console.log(model)
-        const { firstName, secondName, middleName, email, password } = model
+        const {firstName, secondName, middleName, email, password} = model
         const userRepository = AppDataSource.getRepository(User)
         const values = Object.values(model)
 
@@ -71,19 +70,21 @@ userRouter.post("/auth/register", async (req, res): Promise<any> => {
             email: email,
         })
 
-        if(userFromDB) {
+        if (userFromDB) {
             return res.status(400).send({
                 message: "Пользователь с такой почтой уже существует"
             })
         }
 
         const newUser = new User()
+        const userPassword: any = await bcrypt.hash(password, 3)
+
 
         newUser.firstName = firstName
         newUser.lastName = secondName
         newUser.middleName = middleName
         newUser.email = email
-        newUser.password = await bcrypt.hash(newUser.password, 5)
+        newUser.password = userPassword
 
         const userSaved = await userRepository.save(newUser)
 
@@ -93,9 +94,9 @@ userRouter.post("/auth/register", async (req, res): Promise<any> => {
         }
 
         const userDto = new AuthDto(DTO)
-        const tokens = new AuthService().generateTokens({ ...userDto })
+        const tokens = new AuthService().generateTokens({...userDto})
 
-        const { accessToken } = tokens
+        const {accessToken} = tokens
 
         if (!accessToken) {
             console.log("501 у токена")
@@ -105,8 +106,7 @@ userRouter.post("/auth/register", async (req, res): Promise<any> => {
         }
 
         return res.send(tokens)
-    }
-    catch (error) {
+    } catch (error) {
         console.log(error)
         return res.status(501).send({
             message: error,

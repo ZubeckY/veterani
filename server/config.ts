@@ -10,6 +10,8 @@ const config: any = {
     DB_PASSWORD: dbPassword(),
     DB_DATABASE: dbDATABASE(),
     //jwt
+    JWT_ACCESS_SECRET: 'jwt-secret-access',
+    JWT_REFRESH_SECRET: 'jwt-secret-refresh'
 }
 
 export default config
@@ -29,4 +31,3 @@ function dbPassword(): string {
 function dbDATABASE(): string {
     return is_prod ? 'UoCV' : 'testForm'
 }
-

@@ -115,7 +115,7 @@ export default class reg extends Vue {
 
     console.log(this.model);
 
-    await this.$axios.post('/api/auth/register', this.model)
+    await this.$axios.post('/api/auth/register', {model: this.model})
       .then(res => {
         console.log(res.data);
         //localStorage.setItem('accessToken', res.data.token);
