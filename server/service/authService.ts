@@ -9,10 +9,7 @@ export default class AuthService {
     generateTokens(payload: AuthDto) {
         try {
             const accessToken = jwt.sign(payload, config.JWT_ACCESS_SECRET, { expiresIn: '15m' })
-            const refreshToken = jwt.sign(payload, config.JWT_REFRESH_SECRET, {
-                expiresIn: '24h',
-                httpOnly: true
-            })
+            const refreshToken = jwt.sign(payload, config.JWT_REFRESH_SECRET, {expiresIn: '24h'})
             return {
                 accessToken,
                 refreshToken,
@@ -43,13 +40,15 @@ export default class AuthService {
             })
 
             if (tokenData) {
-                tokenData.value = value
+                tokenData.accessToken = value.accessToken
+                tokenData.refreshToken = value.refreshToken
                 return await tokenRepository.save(tokenData)
             }
 
             const createToken = new Token()
             createToken.user = user
-            createToken.value = value
+            createToken.accessToken = value.accessToken
+            createToken.refreshToken = value.refreshToken
 
             return await tokenRepository.save(createToken)
         } catch (e) {
@@ -60,11 +59,11 @@ export default class AuthService {
         }
     }
 
-    async findToken(token: string) {
+    async findAccessToken(token: string) {
         try {
             const tokenRepository = AppDataSource.getRepository(Token)
             const tokenFromDB = await tokenRepository.findOneBy({
-                value: token,
+                accessToken: token,
             })
 
             if (!tokenFromDB) {
@@ -74,6 +73,36 @@ export default class AuthService {
             return tokenFromDB
         } catch (e) {
             return null
+        }
+    }
+
+    async findRefreshToken(token: string) {
+        try {
+            const tokenRepository = AppDataSource.getRepository(Token)
+            const tokenFromDB = await tokenRepository.findOneBy({
+                refreshToken: token,
+            })
+
+            if (!tokenFromDB) {
+                return null
+            }
+
+            return tokenFromDB
+        } catch (e) {
+            return null
+        }
+    }
+
+    async findAndRefreshToken(token: string) {
+        try {
+            const tokenFromDB = await this.findRefreshToken(token)
+
+            if (!tokenFromDB) {
+                return null
+            }
+        }
+        catch (e) {
+
         }
     }
 }
