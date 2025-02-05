@@ -6,8 +6,11 @@ export class Token {
     @PrimaryGeneratedColumn()
     id!: number
 
-    @Column({ nullable: false, unique: true, comment: 'Значение' })
-    value!: string
+    @Column({ nullable: false, unique: true, comment: 'accessToken' })
+    accessToken!: string
+
+    @Column({ nullable: false, unique: true, comment: 'refreshToken' })
+    refreshToken!: string
 
     @ManyToOne(() => User, (user) => user.id, {
         cascade: true,

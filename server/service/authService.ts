@@ -9,7 +9,10 @@ export default class AuthService {
     generateTokens(payload: AuthDto) {
         try {
             const accessToken = jwt.sign(payload, config.JWT_ACCESS_SECRET, { expiresIn: '15m' })
-            const refreshToken = jwt.sign(payload, config.JWT_REFRESH_SECRET, { expiresIn: '24h' })
+            const refreshToken = jwt.sign(payload, config.JWT_REFRESH_SECRET, {
+                expiresIn: '24h',
+                httpOnly: true
+            })
             return {
                 accessToken,
                 refreshToken,
