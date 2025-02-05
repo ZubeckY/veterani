@@ -60,7 +60,10 @@
 
           <div class="authCard__footer d-flex align-center justify-center flex-column">
 
-            <v-btn class="authCard__button" large outlined>Зарегистрироваться</v-btn>
+            <v-btn class="authCard__button"
+                   large
+                   @click.prevent="register"
+                   outlined>Зарегистрироваться</v-btn>
             <v-btn class="authCard__button my-0 pa-0"
                    small
                    @click.prevent="$router.push('/auth/login')"
@@ -107,6 +110,24 @@ export default class reg extends Vue {
     required: (v: any) => !!v || "Это поле обязательно к заполнению"
   }
 
+  async register(): Promise<void> {
+    this.loading = true;
+
+    console.log(this.model);
+
+    await this.$axios.post('/api/auth/register', this.model)
+      .then(res => {
+        console.log(res.data);
+        //localStorage.setItem('accessToken', res.data.token);
+      })
+      .catch(err => {
+        console.log(err);
+      })
+      .finally(() => {
+        this.loading = false
+      })
+
+  }
 }
 </script>
 <style scoped>

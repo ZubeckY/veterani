@@ -16,16 +16,16 @@ userRouter.post("/auth/login", async (req, res): Promise<any> => {
         })
 
         if (!userFromDB) {
-            return {
+            return res.status(400).send({
                 message: 'Пользователь с таким email не найден',
-            }
+            })
         }
 
         const isCodeEquals = await bcrypt.compare(password, userFromDB.password)
         if (!isCodeEquals) {
-            return {
+            return res.status(400).send({
                 message: 'Неверный пароль',
-            }
+            })
         }
 
         const DTO = {
@@ -39,15 +39,78 @@ userRouter.post("/auth/login", async (req, res): Promise<any> => {
         const { accessToken } = tokens
 
         if (!accessToken) {
-            return {
-                message: 'Ошибка создания токена',
-            }
+            return res.status(501).send({
+                message: "ошибка создания токена"
+            })
         }
 
-        return tokens
+        return res.send(tokens)
     }
     catch (error) {
 
+    }
+})
+
+userRouter.post("/auth/register", async (req, res): Promise<any> => {
+    try {
+        const {model} = req.body
+        console.log(model)
+        const { firstName, secondName, middleName, email, password } = model
+        const userRepository = AppDataSource.getRepository(User)
+        const values = Object.values(model)
+
+        for (let i = 1; i < values.length; i++) {
+            if (String(values[i]).length <= 1) {
+                return res.status(400).send({
+                    message: "Пустое значение"
+                })
+            }
+        }
+
+        const userFromDB: User | null = await userRepository.findOneBy({
+            email: email,
+        })
+
+        if(userFromDB) {
+            return res.status(400).send({
+                message: "Пользователь с такой почтой уже существует"
+            })
+        }
+
+        const newUser = new User()
+
+        newUser.firstName = firstName
+        newUser.lastName = secondName
+        newUser.middleName = middleName
+        newUser.email = email
+        newUser.password = await bcrypt.hash(newUser.password, 5)
+
+        const userSaved = await userRepository.save(newUser)
+
+        const DTO = {
+            id: userSaved.id,
+            email: userSaved.email,
+        }
+
+        const userDto = new AuthDto(DTO)
+        const tokens = new AuthService().generateTokens({ ...userDto })
+
+        const { accessToken } = tokens
+
+        if (!accessToken) {
+            console.log("501 у токена")
+            return res.status(501).send({
+                message: "ошибка создания токена"
+            })
+        }
+
+        return res.send(tokens)
+    }
+    catch (error) {
+        console.log(error)
+        return res.status(501).send({
+            message: error,
+        })
     }
 })
 

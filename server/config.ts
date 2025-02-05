@@ -9,6 +9,7 @@ const config: any = {
     DB_USERNAME: dbUsername(),
     DB_PASSWORD: dbPassword(),
     DB_DATABASE: dbDATABASE(),
+    //jwt
 }
 
 export default config
