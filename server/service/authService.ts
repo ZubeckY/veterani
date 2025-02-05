@@ -94,7 +94,7 @@ export default class AuthService {
         }
     }
 
-    async findAndRefreshToken(token: string) {
+    async findAndRefreshAccessToken(token: string) {
         try {
             // Проверяем токен
             const tokenFromDB = await this.findRefreshToken(token)
@@ -123,17 +123,17 @@ export default class AuthService {
             const tokens = new AuthService().generateTokens({...userDto})
 
             // проверяем рефреш токен
-            const {refreshToken} = tokens
-            if (!refreshToken) {
+            const {accessToken} = tokens
+            if (!accessToken) {
                 return null
             }
 
             // обновляем в бд
             const tokenRepository = AppDataSource.getRepository(Token)
-            tokenFromDB.refreshToken = refreshToken
+            tokenFromDB.accessToken = accessToken
 
             await tokenRepository.save(tokenFromDB)
-            return refreshToken
+            return accessToken
         }
         catch (e) {
             return null
