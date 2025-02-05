@@ -11,7 +11,12 @@ const config: any = {
     DB_DATABASE: dbDATABASE(),
     //jwt
     JWT_ACCESS_SECRET: 'jwt-secret-access',
-    JWT_REFRESH_SECRET: 'jwt-secret-refresh'
+    JWT_REFRESH_SECRET: 'jwt-secret-refresh',
+    //SMTP
+    SMTP_HOST: "smtp.beget.com",
+    SMTP_PORT: 2525,
+    SMTP_USER: "test_for_smtp@databasepostgresqlprojectslink12cdf158c3a6028e6fd9a866bddaso1a.ru",
+    SMTP_PASSWORD: "4IoE2LMg%Wrf"
 }
 
 export default config

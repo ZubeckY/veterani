@@ -1,6 +1,21 @@
+import config from "../config";
+import * as nodemailer from "nodemailer";
 
 export default class EmailService {
-    generateOTPCode(): string {
+    transporter = nodemailer.createTransport({
+        host: config.SMTP_HOST,
+        port: config.SMTP_PORT,
+        secure: false,
+        auth: {
+            user: config.SMTP_USER,
+            pass: config.SMTP_PASSWORD,
+        },
+        tls: {
+            rejectUnauthorized: false
+        }
+    })
+
+     generateOTPCode(): string {
         const digits = '0123456789abcdefghijklmnopqrstuvwxyz'
         const len = digits.length
         const OTP_LEN = 5
@@ -13,4 +28,27 @@ export default class EmailService {
 
         return OTP.toUpperCase()
     }
+
+    async sendActivationCode(to: string, code: string) {
+        try {
+            const message = `
+        <div>
+          <h1>Ваш код активации: ${code}</h1>
+          <br />
+          <p>Если действие выполняете не вы, проигнорируйте это письмо</p>
+        </div>
+      `
+
+            await this.transporter.sendMail({
+                from: config.SMTP_USER,
+                to,
+                subject: 'Код активации аккаунта',
+                text: '',
+                html: message,
+            })
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
 }

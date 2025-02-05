@@ -4,6 +4,9 @@ import * as bcrypt from 'bcrypt'
 import {AppDataSource} from "../connectDb";
 import AuthDto from "../DTOS/auth.dto";
 import AuthService from "../service/authService";
+import EmailService from "../service/emailService";
+
+const emailService = new EmailService();
 
 const userRouter = express.Router();
 
@@ -54,7 +57,7 @@ userRouter.post("/auth/register", async (req, res): Promise<any> => {
     try {
 
         const {model} = req.body
-        const {firstName, secondName, middleName, email, password} = model
+        const {firstName, lastName, middleName, email, password} = model
         const userRepository = AppDataSource.getRepository(User)
         const values = Object.values(model)
 
@@ -81,10 +84,11 @@ userRouter.post("/auth/register", async (req, res): Promise<any> => {
 
 
         newUser.firstName = firstName
-        newUser.lastName = secondName
+        newUser.lastName = lastName
         newUser.middleName = middleName
         newUser.email = email
         newUser.password = userPassword
+        newUser.activatedCode = emailService.generateOTPCode()
 
         const userSaved = await userRepository.save(newUser)
 
@@ -104,6 +108,8 @@ userRouter.post("/auth/register", async (req, res): Promise<any> => {
                 message: "ошибка создания токена"
             })
         }
+
+        await emailService.sendActivationCode(userSaved.email, userSaved.activatedCode)
 
         return res.send(tokens)
     } catch (error) {

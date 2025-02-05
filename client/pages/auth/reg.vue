@@ -113,8 +113,6 @@ export default class reg extends Vue {
   async register(): Promise<void> {
     this.loading = true;
 
-    console.log(this.model);
-
     await this.$axios.post('/api/auth/register', {model: this.model})
       .then(res => {
         console.log(res.data);
