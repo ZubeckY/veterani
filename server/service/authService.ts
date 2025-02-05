@@ -3,6 +3,7 @@ import config from "../config";
 import jwt from 'jsonwebtoken'
 import {AppDataSource} from "../connectDb";
 import {Token} from "../entity/token";
+import {User} from "../entity";
 
 
 export default class AuthService {
@@ -95,14 +96,47 @@ export default class AuthService {
 
     async findAndRefreshToken(token: string) {
         try {
+            // Проверяем токен
             const tokenFromDB = await this.findRefreshToken(token)
-
             if (!tokenFromDB) {
                 return null
             }
+
+            // проверяем пользователя по привязке
+            const userRepository = AppDataSource.getRepository(User)
+            const userFromDB = await userRepository.findOneBy({
+                id: tokenFromDB.user.id,
+            })
+
+            if (!userFromDB) {
+                return null
+            }
+
+            // берем данные от пользователя с бд
+            const DTO = {
+                id: userFromDB.id,
+                email: userFromDB.email,
+            }
+
+            // создаем дто для создания токена
+            const userDto = new AuthDto(DTO)
+            const tokens = new AuthService().generateTokens({...userDto})
+
+            // проверяем рефреш токен
+            const {refreshToken} = tokens
+            if (!refreshToken) {
+                return null
+            }
+
+            // обновляем в бд
+            const tokenRepository = AppDataSource.getRepository(Token)
+            tokenFromDB.refreshToken = refreshToken
+
+            await tokenRepository.save(tokenFromDB)
+            return refreshToken
         }
         catch (e) {
-
+            return null
         }
     }
 }
