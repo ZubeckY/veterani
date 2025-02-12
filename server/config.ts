@@ -10,6 +10,10 @@ const config: any = {
     DB_PASSWORD: dbPassword(),
     DB_DATABASE: dbDATABASE(),
     //jwt
+    JWT_EXPIRES_IN: {
+        ACCESS: "15m",
+        REFRESH: "24h",
+    },
     JWT_ACCESS_SECRET: 'jwt-secret-access',
     JWT_REFRESH_SECRET: 'jwt-secret-refresh',
     //SMTP

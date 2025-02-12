@@ -4,15 +4,14 @@ import jwt from 'jsonwebtoken'
 import {AppDataSource} from "../connectDb"
 import {User, Token} from "../entity"
 
-
 export default class AuthService {
     generateTokens(payload: AuthDto) {
         if (!payload) {
             return null
         }
         try {
-            const accessToken = jwt.sign(payload, config.JWT_ACCESS_SECRET, {expiresIn: '15m'})
-            const refreshToken = jwt.sign(payload, config.JWT_REFRESH_SECRET, {expiresIn: '24h'})
+            const accessToken = jwt.sign(payload, config.JWT_ACCESS_SECRET, {expiresIn: config.JWT_EXPIRES_IN.ACCESS})
+            const refreshToken = jwt.sign(payload, config.JWT_REFRESH_SECRET, {expiresIn: config.JWT_EXPIRES_IN.REFRESH})
             return {
                 accessToken,
                 refreshToken,
@@ -30,7 +29,7 @@ export default class AuthService {
             return null
         }
         try {
-            return jwt.sign(payload, config.JWT_ACCESS_SECRET, {expiresIn: '15m'})
+            return jwt.sign(payload, config.JWT_ACCESS_SECRET, {expiresIn: config.JWT_EXPIRES_IN.ACCESS})
         } catch (e) {
             return {
                 message: 'Ошибка сервера',
@@ -58,13 +57,13 @@ export default class AuthService {
             })
 
             if (tokenData) {
-                tokenData.value = value.accessToken
+                tokenData.value = value.refreshToken
                 return await tokenRepository.save(tokenData)
             }
 
             const createToken = new Token()
             createToken.user = user
-            createToken.value = value.accessToken
+            createToken.value = value.refreshToken
 
             return await tokenRepository.save(createToken)
         } catch (e) {
@@ -107,6 +106,7 @@ export default class AuthService {
             if (!userFromDB) {
                 return null
             }
+
             const DTO = {
                 id: userFromDB.id,
                 email: userFromDB.email,
