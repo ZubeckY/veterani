@@ -19,6 +19,13 @@ export class Post {
     })
     text!: string;
 
+    @Column({
+        comment: "Состоит в слайдере",
+        nullable: false,
+        default: false,
+    })
+    includesSlider!: boolean;
+
     @ManyToOne(() => User, (user) => user.id, {
         cascade: false,
         nullable: false,
