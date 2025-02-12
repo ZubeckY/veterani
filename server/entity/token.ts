@@ -6,12 +6,6 @@ export class Token {
     @PrimaryGeneratedColumn()
     id!: number
 
-    @Column({ nullable: false, unique: true, comment: 'accessToken' })
-    accessToken!: string
-
-    @Column({ nullable: false, unique: true, comment: 'refreshToken' })
-    refreshToken!: string
-
     @ManyToOne(() => User, (user) => user.id, {
         cascade: true,
         nullable: false,
@@ -19,6 +13,9 @@ export class Token {
     })
     @JoinColumn()
     user!: Relation<User>
+
+    @Column({ nullable: false, unique: true, comment: 'token' })
+    value!: string
 
     @CreateDateColumn({ comment: 'Дата создания' })
     created!: Date

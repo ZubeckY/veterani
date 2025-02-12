@@ -1,15 +1,17 @@
-import AuthDto from "../DTOS/auth.dto";
-import config from "../config";
+import AuthDto from "../DTOS/auth.dto"
+import config from "../config"
 import jwt from 'jsonwebtoken'
-import {AppDataSource} from "../connectDb";
-import {Token} from "../entity/token";
-import {User} from "../entity";
+import {AppDataSource} from "../connectDb"
+import {User, Token} from "../entity"
 
 
 export default class AuthService {
     generateTokens(payload: AuthDto) {
+        if (!payload) {
+            return null
+        }
         try {
-            const accessToken = jwt.sign(payload, config.JWT_ACCESS_SECRET, { expiresIn: '15m' })
+            const accessToken = jwt.sign(payload, config.JWT_ACCESS_SECRET, {expiresIn: '15m'})
             const refreshToken = jwt.sign(payload, config.JWT_REFRESH_SECRET, {expiresIn: '24h'})
             return {
                 accessToken,
@@ -23,6 +25,21 @@ export default class AuthService {
         }
     }
 
+    generateAccessToken(payload: AuthDto) {
+        if (!payload) {
+            return null
+        }
+        try {
+            return jwt.sign(payload, config.JWT_ACCESS_SECRET, {expiresIn: '15m'})
+        } catch (e) {
+            return {
+                message: 'Ошибка сервера',
+                error: e,
+            }
+        }
+
+    }
+
     validateToken(token: any, secret: any) {
         try {
             return jwt.verify(token, secret)
@@ -33,23 +50,21 @@ export default class AuthService {
 
     async saveToken(model: any) {
         try {
-            const { user, value } = model
+            const {user, value} = model
 
             const tokenRepository = AppDataSource.getRepository(Token)
-            const tokenData = await tokenRepository .findOneBy({
+            const tokenData = await tokenRepository.findOneBy({
                 user: user
             })
 
             if (tokenData) {
-                tokenData.accessToken = value.accessToken
-                tokenData.refreshToken = value.refreshToken
+                tokenData.value = value.accessToken
                 return await tokenRepository.save(tokenData)
             }
 
             const createToken = new Token()
             createToken.user = user
-            createToken.accessToken = value.accessToken
-            createToken.refreshToken = value.refreshToken
+            createToken.value = value.accessToken
 
             return await tokenRepository.save(createToken)
         } catch (e) {
@@ -60,130 +75,48 @@ export default class AuthService {
         }
     }
 
-    async findAccessToken(token: string) {
+    async findToken(token: string) {
         try {
             const tokenRepository = AppDataSource.getRepository(Token)
             const tokenFromDB = await tokenRepository.findOneBy({
-                accessToken: token,
+                value: token,
             })
 
-            if (!tokenFromDB) {
-                return null
-            }
-
-            return tokenFromDB
+            return tokenFromDB ?? null
         } catch (e) {
             return null
         }
     }
 
-    async findRefreshToken(token: string) {
-        try {
-            const tokenRepository = AppDataSource.getRepository(Token)
-            const tokenFromDB = await tokenRepository.findOneBy({
-                refreshToken: token,
-            })
+    async refreshToken(token: string) {
+        if (!token) {
+            return null
+        }
 
-            if (!tokenFromDB) {
+        try {
+            const decoded: any = this.validateToken(token, config.JWT_ACCESS_SECRET)
+            if (!decoded) {
                 return null
             }
 
-            return tokenFromDB
+            const userRepository = AppDataSource.getRepository(User)
+            const userFromDB: User | null = await userRepository.findOneBy({
+                email: decoded?.email,
+            })
+
+            if (!userFromDB) {
+                return null
+            }
+            const DTO = {
+                id: userFromDB.id,
+                email: userFromDB.email,
+            }
+
+            return this.generateAccessToken(new AuthDto(DTO)) ?? null
         } catch (e) {
-            return null
-        }
-    }
-
-    async findAndRefreshAccessToken(token: string) {
-        try {
-            // Проверяем токен
-            const tokenFromDB = await this.findRefreshToken(token)
-            if (!tokenFromDB) {
-                return null
+            return {
+                message: e
             }
-
-            // проверяем пользователя по привязке
-            const userRepository = AppDataSource.getRepository(User)
-            const userFromDB = await userRepository.findOneBy({
-                id: tokenFromDB.user.id,
-            })
-
-            if (!userFromDB) {
-                return null
-            }
-
-            // берем данные от пользователя с бд
-            const DTO = {
-                id: userFromDB.id,
-                email: userFromDB.email,
-            }
-
-            // создаем дто для создания токена
-            const userDto = new AuthDto(DTO)
-            const tokens = new AuthService().generateTokens({...userDto})
-
-            // проверяем рефреш токен
-            const {accessToken} = tokens
-            if (!accessToken) {
-                return null
-            }
-
-            // обновляем в бд
-            const tokenRepository = AppDataSource.getRepository(Token)
-            tokenFromDB.accessToken = accessToken
-
-            await tokenRepository.save(tokenFromDB)
-            return accessToken
-        }
-        catch (e) {
-            return null
-        }
-    }
-
-    async findAndRefreshTokens(token: string) {
-        try {
-            // Проверяем токен
-            const tokenFromDB = await this.findRefreshToken(token)
-            if (!tokenFromDB) {
-                return null
-            }
-
-            // проверяем пользователя по привязке
-            const userRepository = AppDataSource.getRepository(User)
-            const userFromDB = await userRepository.findOneBy({
-                id: tokenFromDB.user.id,
-            })
-
-            if (!userFromDB) {
-                return null
-            }
-
-            // берем данные от пользователя с бд
-            const DTO = {
-                id: userFromDB.id,
-                email: userFromDB.email,
-            }
-
-            // создаем дто для создания токена
-            const userDto = new AuthDto(DTO)
-            const tokens = new AuthService().generateTokens({...userDto})
-
-            // проверяем рефреш токен
-            const {accessToken, refreshToken} = tokens
-            if (!accessToken) {
-                return null
-            }
-
-            // обновляем в бд
-            const tokenRepository = AppDataSource.getRepository(Token)
-            tokenFromDB.accessToken = accessToken
-            tokenFromDB.refreshToken = refreshToken
-
-            await tokenRepository.save(tokenFromDB)
-            return tokens
-        }
-        catch (e) {
-            return null
         }
     }
 }

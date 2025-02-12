@@ -1,16 +1,17 @@
-import express from "express";
+import {Router, Request, Response, NextFunction} from "express";
 import {User} from "../entity";
 import * as bcrypt from 'bcrypt'
 import {AppDataSource} from "../connectDb";
 import AuthDto from "../DTOS/auth.dto";
 import AuthService from "../service/authService";
 import EmailService from "../service/emailService";
+import {checkValidAuth} from "../middleware/userMiddleware";
 
 const emailService = new EmailService();
 
-const userRouter = express.Router();
+const userRouter = Router();
 
-userRouter.post("/auth/login", async (req, res): Promise<any> => {
+userRouter.post("/auth/login", async (req: Request, res: Response): Promise<any> => {
     try {
         const {email, password} = req.body?.model
         const userRepository = AppDataSource.getRepository(User)
@@ -37,10 +38,9 @@ userRouter.post("/auth/login", async (req, res): Promise<any> => {
         }
 
         const userDto = new AuthDto(DTO)
-        const tokens = new AuthService().generateTokens({...userDto})
+        const tokens: any = new AuthService().generateTokens({...userDto})
 
         const {accessToken} = tokens
-
         if (!accessToken) {
             return res.status(501).send({
                 message: "ошибка создания токена"
@@ -53,7 +53,7 @@ userRouter.post("/auth/login", async (req, res): Promise<any> => {
     }
 })
 
-userRouter.post("/auth/register", async (req, res): Promise<any> => {
+userRouter.post("/auth/register", async (req: Request, res: Response): Promise<any> => {
     try {
 
         const {model} = req.body
@@ -82,7 +82,6 @@ userRouter.post("/auth/register", async (req, res): Promise<any> => {
         const newUser = new User()
         const userPassword: any = await bcrypt.hash(password, 3)
 
-
         newUser.firstName = firstName
         newUser.lastName = lastName
         newUser.middleName = middleName
@@ -98,10 +97,9 @@ userRouter.post("/auth/register", async (req, res): Promise<any> => {
         }
 
         const userDto = new AuthDto(DTO)
-        const tokens = new AuthService().generateTokens({...userDto})
+        const tokens: any = new AuthService().generateTokens({...userDto})
 
         const {accessToken} = tokens
-
         if (!accessToken) {
             console.log("501 у токена")
             return res.status(501).send({
@@ -119,5 +117,10 @@ userRouter.post("/auth/register", async (req, res): Promise<any> => {
         })
     }
 })
+
+// @ts-ignore
+userRouter.post('/auth/refresh', checkValidAuth, async (req: Request, res: Response): Promise<any> => {
+});
+
 
 export default userRouter;
