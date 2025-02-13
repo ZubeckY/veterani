@@ -93,15 +93,7 @@ export default class AuthService {
         }
 
         try {
-            const decoded: any = this.validateToken(token, config.JWT_ACCESS_SECRET)
-            if (!decoded) {
-                return null
-            }
-
-            const userRepository = AppDataSource.getRepository(User)
-            const userFromDB: User | null = await userRepository.findOneBy({
-                email: decoded?.email,
-            })
+            const userFromDB: any = this.getUserByToken (token)
 
             if (!userFromDB) {
                 return null
@@ -113,6 +105,30 @@ export default class AuthService {
             }
 
             return this.generateAccessToken(new AuthDto(DTO)) ?? null
+        } catch (e) {
+            return {
+                message: e
+            }
+        }
+    }
+
+    async getUserByToken(token: string) {
+        if (!token) {
+            return null
+        }
+
+        try {
+            const decoded: any = this.validateToken(token, config.JWT_ACCESS_SECRET)
+            if (!decoded) {
+                return null
+            }
+
+            const userRepository = AppDataSource.getRepository(User)
+            const userFromDB: User | null = await userRepository.findOneBy({
+                email: decoded?.email,
+            })
+
+            return userFromDB ?? null
         } catch (e) {
             return {
                 message: e
