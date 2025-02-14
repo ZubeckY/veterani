@@ -1,8 +1,10 @@
-import {Router, Request, Response, NextFunction} from "express";
+import {Router, Request, Response} from "express";
 import {Post} from "../entity";
 import {AppDataSource} from "../connectDb";
 import {checkValidAuth} from "../middleware/userMiddleware";
 import AuthService from "../service/authService";
+//@ts-ignore
+import translitRusEng from 'translit-rus-eng'
 
 const blogRouter = Router();
 
@@ -17,6 +19,21 @@ blogRouter.get('/post/getMany', async (req: Request, res: Response): Promise<any
             .skip(skip)
             .take(take)
             .getMany()
+        return res.send(post)
+    }
+    catch (e) {
+        console.error(e);
+    }
+})
+
+blogRouter.get('/post/:link', async (req: Request, res: Response): Promise<any> => {
+    try {
+
+        const link = req.params.link;
+
+        const postRepository = AppDataSource.getRepository(Post)
+        const post = await postRepository.findOneBy({link})
+
         return res.send(post)
     }
     catch (e) {
@@ -48,16 +65,44 @@ blogRouter.post('/post/create', checkValidAuth, async (req: Request, res: Respon
             })
         }
 
+        const link = translitRusEng(headLine, {loverCase: true, slug: true}).replaceAll('_', '-')
+
         const post = new Post()
         post.user = userFromDB
         post.text = text
         post.headLine = headLine
         post.includesSlider = includeSlider
+        post.link = link
 
         const postRepository = AppDataSource.getRepository(Post)
         const saved = await postRepository.save(post)
 
         return res.send(saved)
+    }
+    catch (e) {
+        console.error(e);
+    }
+})
+
+//@ts-ignore
+blogRouter.delete('/post/delete/:link', checkValidAuth, async (req: Request, res: Response): Promise<any> => {
+    try {
+        const link = req.params.link
+
+        const postRepository = AppDataSource.getRepository(Post)
+        const post: any = await postRepository.findOneBy({link})
+
+        if (!post) {
+            res.status(503).send({
+                message: "Поста не существует"
+            })
+        }
+
+        await postRepository.remove(post)
+
+        return res.status(200).send({
+            message: "Ok"
+        })
     }
     catch (e) {
         console.error(e);

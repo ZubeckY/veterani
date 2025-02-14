@@ -33,6 +33,13 @@ export class Post {
     @JoinColumn()
     user!: Relation<User>;
 
+    @Column({
+        comment: "Ссылка на пост",
+        unique: true,
+        nullable: false,
+    })
+    link!: string;
+
     @CreateDateColumn({
         comment: "Дата создания"
     })
