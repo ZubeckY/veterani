@@ -13,7 +13,10 @@ const userRouter = Router();
 
 userRouter.post("/auth/login", async (req: Request, res: Response): Promise<any> => {
     try {
-        const {email, password} = req.body?.model
+        const {model} = req.body;
+        const {password} = req.body?.model
+        const email = model.email.toLowerCase()
+
         const userRepository = AppDataSource.getRepository(User)
         const userFromDB: User | null = await userRepository.findOneBy({
             email: email,
@@ -49,18 +52,20 @@ userRouter.post("/auth/login", async (req: Request, res: Response): Promise<any>
 
         return res.send(tokens)
     } catch (error) {
-
+        console.log(error)
+        return res.status(500).send({
+            message: error,
+        })
     }
 })
 
 userRouter.post("/auth/register", async (req: Request, res: Response): Promise<any> => {
     try {
-
         const {model} = req.body
-        const {firstName, lastName, middleName, email, password} = model
-        const userRepository = AppDataSource.getRepository(User)
-        const values = Object.values(model)
+        const email = model.email.toLowerCase()
+        const {firstName, lastName, middleName, password} = model
 
+        const values = Object.values(model)
         for (let i = 1; i < values.length; i++) {
             if (String(values[i]).length <= 1) {
                 return res.status(400).send({
@@ -69,6 +74,7 @@ userRouter.post("/auth/register", async (req: Request, res: Response): Promise<a
             }
         }
 
+        const userRepository = AppDataSource.getRepository(User)
         const userFromDB: User | null = await userRepository.findOneBy({
             email: email,
         })
@@ -120,6 +126,14 @@ userRouter.post("/auth/register", async (req: Request, res: Response): Promise<a
 
 // @ts-ignore
 userRouter.post('/auth/refresh', checkValidAuth, async (req: Request, res: Response): Promise<any> => {
+    try {
+        return res.status(200)
+    } catch (error) {
+        console.log(error)
+        return res.status(501).send({
+            message: error,
+        })
+    }
 });
 
 

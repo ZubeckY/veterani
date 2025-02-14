@@ -115,8 +115,13 @@ export default class reg extends Vue {
 
     await this.$axios.post('/api/auth/register', {model: this.model})
       .then(res => {
-        console.log(res.data);
-        //localStorage.setItem('accessToken', res.data.token);
+        const accessToken = res.data.access_token;
+        const refreshToken = res.data.refresh_token;
+
+        sessionStorage.setItem('authorized', 'authorized=' + accessToken);
+        document.cookie = 'refreshToken=' + refreshToken;
+
+        this.$router.push('/lk');
       })
       .catch(err => {
         console.log(err);
@@ -124,7 +129,6 @@ export default class reg extends Vue {
       .finally(() => {
         this.loading = false
       })
-
   }
 }
 </script>

@@ -27,11 +27,12 @@
 
           <div class="authCard__footer d-flex align-center justify-center flex-column">
 
-            <v-btn class="authCard__button" large outlined>Вход</v-btn>
+            <v-btn class="authCard__button" large outlined @click="login">Вход</v-btn>
             <v-btn class="authCard__button my-0 pa-0"
                    small
                    @click.prevent="$router.push('/auth/reg')"
-                   text>Зарегистрироваться</v-btn>
+                   text>Зарегистрироваться
+            </v-btn>
 
           </div>
 
@@ -46,7 +47,7 @@ import {Vue, Component} from 'vue-property-decorator';
 
 @Component({
   layout: 'auth',
-  head(this: Login): object  {
+  head(this: Login): object {
     return {
       title: 'Авторизация'
     }
@@ -64,15 +65,23 @@ export default class Login extends Vue {
   showPass: boolean = false;
 
   async login() {
-    this.$axios.post('/api/auth/login', this.model)
+    await this.$axios.post('/api/auth/login/', {model: this.model})
       .then(res => {
-        localStorage.setItem('accessToken', res.data.tokens.accessToken);
+        const accessToken = res.data.access_token;
+        const refreshToken = res.data.refresh_token;
+
+        sessionStorage.setItem('authorized', 'authorized=' + accessToken);
+        document.cookie = 'refreshToken=' + refreshToken;
+
+        this.$router.push('/lk');
+      })
+      .catch(err => {
+        console.log(err)
       })
   }
-
 }
 </script>
 
 <style>
-  @import "@/assets/styles/auth.css";
+@import "@/assets/styles/auth.css";
 </style>
