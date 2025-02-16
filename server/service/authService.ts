@@ -10,8 +10,13 @@ export default class AuthService {
             return null
         }
         try {
-            const accessToken = jwt.sign(payload, config.JWT_ACCESS_SECRET, {expiresIn: config.JWT_EXPIRES_IN.ACCESS})
-            const refreshToken = jwt.sign(payload, config.JWT_REFRESH_SECRET, {expiresIn: config.JWT_EXPIRES_IN.REFRESH})
+            const dto = {
+                id: payload.id,
+                email: payload.email,
+            }
+
+            const accessToken = jwt.sign(dto, config.JWT_ACCESS_SECRET, {expiresIn: config.JWT_EXPIRES_IN.ACCESS})
+            const refreshToken = jwt.sign(dto, config.JWT_REFRESH_SECRET, {expiresIn: config.JWT_EXPIRES_IN.REFRESH})
             return {
                 accessToken,
                 refreshToken,
@@ -28,15 +33,34 @@ export default class AuthService {
         if (!payload) {
             return null
         }
+
         try {
-            return jwt.sign(payload, config.JWT_ACCESS_SECRET, {expiresIn: config.JWT_EXPIRES_IN.ACCESS})
+            const dto = {
+                id: payload.id,
+                email: payload.email,
+            }
+
+            return jwt.sign(dto, config.JWT_ACCESS_SECRET, {expiresIn: config.JWT_EXPIRES_IN.ACCESS})
         } catch (e) {
             return {
                 message: 'Ошибка сервера',
                 error: e,
             }
         }
+    }
 
+    generateRefreshToken(payload: AuthDto) {
+        if (!payload) {
+            return null
+        }
+        try {
+            return jwt.sign(payload, config.JWT_REFRESH_SECRET, {expiresIn: config.JWT_EXPIRES_IN.REFRESH})
+        } catch (e) {
+            return {
+                message: 'Ошибка сервера',
+                error: e,
+            }
+        }
     }
 
     validateToken(token: any, secret: any) {
@@ -93,18 +117,17 @@ export default class AuthService {
         }
 
         try {
-            const userFromDB: any = this.getUserByToken (token)
-
+            const userFromDB: any = await this.getUserByToken(token)
             if (!userFromDB) {
                 return null
             }
 
-            const DTO = {
+            const DTO: AuthDto = new AuthDto({
                 id: userFromDB.id,
                 email: userFromDB.email,
-            }
+            })
 
-            return this.generateAccessToken(new AuthDto(DTO)) ?? null
+            return this.generateAccessToken(DTO) ?? null
         } catch (e) {
             return {
                 message: e
@@ -118,7 +141,7 @@ export default class AuthService {
         }
 
         try {
-            const decoded: any = this.validateToken(token, config.JWT_ACCESS_SECRET)
+            const decoded: any = this.validateToken(token, config.JWT_REFRESH_SECRET)
             if (!decoded) {
                 return null
             }

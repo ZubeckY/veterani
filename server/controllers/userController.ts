@@ -124,10 +124,9 @@ userRouter.post("/auth/register", async (req: Request, res: Response): Promise<a
     }
 })
 
-// @ts-ignore
-userRouter.post('/auth/refresh', checkValidAuth, async (req: Request, res: Response): Promise<any> => {
+userRouter.post("/auth/refresh/", checkValidAuth, async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
-        return res.status(200)
+        res.send({message: 'ok'})
     } catch (error) {
         console.log(error)
         return res.status(501).send({

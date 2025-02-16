@@ -2,8 +2,6 @@
   <div>
 
 
-
-
     <v-dialog v-model="logoutDialog"
               max-width="360">
       <template v-slot:activator="{ on, attrs }">
@@ -60,54 +58,60 @@ export default class Lk extends Vue {
   logoutDialog: boolean = false;
 
 
-  async mounted () {
+  async mounted() {
     if (process.client) {
       const accessToken = sessionStorage.getItem('authorized')
-
-      const refreshTokenTarget = "refreshToken="
-      const cookies = this.getCookie()
-      let refreshToken = ''
-
-
-      cookies.forEach((cookie: any) => {
-        if (cookie.includes(refreshTokenTarget)) {
-          refreshToken = cookie
-        }
-      })
-
-      if (!refreshToken) {
-        return this.logoutFunction()
-      }
+      const refreshToken = localStorage.getItem('refreshToken')
+      document.cookie = 'refreshToken=' + refreshToken
 
       // делаем запрос, проверяем пользователя
-
       await this.$axios.post('/api/auth/refresh', {}, {
         headers: {
+          cookie: refreshToken,
           authorized: accessToken,
-          cookies: refreshToken
         }
       })
         .then((response) => {
-          console.log('response is: ', response.data)
+          if (response.status != 200) {
+            this.logoutFunction()
+          }
+
+          if (!accessToken) {
+            sessionStorage.setItem('authorized', 'authorized=' + response.headers.authorized)
+          }
         })
         .catch((error: any) => {
           console.log('error is: ', error.message)
         })
-
     }
   }
 
-
-  getCookie(): any {
-    if (process.client) {
-      return document.cookie.split('; ')
-    }
-  }
 
   logoutFunction() {
     if (process.client) {
       sessionStorage.removeItem('authorized')
-      this.$router.push('/auth/login')
+      localStorage.removeItem('refreshToken')
+      this.clearCookie()
+
+      document.location.href = '/auth/logout/'
+    }
+  }
+
+  getCookie(): any {
+    if (process.client) {
+      return document.cookie
+    }
+  }
+
+  clearCookie(): any {
+    if (process.client) {
+      return document.cookie.split(";").forEach(function (c) {
+        document.cookie = c
+          .replace(/^ +/, "")
+          .replace(/=.*/, "=;expires=" + new Date()
+            .toUTCString() + ";path=/"
+          );
+      });
     }
   }
 }
