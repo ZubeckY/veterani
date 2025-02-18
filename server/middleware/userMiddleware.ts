@@ -1,107 +1,71 @@
 import {Request, Response, NextFunction} from "express";
 import AuthService from "../service/authService";
+import {AppDataSource} from "../connectDb";
 import config from "../config";
+import {User} from "../entity";
 
 export async function checkValidAuth(req: Request, res: Response, next: NextFunction): Promise<any> {
     try {
+        /* Берем данные с запроса */
         const cookie: any = req.headers['cookie']
-        const authorization: any = req.headers['authorized']
-
-        const accessToken = authorization.split('authorized=')[1]
-        const refreshToken = cookie.split('refreshToken=')[1]
-
-        if (!refreshToken) {
-            return res.status(401).send({
-                message: `token not found`,
-            })
-        }
-
-        // декодим refreshToken
-        const decodeRefreshToken: any = new AuthService().validateToken(refreshToken, config.JWT_REFRESH_SECRET);
-
-        // при наличии accessToken
-        if (decodeRefreshToken && accessToken) {
-            const decodeAccessToken: any = new AuthService().validateToken(accessToken, config.JWT_ACCESS_SECRET);
-            if (!decodeAccessToken) {
-                return {
-                    status: 401,
-                    message: 'No token provided'
-                };
-            }
-
-            if (decodeRefreshToken.id != decodeAccessToken.id) {
-                return {
-                    status: 401,
-                    message: 'No token provided'
-                };
-            }
-
-            if (decodeRefreshToken.email != decodeAccessToken.email) {
-                return {
-                    status: 401,
-                    message: 'No token provided'
-                };
-            }
-        }
-
-        if (decodeRefreshToken && !accessToken) {
-            const newAccessToken: any = await new AuthService().refreshToken(refreshToken);
-
-            if (!newAccessToken) {
-                return res.status(401).send({
-                    message: 'No token provided'
-                });
-            }
-
+        if (!cookie) {
             return res
-                .cookie('refreshToken', refreshToken, {httpOnly: true})
-                .header('authorized', newAccessToken)
-                .status(200)
+                .status(401)
                 .send({
-                    message: 'ok'
+                    message: 'Отсутствуют cookie. Код ошибки - 1010'
+                });
+        }
+
+        const refreshToken = cookie.split('refreshToken=')[1]
+        if (!refreshToken) {
+            return res
+                .status(401)
+                .send({
+                    message: 'Токен не найден. Код ошибки - 1020',
                 })
         }
 
+        /* разбираем refreshToken */
+        const decodeRefreshToken: any = new AuthService().validateToken(refreshToken, config.JWT_REFRESH_SECRET);
+        if (!decodeRefreshToken) {
+            return res
+                .status(401)
+                .send({
+                    message: 'Не валидный токен. Код ошибки - 1030',
+                })
+        }
 
-        return res
-            .cookie('refreshToken', refreshToken, {httpOnly: true})
-            .header('authorized', accessToken)
-            .send({
-                message: 'ok'
+        const {id, email} = decodeRefreshToken;
+        if (!id && !email) {
+            return res
+                .status(401)
+                .send({
+                    message: 'Пользователь не указан. Код ошибки - 1040',
+                })
+        }
+
+        const userFromDB = await AppDataSource
+            .getRepository(User)
+            .findOneBy({
+                id,
+                email,
             })
 
-    } catch (error) {
-        try {
-            const cookie: any = req.headers['cookie']
-
-            const refreshToken = cookie.split('refreshToken=')[1]
-
-            if (!refreshToken) {
-                return {
-                    status: 401,
-                    message: 'No token provided'
-                };
-            }
-
-            const newAccessToken: any = await new AuthService().refreshToken(refreshToken);
-            console.log('newAccessToken catch', newAccessToken)
-
-            if (!newAccessToken) {
-                return res.status(401).send({
-                    message: 'No token provided'
-                });
-            }
-
-            res
-                .cookie('refreshToken', refreshToken, {httpOnly: true})
-                .header('authorized', newAccessToken)
-                .status(200)
-        } catch (error) {
-            console.log(error);
-
-            return res.status(400).send({
-                message: error
-            });
+        if (!userFromDB) {
+            return res
+                .status(401)
+                .send({
+                    message: 'Пользователь указан неверно. Код ошибки - 1045'
+                })
         }
+
+        return next()
+    } catch (error) {
+        console.log(error)
+        return res
+            .status(500)
+            .send({
+                message: 'Ошибка сервера 1050'
+            })
     }
 }

@@ -78,6 +78,7 @@
 </template>
 <script lang="ts">
 import {Vue, Component} from 'vue-property-decorator';
+import Cookie from "cookie-universal";
 
 @Component({
   layout: 'auth',
@@ -115,16 +116,10 @@ export default class reg extends Vue {
 
     await this.$axios.post('/api/auth/register', {model: this.model})
       .then(res => {
-        const accessToken = res.data.accessToken;
         const refreshToken = res.data.refreshToken;
 
-        const authorized = 'authorized=' + accessToken
-
-        sessionStorage.removeItem('authorized')
-        sessionStorage.setItem('authorized', authorized)
-
-        localStorage.setItem('refreshToken', 'refreshToken=' + refreshToken)
-        document.cookie = 'refreshToken=' + refreshToken;
+        const cookies = Cookie()
+        cookies.set('refreshToken', refreshToken)
 
         document.location.href = '/lk/'
       })

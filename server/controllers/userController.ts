@@ -126,9 +126,10 @@ userRouter.post("/auth/register", async (req: Request, res: Response): Promise<a
 
 userRouter.post("/auth/refresh/", checkValidAuth, async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
-        res.send({message: 'ok'})
+        res.send({
+            message: 'ping - pong'
+        })
     } catch (error) {
-        console.log(error)
         return res.status(501).send({
             message: error,
         })

@@ -16,7 +16,6 @@
           Вы действительно хотите выйти из профиля?
         </v-card-text>
 
-
         <v-card-actions>
           <v-btn class="ma-0 pa-0"
                  height="fit-content"
@@ -44,6 +43,7 @@
 </template>
 
 <script lang="ts">
+import Cookie from 'cookie-universal'
 import {Vue, Component} from 'vue-property-decorator';
 
 @Component({
@@ -60,59 +60,26 @@ export default class Lk extends Vue {
 
   async mounted() {
     if (process.client) {
-      const accessToken = sessionStorage.getItem('authorized')
-      const refreshToken = localStorage.getItem('refreshToken')
-      document.cookie = 'refreshToken=' + refreshToken
+      const cookies = Cookie()
 
-      // делаем запрос, проверяем пользователя
-      await this.$axios.post('/api/auth/refresh', {}, {
-        headers: {
-          cookie: refreshToken,
-          authorized: accessToken,
-        }
-      })
-        .then((response) => {
-          if (response.status != 200) {
-            this.logoutFunction()
-          }
-
-          if (!accessToken) {
-            sessionStorage.setItem('authorized', 'authorized=' + response.headers.authorized)
-          }
+      await this.$axios.post('/api/auth/refresh')
+        .then(res => {
+          console.log(res)
         })
         .catch((error: any) => {
-          console.log('error is: ', error.message)
+          console.log(error.response)
+
+          if (error.response.status === 401) {
+            this.logoutFunction()
+          }
         })
     }
   }
 
-
   logoutFunction() {
-    if (process.client) {
-      sessionStorage.removeItem('authorized')
-      localStorage.removeItem('refreshToken')
-      this.clearCookie()
-
-      document.location.href = '/auth/logout/'
-    }
-  }
-
-  getCookie(): any {
-    if (process.client) {
-      return document.cookie
-    }
-  }
-
-  clearCookie(): any {
-    if (process.client) {
-      return document.cookie.split(";").forEach(function (c) {
-        document.cookie = c
-          .replace(/^ +/, "")
-          .replace(/=.*/, "=;expires=" + new Date()
-            .toUTCString() + ";path=/"
-          );
-      });
-    }
+    const cookies = Cookie()
+    cookies.removeAll()
+    this.$router.push('/auth/login/')
   }
 }
 </script>
