@@ -5,21 +5,27 @@
     </div>
     <div v-else>
 
-      <div v-for="(item, i) in data" :key="'blog-' + i">
-        <div>{{item.headLine}}</div>
-        <div>
-          <v-btn @click="$router.push('/blog/edit/' + item.link)" icon>
-            <v-icon>mdi-pencil</v-icon>
-          </v-btn>
+      <v-card v-for="(item, i) in data" :key="'blog-' + i">
+        <div class="d-flex">
+          <div class="ml-2 mr-4" style="font-size: 22px; font-weight: bold">{{ item.headLine }}</div>
+          <div>
+            <v-btn @click="$router.push('/blog/edit/' + item.link)" icon>
+              <v-icon>mdi-pencil</v-icon>
+            </v-btn>
 
-          <blog-delete @deleteItem="deleteItem(item.link)"/>
+            <blog-delete @deleteItem="deleteItem(item.link)"/>
+          </div>
         </div>
-      </div>
+      </v-card>
 
       <!-- пагинация -->
       <v-pagination v-model="pagPage"
                     :length="pagSize"
                     :total-visible="7"/>
+
+      <v-btn color="success" fab>
+        <v-icon>mdi-plus</v-icon>
+      </v-btn>
 
     </div>
   </div>
@@ -28,7 +34,7 @@
 import {Vue, Component} from 'vue-property-decorator';
 
 @Component({
-  head(this: Blog): object  {
+  head(this: Blog): object {
     return {
       title: 'Новости',
     }
@@ -49,6 +55,7 @@ export default class Blog extends Vue {
     this.$axios.get(this.getLink)
       .then(res => {
         console.log(res.data)
+        this.data = res.data
       })
       .catch((err) => {
         console.log(err)
@@ -69,7 +76,7 @@ export default class Blog extends Vue {
       })
   }
 
-  get pagSize (): number {
+  get pagSize(): number {
     return Math.ceil(this.data.length / this.size)
   }
 

@@ -58,9 +58,17 @@ blogRouter.post('/post/create', checkValidAuth, async (req: Request, res: Respon
             }
         }
 
-        const accessToken: any = req.headers['authorized'];
-        const userFromDB: any = await new AuthService().getUserByToken(accessToken)
+        const cookie: any = req.headers['cookie']
+        const refreshToken = await new AuthService().getTokenFromCookie(cookie);
+        if (!refreshToken) {
+            return res
+                .status(401)
+                .send({
+                    message: 'Токен не найден. Код ошибки - 1020',
+                })
+        }
 
+        const userFromDB: any = await new AuthService().getUserByToken(refreshToken)
         if (!userFromDB) {
             res.status(401).send({
                 message: "user undefind"
