@@ -55,6 +55,7 @@ export default class _link extends Vue {
     const link = this.$router.currentRoute.params.link;
     this.$axios.get('/api/post/' + link)
       .then((response) => {
+        console.log(response.data);
         this.model = response.data;
       })
       .catch((error) => {
@@ -62,10 +63,9 @@ export default class _link extends Vue {
       })
   }
 
-
   async edit() {
     const link = this.$router.currentRoute.params.link;
-    await this.$axios.post('/api/post/update/' + link, {model: this.model})
+    await this.$axios.patch('/api/post/update/' + link, {model: this.model})
       .then((response) => {
         console.log(response);
       })

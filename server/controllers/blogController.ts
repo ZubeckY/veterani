@@ -124,22 +124,21 @@ blogRouter.delete('/post/delete/:link', checkValidAuth, async (req: Request, res
 blogRouter.patch('/post/update/:link', checkValidAuth, async (req: Request, res: Response): Promise<any> => {
     try {
         const link = req.params.link
-        const info = req.body
+        const {model} = req.body
 
         const postRepository = AppDataSource.getRepository(Post)
         const post: any = await postRepository.findOneBy({link})
-
         if (!post) {
             res.status(403).send({
                 message: "Нет такого поста"
             })
         }
 
-        const linkTitle = translitRusEng(info.headLine, {loverCase: true, slug: true}).replaceAll('_', '-')
+        const linkTitle = translitRusEng(model.headLine, {loverCase: true, slug: true}).replaceAll('_', '-')
 
-        post.text = info.text
-        post.headLine = info.headLine
-        post.includesSlider = info.includeSlider
+        post.text = model.text
+        post.headLine = model.headLine
+        post.includesSlider = model.includeSlider
         post.link = linkTitle
 
         const saved = await postRepository.save(post)
