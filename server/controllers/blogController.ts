@@ -22,7 +22,9 @@ blogRouter.get('/post/getMany', async (req: Request, res: Response): Promise<any
         return res.send(post)
     }
     catch (e) {
-        console.error(e);
+        res.status(503).send({
+            message: "Ошибка"
+        })
     }
 })
 
@@ -37,7 +39,9 @@ blogRouter.get('/post/:link', async (req: Request, res: Response): Promise<any> 
         return res.send(post)
     }
     catch (e) {
-        console.error(e);
+        res.status(503).send({
+            message: "Ошибка"
+        })
     }
 })
 
@@ -80,7 +84,9 @@ blogRouter.post('/post/create', checkValidAuth, async (req: Request, res: Respon
         return res.send(saved)
     }
     catch (e) {
-        console.error(e);
+        res.status(503).send({
+            message: "Ошибка"
+        })
     }
 })
 
@@ -105,7 +111,40 @@ blogRouter.delete('/post/delete/:link', checkValidAuth, async (req: Request, res
         })
     }
     catch (e) {
-        console.error(e);
+        res.status(503).send({
+            message: "Ошибка"
+        })
+    }
+})
+
+blogRouter.patch('/post/update/:id', checkValidAuth, async (req: Request, res: Response): Promise<any> => {
+    try {
+        const link = req.params.link
+        const info = req.body
+
+        const postRepository = AppDataSource.getRepository(Post)
+        const post: any = await postRepository.findOneBy({link})
+
+        if (!post) {
+            res.status(403).send({
+                message: "Нет такого поста"
+            })
+        }
+
+        const linkTitle = translitRusEng(info.headLine, {loverCase: true, slug: true}).replaceAll('_', '-')
+
+        post.text = info.text
+        post.headLine = info.headLine
+        post.includesSlider = info.includeSlider
+        post.link = linkTitle
+
+        const saved = await postRepository.save(post)
+
+    }
+    catch (e) {
+        res.status(503).send({
+            message: "Ошибка"
+        })
     }
 })
 
