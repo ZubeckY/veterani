@@ -23,7 +23,8 @@
                     :length="pagSize"
                     :total-visible="7"/>
 
-      <v-btn color="success" fab>
+      <v-btn @click="$router.push('/blog/create')"
+             color="success" fab>
         <v-icon>mdi-plus</v-icon>
       </v-btn>
 
