@@ -62,7 +62,7 @@ export default class Blog extends Vue {
     this.$axios.delete('/api/post/delete/' + link)
       .then(res => {
         console.log(res)
-        await this.getData();
+        this.getData();
       })
       .catch((err) => {
         console.log(err)
