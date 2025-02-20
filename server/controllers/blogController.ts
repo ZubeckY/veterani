@@ -20,8 +20,7 @@ blogRouter.get('/post/getMany', async (req: Request, res: Response): Promise<any
             .take(take)
             .getMany()
         return res.send(post)
-    }
-    catch (e) {
+    } catch (e) {
         res.status(503).send({
             message: "Ошибка"
         })
@@ -37,8 +36,7 @@ blogRouter.get('/post/:link', async (req: Request, res: Response): Promise<any> 
         const post = await postRepository.findOneBy({link})
 
         return res.send(post)
-    }
-    catch (e) {
+    } catch (e) {
         res.status(503).send({
             message: "Ошибка"
         })
@@ -49,7 +47,7 @@ blogRouter.get('/post/:link', async (req: Request, res: Response): Promise<any> 
 blogRouter.post('/post/create', checkValidAuth, async (req: Request, res: Response): Promise<any> => {
     try {
         const {model} = req.body
-        const {headLine, text, includeSlider}  = model
+        const {headLine, text, includeSlider} = model
         const values = Object.values(model)
 
         for (let i = 1; i < values.length; i++) {
@@ -60,8 +58,8 @@ blogRouter.post('/post/create', checkValidAuth, async (req: Request, res: Respon
             }
         }
 
-        const accessToken:any = req.headers['authorized'];
-        const userFromDB:any = await new AuthService().getUserByToken(accessToken)
+        const accessToken: any = req.headers['authorized'];
+        const userFromDB: any = await new AuthService().getUserByToken(accessToken)
 
         if (!userFromDB) {
             res.status(401).send({
@@ -82,8 +80,7 @@ blogRouter.post('/post/create', checkValidAuth, async (req: Request, res: Respon
         const saved = await postRepository.save(post)
 
         return res.send(saved)
-    }
-    catch (e) {
+    } catch (e) {
         res.status(503).send({
             message: "Ошибка"
         })
@@ -109,15 +106,14 @@ blogRouter.delete('/post/delete/:link', checkValidAuth, async (req: Request, res
         return res.status(200).send({
             message: "Ok"
         })
-    }
-    catch (e) {
+    } catch (e) {
         res.status(503).send({
             message: "Ошибка"
         })
     }
 })
 
-blogRouter.patch('/post/update/:id', checkValidAuth, async (req: Request, res: Response): Promise<any> => {
+blogRouter.patch('/post/update/:link', checkValidAuth, async (req: Request, res: Response): Promise<any> => {
     try {
         const link = req.params.link
         const info = req.body
@@ -140,11 +136,11 @@ blogRouter.patch('/post/update/:id', checkValidAuth, async (req: Request, res: R
 
         const saved = await postRepository.save(post)
 
-    }
-    catch (e) {
+        res.status(200).send(saved)
+    } catch (e) {
         res.status(503).send({
-            message: "Ошибка"
-        })
+                message: "Ошибка"
+            })
     }
 })
 

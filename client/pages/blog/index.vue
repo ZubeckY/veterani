@@ -1,12 +1,19 @@
 <template>
   <div>
     <div v-if="loading">
-
+      загрузка
     </div>
     <div v-else>
 
       <div v-for="(item, i) in data" :key="'blog-' + i">
-        <div>{{item}}</div>
+        <div>{{item.headLine}}</div>
+        <div>
+          <v-btn @click="$router.push('/blog/edit/' + item.link)" icon>
+            <v-icon>mdi-pencil</v-icon>
+          </v-btn>
+
+          <blog-delete @deleteItem="deleteItem(item.link)"/>
+        </div>
       </div>
 
       <!-- пагинация -->
@@ -35,13 +42,27 @@ export default class Blog extends Vue {
   pagPage: number = 1;
 
   async mounted() {
-
+    await this.getData();
   }
 
   async getData() {
     this.$axios.get(this.getLink)
       .then(res => {
         console.log(res.data)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+      .finally(() => {
+        this.loading = false;
+      })
+  }
+
+  async deleteItem(link: string) {
+    this.$axios.delete('/api/post/delete/' + link)
+      .then(res => {
+        console.log(res)
+        await this.getData();
       })
       .catch((err) => {
         console.log(err)
