@@ -5,10 +5,10 @@ import {AppDataSource} from "../connectDb";
 import AuthDto from "../DTOS/auth.dto";
 import AuthService from "../service/authService";
 import EmailService from "../service/emailService";
-import {checkValidAuth} from "../middleware/userMiddleware";
+import {checkValidAuth} from "../middleware/auth/checkValidAuth";
+import {Role, roleTypeText} from "../types/role";
 
 const emailService = new EmailService();
-
 const userRouter = Router();
 
 userRouter.post("/auth/login", async (req: Request, res: Response): Promise<any> => {
@@ -135,6 +135,95 @@ userRouter.post("/auth/refresh/", checkValidAuth, async (req: Request, res: Resp
         })
     }
 });
+
+/* получение данных о текущем пользователе */
+userRouter.get('/auth/lk', async (req: Request, res: Response): Promise<any> => {
+    try {
+        const cookie: any = req.headers['cookie']
+        const refreshToken = await new AuthService().getTokenFromCookie(cookie);
+        if (!refreshToken) {
+            return res
+                .status(401)
+                .send({
+                    message: 'Токен не найден. Код ошибки - 1020',
+                })
+        }
+
+        const userFromDB: any = await new AuthService().getUserByToken(refreshToken)
+        if (!userFromDB) {
+            return res
+                .status(401)
+                .send({
+                    message: 'Пользователь указан неверно. Код ошибки - 1045'
+                })
+        }
+
+        delete userFromDB.activatedCode
+        delete userFromDB.password
+        delete userFromDB.updated
+
+        const role: Role = userFromDB.role
+        userFromDB.rolePublic = roleTypeText[role]
+
+        return res
+            .status(200)
+            .send({
+                user: userFromDB
+            })
+
+    } catch (e) {
+        res
+            .status(501)
+            .send({
+                message: 'Ошибка'
+            })
+    }
+})
+
+/* получение данных о другом пользователе */
+userRouter.get("/auth/user/:id/", async (req: Request, res: Response): Promise<any> => {
+    try {
+        const {id} = req.params
+        if (!(Number.isInteger(+id))) {
+            return res
+                .status(400)
+                .send({
+                    message: 'Не указан пользователь'
+                })
+        }
+
+        const userRepository = AppDataSource.getRepository(User)
+        const userFromDB: any = await userRepository.findOneBy({id: +id})
+        if (!userFromDB) {
+            return res
+                .status(404)
+                .send({
+                    message: 'Пользователь не найден'
+                })
+        }
+
+        delete userFromDB.password
+        delete userFromDB.activated
+        delete userFromDB.activatedCode
+        delete userFromDB.created
+        delete userFromDB.updated
+
+        const role: Role = userFromDB.role
+        userFromDB.rolePublic = roleTypeText[role]
+
+        return res
+            .status(200)
+            .send({
+                user: userFromDB
+            })
+    } catch (e) {
+        res
+            .status(501)
+            .send({
+                message: 'Ошибка'
+            })
+    }
+})
 
 
 export default userRouter;

@@ -1,5 +1,45 @@
 <template>
   <div>
+    <div style="max-width: 500px">
+      <v-row>
+        <v-col cols="3">id:</v-col>
+        <v-col v-text="user.id"></v-col>
+      </v-row>
+
+      <v-row>
+        <v-col cols="3">Имя:</v-col>
+        <v-col v-text="user.firstName"></v-col>
+      </v-row>
+
+      <v-row>
+        <v-col cols="3">Фамилия:</v-col>
+        <v-col v-text="user.lastName"></v-col>
+      </v-row>
+
+      <v-row>
+        <v-col cols="3">Отчество:</v-col>
+        <v-col v-text="user.middleName"></v-col>
+      </v-row>
+
+      <v-row>
+        <v-col cols="3">email:</v-col>
+        <v-col v-text="user.email"></v-col>
+      </v-row>
+
+      <v-row>
+        <v-col cols="3">Активирован:</v-col>
+        <v-col v-text="user.activated ? 'Да' : 'Нет'"></v-col>
+      </v-row>
+
+      <v-row>
+        <v-col cols="3">Роль:</v-col>
+        <v-col v-text="user.rolePublic"></v-col>
+      </v-row>
+    </div>
+
+    <div v-if="userAdminButton">
+      <v-btn @click="$router.push('/admin')">Админ панель</v-btn>
+    </div>
 
 
     <v-dialog v-model="logoutDialog"
@@ -57,14 +97,16 @@ export default class Lk extends Vue {
   linkTitle: string = '';
   logoutDialog: boolean = false;
 
+  user: any = {};
 
   async mounted() {
     if (process.client) {
       const cookies = Cookie()
 
-      await this.$axios.post('/api/auth/refresh')
+      await this.$axios.get('/api/auth/lk/')
         .then(res => {
-          console.log(res)
+          console.log(res.data.user)
+          this.user = res.data.user
         })
         .catch((error: any) => {
           console.log(error.response)
@@ -80,6 +122,11 @@ export default class Lk extends Vue {
     const cookies = Cookie()
     cookies.removeAll()
     this.$router.push('/auth/login/')
+  }
+
+  get userAdminButton() {
+    const successRoles = ['admin', 'manager']
+    return successRoles.includes(this.user['role'])
   }
 }
 </script>

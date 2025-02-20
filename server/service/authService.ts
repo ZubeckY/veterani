@@ -54,7 +54,12 @@ export default class AuthService {
             return null
         }
         try {
-            return jwt.sign(payload, config.JWT_REFRESH_SECRET, {expiresIn: config.JWT_EXPIRES_IN.REFRESH})
+            const dto = {
+                id: payload.id,
+                email: payload.email,
+            }
+
+            return jwt.sign(dto, config.JWT_REFRESH_SECRET, {expiresIn: config.JWT_EXPIRES_IN.REFRESH})
         } catch (e) {
             return {
                 message: 'Ошибка сервера',
@@ -135,12 +140,21 @@ export default class AuthService {
         }
     }
 
-    async getUserByToken(token: string) {
-        if (!token) {
+    async getTokenFromCookie(cookie: any) {
+        try {
+            return cookie.split('refreshToken=')[1] ?? null
+        } catch (e) {
+            console.log(e)
             return null
         }
+    }
 
+    async getUserByToken(token: string) {
         try {
+            if (!token) {
+                return null
+            }
+
             const decoded: any = this.validateToken(token, config.JWT_REFRESH_SECRET)
             if (!decoded) {
                 return null
@@ -148,6 +162,7 @@ export default class AuthService {
 
             const userRepository = AppDataSource.getRepository(User)
             const userFromDB: User | null = await userRepository.findOneBy({
+                id: decoded.id,
                 email: decoded?.email,
             })
 

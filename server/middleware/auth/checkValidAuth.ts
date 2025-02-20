@@ -1,12 +1,9 @@
 import {Request, Response, NextFunction} from "express";
-import AuthService from "../service/authService";
-import {AppDataSource} from "../connectDb";
-import config from "../config";
-import {User} from "../entity";
+import AuthService from "../../service/authService";
+import config from "../../config";
 
 export async function checkValidAuth(req: Request, res: Response, next: NextFunction): Promise<any> {
     try {
-        /* Берем данные с запроса */
         const cookie: any = req.headers['cookie']
         if (!cookie) {
             return res
@@ -16,7 +13,7 @@ export async function checkValidAuth(req: Request, res: Response, next: NextFunc
                 });
         }
 
-        const refreshToken = cookie.split('refreshToken=')[1]
+        const refreshToken = await new AuthService().getTokenFromCookie(cookie);
         if (!refreshToken) {
             return res
                 .status(401)
@@ -44,13 +41,7 @@ export async function checkValidAuth(req: Request, res: Response, next: NextFunc
                 })
         }
 
-        const userFromDB = await AppDataSource
-            .getRepository(User)
-            .findOneBy({
-                id,
-                email,
-            })
-
+        const userFromDB = await new AuthService().getUserByToken(refreshToken)
         if (!userFromDB) {
             return res
                 .status(401)
@@ -65,7 +56,7 @@ export async function checkValidAuth(req: Request, res: Response, next: NextFunc
         return res
             .status(500)
             .send({
-                message: 'Ошибка сервера 1050'
+                message: 'Ошибка сервера. Код ошибки - 1050'
             })
     }
 }

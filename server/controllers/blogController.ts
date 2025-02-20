@@ -1,7 +1,7 @@
 import {Router, Request, Response} from "express";
 import {Post} from "../entity";
 import {AppDataSource} from "../connectDb";
-import {checkValidAuth} from "../middleware/userMiddleware";
+import {checkValidAuth} from "../middleware/auth/checkValidAuth";
 import AuthService from "../service/authService";
 //@ts-ignore
 import translitRusEng from 'translit-rus-eng'
