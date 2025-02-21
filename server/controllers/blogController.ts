@@ -9,6 +9,68 @@ import {Role} from "../types/role";
 
 const blogRouter = Router();
 
+/**
+ * @swagger
+ * /post/getMany:
+ *   get:
+ *     summary: Получить список постов
+ *     description: Возвращает список опубликованных постов с пагинацией.
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Номер страницы (по умолчанию 1)
+ *       - in: query
+ *         name: size
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Количество постов на странице (по умолчанию 10)
+ *     responses:
+ *       200:
+ *         description: Список постов успешно получен
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                     example: 1
+ *                   title:
+ *                     type: string
+ *                     example: "Заголовок поста"
+ *                   content:
+ *                     type: string
+ *                     example: "Текст поста"
+ *                   published:
+ *                     type: boolean
+ *                     example: true
+ *                   user:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                         example: 5
+ *                       username:
+ *                         type: string
+ *                         example: "user123"
+ *       503:
+ *         description: Ошибка сервера
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Ошибка"
+ */
+
 blogRouter.get('/post/getMany', async (req: Request, res: Response): Promise<any> => {
     try {
         const skip = (+(req.query?.page ?? 1) - 1) * +(req.query?.size ?? 10)

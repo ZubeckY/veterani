@@ -5,11 +5,12 @@ import bodyParser from 'body-parser';
 import controller from "./controllers";
 import connectDataBase from "./connectDb";
 import logger from "./modules/logger";
-
+import {setupSwagger} from "./swagger";
 const app: express.Express = express()
 const port = config.port
 
 connectDataBase()
+setupSwagger(app);
 
 //app.use(cors());
 app.set('trust proxy', true)
