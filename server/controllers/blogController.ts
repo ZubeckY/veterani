@@ -177,9 +177,6 @@ blogRouter.delete('/post/delete/:link', checkValidAuth, async (req: Request, res
                     message: "роль не совпадает"
                 })
             }
-            return res.status(403).send({
-                message: "Неверно указан пользователь"
-            })
         }
 
         await postRepository.remove(post)
@@ -242,9 +239,6 @@ blogRouter.patch('/post/update/:link', checkValidAuth, async (req: Request, res:
                     message: "роль не совпадает"
                 })
             }
-            return res.status(403).send({
-                message: "Неверно указан пользователь"
-            })
         }
 
         const linkTitle = translitRusEng(model.headLine, {loverCase: true, slug: true}).replaceAll('_', '-')
