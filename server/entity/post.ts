@@ -40,6 +40,18 @@ export class Post {
     })
     link!: string;
 
+    @Column({
+        comment: "Публикация",
+        default: false,
+    })
+    published!: boolean;
+
+    @Column({
+        comment: "Предложенный",
+        default: false,
+    })
+    suggested!: boolean;
+
     @CreateDateColumn({
         comment: "Дата создания"
     })

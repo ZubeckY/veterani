@@ -5,6 +5,7 @@ import {checkValidAuth} from "../middleware/auth/checkValidAuth";
 import AuthService from "../service/authService";
 //@ts-ignore
 import translitRusEng from 'translit-rus-eng'
+import {Role} from "../types/role";
 
 const blogRouter = Router();
 
@@ -18,6 +19,7 @@ blogRouter.get('/post/getMany', async (req: Request, res: Response): Promise<any
             .leftJoinAndSelect('post.user', 'user')
             .skip(skip)
             .take(take)
+            .where("published = :published", { published: true })
             .getMany()
         return res.send(post)
     } catch (e) {
@@ -33,7 +35,17 @@ blogRouter.get('/post/:link', async (req: Request, res: Response): Promise<any> 
         const link = req.params.link;
 
         const postRepository = AppDataSource.getRepository(Post)
-        const post = await postRepository.findOneBy({link})
+        const post: any = await postRepository.findOneBy({link})
+
+        if (!post) {
+            return res.status(404).send({
+                message: "Пост не найден"
+            })
+        }
+
+        delete post.includesSlider
+        delete post.published
+        delete post.suggested
 
         return res.send(post)
     } catch (e) {
@@ -43,7 +55,6 @@ blogRouter.get('/post/:link', async (req: Request, res: Response): Promise<any> 
     }
 })
 
-//@ts-ignore
 blogRouter.post('/post/create', checkValidAuth, async (req: Request, res: Response): Promise<any> => {
     try {
         const {model} = req.body
@@ -75,6 +86,13 @@ blogRouter.post('/post/create', checkValidAuth, async (req: Request, res: Respon
             })
         }
 
+        const requiredRoles = [
+            Role.admin,
+            Role.manager,
+        ]
+
+        const roleIncludes = requiredRoles.includes(userFromDB.role)
+
         const link = translitRusEng(headLine, {loverCase: true, slug: true}).replaceAll('_', '-')
 
         const post = new Post()
@@ -83,6 +101,8 @@ blogRouter.post('/post/create', checkValidAuth, async (req: Request, res: Respon
         post.headLine = headLine
         post.includesSlider = includeSlider
         post.link = link
+        post.suggested = !roleIncludes
+        post.published = roleIncludes
 
         const postRepository = AppDataSource.getRepository(Post)
         const saved = await postRepository.save(post)
@@ -109,6 +129,42 @@ blogRouter.delete('/post/delete/:link', checkValidAuth, async (req: Request, res
             })
         }
 
+        const cookie: any = req.headers['cookie']
+        const refreshToken = await new AuthService().getTokenFromCookie(cookie);
+        if (!refreshToken) {
+            return res
+                .status(401)
+                .send({
+                    message: 'Токен не найден. Код ошибки - 1020',
+                })
+        }
+
+        const userFromDB: any = await new AuthService().getUserByToken(refreshToken)
+        if (!userFromDB) {
+            res.status(401).send({
+                message: "user undefind"
+            })
+        }
+
+        const requiredRoles = [
+            Role.admin,
+            Role.manager,
+        ]
+
+        const roleIncludes = requiredRoles.includes(userFromDB.role)
+
+        if (userFromDB.id !== post.user.id)
+        {
+            if (!roleIncludes) {
+                return res.status(403).send({
+                    message: "роль не совпадает"
+                })
+            }
+            return res.status(403).send({
+                message: "Неверно указан пользователь"
+            })
+        }
+
         await postRepository.remove(post)
 
         return res.status(200).send({
@@ -131,6 +187,42 @@ blogRouter.patch('/post/update/:link', checkValidAuth, async (req: Request, res:
         if (!post) {
             res.status(403).send({
                 message: "Нет такого поста"
+            })
+        }
+
+        const cookie: any = req.headers['cookie']
+        const refreshToken = await new AuthService().getTokenFromCookie(cookie);
+        if (!refreshToken) {
+            return res
+                .status(401)
+                .send({
+                    message: 'Токен не найден. Код ошибки - 1020',
+                })
+        }
+
+        const userFromDB: any = await new AuthService().getUserByToken(refreshToken)
+        if (!userFromDB) {
+            res.status(401).send({
+                message: "user undefind"
+            })
+        }
+
+        const requiredRoles = [
+            Role.admin,
+            Role.manager,
+        ]
+
+        const roleIncludes = requiredRoles.includes(userFromDB.role)
+
+        if (userFromDB.id !== post.user.id)
+        {
+            if (!roleIncludes) {
+                return res.status(403).send({
+                    message: "роль не совпадает"
+                })
+            }
+            return res.status(403).send({
+                message: "Неверно указан пользователь"
             })
         }
 
