@@ -1,4 +1,4 @@
-const is_prod = !true
+const is_prod = true
 
 const config: any = {
     port: 4000,

@@ -5,9 +5,17 @@
     </div>
     <div v-else>
 
-      <v-card v-for="(item, i) in data" :key="'blog-' + i">
+      <v-card v-for="(item, i) in data"
+              :key="'blog-' + i"
+              class="mx-auto"
+              max-width="800">
         <div class="d-flex">
-          <div class="ml-2 mr-4" style="font-size: 22px; font-weight: bold">{{ item.headLine }}</div>
+          <div class="ml-2 mr-4" style="font-size: 22px; font-weight: bold">{{ item.id }}</div>
+          <div @click="$router.push('/blog/' + item.link)"
+               class="ml-2 mr-4 font-weight-bold primary--text"
+               style="font-size: 22px; cursor: pointer">{{ item.headLine }}</div>
+          <v-spacer/>
+          <div class="ml-2 mr-4" style="font-size: 22px; font-weight: bold">{{ userInfo(item.user) }}</div>
           <div>
             <v-btn @click="$router.push('/blog/edit/' + item.link)" icon>
               <v-icon>mdi-pencil</v-icon>
@@ -75,6 +83,10 @@ export default class Blog extends Vue {
       .catch((err) => {
         console.log(err)
       })
+  }
+
+  userInfo(user: any) {
+    return user.id + ', ' + user.firstName + ' ' + user.lastName + ', ' + user.role
   }
 
   get pagSize(): number {

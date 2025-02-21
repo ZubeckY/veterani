@@ -52,6 +52,7 @@ export default class Create extends Vue {
     await this.$axios.post('/api/post/create', {model: this.model})
       .then((response) => {
         console.log(response);
+        this.$router.push('/blog');
       })
       .catch((error) => {
         console.log(error);

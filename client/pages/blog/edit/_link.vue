@@ -13,6 +13,9 @@
       <v-checkbox label="Используется в слайдере"
                   v-model="model.includesSlider"/>
 
+      <v-checkbox label="Опубликованный пост"
+                  v-model="model.published"/>
+
       <v-textarea label="Текст"
                   v-model="model.text"
                   outlined dense/>
@@ -48,6 +51,7 @@ export default class _link extends Vue {
     text: '',
     includesSlider: false,
     link: '',
+    published: false,
     created: ''
   }
 
@@ -68,6 +72,7 @@ export default class _link extends Vue {
     await this.$axios.patch('/api/post/update/' + link, {model: this.model})
       .then((response) => {
         console.log(response);
+        this.$router.push('/blog');
       })
       .catch((error) => {
         console.log(error);

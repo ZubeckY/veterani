@@ -19,7 +19,7 @@ blogRouter.get('/post/getMany', async (req: Request, res: Response): Promise<any
             .leftJoinAndSelect('post.user', 'user')
             .skip(skip)
             .take(take)
-            .where("published = :published", { published: true })
+            .where("published = :published", {published: true})
             .getMany()
         return res.send(post)
     } catch (e) {
@@ -35,7 +35,12 @@ blogRouter.get('/post/:link', async (req: Request, res: Response): Promise<any> 
         const link = req.params.link;
 
         const postRepository = AppDataSource.getRepository(Post)
-        const post: any = await postRepository.findOneBy({link})
+        const post: any = await postRepository
+            .createQueryBuilder('post')
+            .leftJoinAndSelect('post.user', 'user')
+            .where("link = :link", {link: link})
+            .getOne()
+
 
         if (!post) {
             return res.status(404).send({
@@ -46,6 +51,15 @@ blogRouter.get('/post/:link', async (req: Request, res: Response): Promise<any> 
         delete post.includesSlider
         delete post.published
         delete post.suggested
+
+        delete post.user.middleName
+        delete post.user.email
+        delete post.user.password
+        delete post.user.created
+        delete post.user.activated
+        delete post.user.activatedCode
+        delete post.user.updated
+        delete post.user.block
 
         return res.send(post)
     } catch (e) {
@@ -121,7 +135,11 @@ blogRouter.delete('/post/delete/:link', checkValidAuth, async (req: Request, res
         const link = req.params.link
 
         const postRepository = AppDataSource.getRepository(Post)
-        const post: any = await postRepository.findOneBy({link})
+        const post: any = await postRepository
+            .createQueryBuilder('post')
+            .leftJoinAndSelect('post.user', 'user')
+            .where("link = :link", {link: link})
+            .getOne()
 
         if (!post) {
             res.status(503).send({
@@ -153,8 +171,7 @@ blogRouter.delete('/post/delete/:link', checkValidAuth, async (req: Request, res
 
         const roleIncludes = requiredRoles.includes(userFromDB.role)
 
-        if (userFromDB.id !== post.user.id)
-        {
+        if (userFromDB.id !== post.user.id) {
             if (!roleIncludes) {
                 return res.status(403).send({
                     message: "роль не совпадает"
@@ -183,7 +200,12 @@ blogRouter.patch('/post/update/:link', checkValidAuth, async (req: Request, res:
         const {model} = req.body
 
         const postRepository = AppDataSource.getRepository(Post)
-        const post: any = await postRepository.findOneBy({link})
+        const post: any = await postRepository
+            .createQueryBuilder('post')
+            .leftJoinAndSelect('post.user', 'user')
+            .where("link = :link", {link: link})
+            .getOne()
+
         if (!post) {
             res.status(403).send({
                 message: "Нет такого поста"
@@ -214,8 +236,7 @@ blogRouter.patch('/post/update/:link', checkValidAuth, async (req: Request, res:
 
         const roleIncludes = requiredRoles.includes(userFromDB.role)
 
-        if (userFromDB.id !== post.user.id)
-        {
+        if (userFromDB.id !== post.user.id) {
             if (!roleIncludes) {
                 return res.status(403).send({
                     message: "роль не совпадает"
@@ -237,9 +258,11 @@ blogRouter.patch('/post/update/:link', checkValidAuth, async (req: Request, res:
 
         res.status(200).send(saved)
     } catch (e) {
+        console.log(e)
+
         res.status(503).send({
-                message: "Ошибка"
-            })
+            message: "Ошибка"
+        })
     }
 })
 
