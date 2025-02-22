@@ -15,7 +15,7 @@ export default class EmailService {
         }
     })
 
-     generateOTPCode(): string {
+    generateOTPCode(): string {
         const digits = '0123456789abcdefghijklmnopqrstuvwxyz'
         const len = digits.length
         const OTP_LEN = 5
@@ -32,12 +32,12 @@ export default class EmailService {
     async sendActivationCode(to: string, code: string) {
         try {
             const message = `
-        <div>
-          <h1>Ваш код активации: ${code}</h1>
-          <br />
-          <p>Если действие выполняете не вы, проигнорируйте это письмо</p>
-        </div>
-      `
+                <div>
+                  <h1>Ваш код активации: ${code}</h1>
+                  <br />
+                  <p>Если действие выполняете не вы, проигнорируйте это письмо</p>
+                </div>
+              `
 
             await this.transporter.sendMail({
                 from: config.SMTP_USER,
@@ -51,4 +51,25 @@ export default class EmailService {
         }
     }
 
+    async sendMessageYouActivated(to: string) {
+        try {
+            const message = `
+                <div>
+                  <h1>Ваш аккаунт активирован</h1>
+                  <br />
+                  <p>Ваш аккаунт активирован! Теперь Вы являетесь полноценным пользователем сайта</p>
+                </div>
+              `
+
+            await this.transporter.sendMail({
+                from: config.SMTP_USER,
+                to,
+                subject: 'Ваш аккаунт активирован',
+                text: '',
+                html: message,
+            })
+        } catch (e) {
+            console.log(e)
+        }
+    }
 }

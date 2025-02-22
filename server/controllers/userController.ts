@@ -520,7 +520,7 @@ userRouter.get("/auth/user/:id/", async (req: Request, res: Response): Promise<a
     }
 })
 
-userRouter.patch("/auth/user/activated", checkValidAuth, async (req: Request, res: Response):Promise<any> => {
+userRouter.patch("/auth/user/activate-account", checkValidAuth, async (req: Request, res: Response): Promise<any> => {
     try {
         const cookie: any = req.headers['cookie']
         const refreshToken = await new AuthService().getTokenFromCookie(cookie);
@@ -543,7 +543,7 @@ userRouter.patch("/auth/user/activated", checkValidAuth, async (req: Request, re
 
         const {model} = req.body
 
-        if (model.activatedCode != userFromDB.activatedCode) {
+        if (model != userFromDB.activatedCode) {
             return res.status(400).send({
                 message: "Неверный код"
             })
@@ -556,19 +556,19 @@ userRouter.patch("/auth/user/activated", checkValidAuth, async (req: Request, re
         const userRepository = AppDataSource.getRepository(User)
 
         await userRepository.save(userFromDB)
+        await emailService.sendMessageYouActivated(userFromDB.email)
 
         res.send({
             message: "Ok"
         })
-    }
-    catch (e){
-     return res.status(500).send({
-         message: "Error activated"
-     })
+    } catch (e) {
+        return res.status(500).send({
+            message: "Error activated"
+        })
     }
 })
 
-userRouter.patch("/auth/user/refresh-code", checkValidAuth, async (req: Request, res: Response):Promise<any> => {
+userRouter.patch("/auth/user/refresh-code", checkValidAuth, async (req: Request, res: Response): Promise<any> => {
     try {
         const cookie: any = req.headers['cookie']
         const refreshToken = await new AuthService().getTokenFromCookie(cookie);
@@ -594,11 +594,12 @@ userRouter.patch("/auth/user/refresh-code", checkValidAuth, async (req: Request,
         const userRepository = AppDataSource.getRepository(User)
         await userRepository.save(userFromDB)
 
+        await emailService.sendActivationCode(userFromDB.email, userFromDB.activatedCode)
+
         res.send({
-            message: "Аккаунт подтверждён",
+            message: "Ок",
         })
-    }
-    catch (e){
+    } catch (e) {
         return res.status(500).send({
             message: "Ошибка изменения кода"
         })
