@@ -225,5 +225,89 @@ userRouter.get("/auth/user/:id/", async (req: Request, res: Response): Promise<a
     }
 })
 
+userRouter.patch("/auth/user/activated", checkValidAuth, async (req: Request, res: Response):Promise<any> => {
+    try {
+        const cookie: any = req.headers['cookie']
+        const refreshToken = await new AuthService().getTokenFromCookie(cookie);
+        if (!refreshToken) {
+            return res
+                .status(401)
+                .send({
+                    message: 'Токен не найден. Код ошибки - 1020',
+                })
+        }
+
+        const userFromDB: any = await new AuthService().getUserByToken(refreshToken)
+        if (!userFromDB) {
+            return res
+                .status(401)
+                .send({
+                    message: 'Пользователь указан неверно. Код ошибки - 1045'
+                })
+        }
+
+        const {model} = req.body
+
+        if (model.activatedCode != userFromDB.activatedCode) {
+            return res.status(400).send({
+                message: "Неверный код"
+            })
+        }
+
+        userFromDB.activatedCode = ""
+        userFromDB.activated = true
+        userFromDB.role = Role.user
+
+        const userRepository = AppDataSource.getRepository(User)
+
+        await userRepository.save(userFromDB)
+
+        res.send({
+            message: "Ok"
+        })
+    }
+    catch (e){
+     return res.status(500).send({
+         message: "Error activated"
+     })
+    }
+})
+
+userRouter.patch("/auth/user/refresh-code", checkValidAuth, async (req: Request, res: Response):Promise<any> => {
+    try {
+        const cookie: any = req.headers['cookie']
+        const refreshToken = await new AuthService().getTokenFromCookie(cookie);
+        if (!refreshToken) {
+            return res
+                .status(401)
+                .send({
+                    message: 'Токен не найден. Код ошибки - 1020',
+                })
+        }
+
+        const userFromDB: any = await new AuthService().getUserByToken(refreshToken)
+        if (!userFromDB) {
+            return res
+                .status(401)
+                .send({
+                    message: 'Пользователь указан неверно. Код ошибки - 1045'
+                })
+        }
+
+        userFromDB.activatedCode = emailService.generateOTPCode()
+
+        const userRepository = AppDataSource.getRepository(User)
+        await userRepository.save(userFromDB)
+
+        res.send({
+            message: "Аккаунт подтверждён",
+        })
+    }
+    catch (e){
+        return res.status(500).send({
+            message: "Ошибка изменения кода"
+        })
+    }
+})
 
 export default userRouter;
