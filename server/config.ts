@@ -1,4 +1,4 @@
-const is_prod = false
+const is_prod = true
 
 const config: any = {
     prod: is_prod,
