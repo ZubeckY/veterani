@@ -362,23 +362,9 @@ userRouter.post("/auth/refresh/", checkValidAuth, async (req: Request, res: Resp
 
 userRouter.get('/auth/lk', async (req: Request, res: Response): Promise<any> => {
     try {
-        const cookie: any = req.headers['cookie']
-        const refreshToken = await new AuthService().getTokenFromCookie(cookie);
-        if (!refreshToken) {
-            return res
-                .status(401)
-                .send({
-                    message: 'Токен не найден. Код ошибки - 1020',
-                })
-        }
-
-        const userFromDB: any = await new AuthService().getUserByToken(refreshToken)
-        if (!userFromDB) {
-            return res
-                .status(401)
-                .send({
-                    message: 'Пользователь указан неверно. Код ошибки - 1045'
-                })
+        const userFromDB: any = await new AuthService().getUserFromCookies(req.headers['cookie'], res)
+        if (!userFromDB.id) {
+            return userFromDB
         }
 
         delete userFromDB.activatedCode
@@ -522,23 +508,9 @@ userRouter.get("/auth/user/:id/", async (req: Request, res: Response): Promise<a
 
 userRouter.patch("/auth/user/activate-account", checkValidAuth, async (req: Request, res: Response): Promise<any> => {
     try {
-        const cookie: any = req.headers['cookie']
-        const refreshToken = await new AuthService().getTokenFromCookie(cookie);
-        if (!refreshToken) {
-            return res
-                .status(401)
-                .send({
-                    message: 'Токен не найден. Код ошибки - 1020',
-                })
-        }
-
-        const userFromDB: any = await new AuthService().getUserByToken(refreshToken)
-        if (!userFromDB) {
-            return res
-                .status(401)
-                .send({
-                    message: 'Пользователь указан неверно. Код ошибки - 1045'
-                })
+        const userFromDB: any = await new AuthService().getUserFromCookies(req.headers['cookie'], res)
+        if (!userFromDB.id) {
+            return userFromDB
         }
 
         const {model} = req.body
@@ -570,23 +542,9 @@ userRouter.patch("/auth/user/activate-account", checkValidAuth, async (req: Requ
 
 userRouter.patch("/auth/user/refresh-code", checkValidAuth, async (req: Request, res: Response): Promise<any> => {
     try {
-        const cookie: any = req.headers['cookie']
-        const refreshToken = await new AuthService().getTokenFromCookie(cookie);
-        if (!refreshToken) {
-            return res
-                .status(401)
-                .send({
-                    message: 'Токен не найден. Код ошибки - 1020',
-                })
-        }
-
-        const userFromDB: any = await new AuthService().getUserByToken(refreshToken)
-        if (!userFromDB) {
-            return res
-                .status(401)
-                .send({
-                    message: 'Пользователь указан неверно. Код ошибки - 1045'
-                })
+        const userFromDB: any = await new AuthService().getUserFromCookies(req.headers['cookie'], res)
+        if (!userFromDB.id) {
+            return userFromDB
         }
 
         userFromDB.activatedCode = emailService.generateOTPCode()

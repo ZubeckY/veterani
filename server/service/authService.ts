@@ -1,6 +1,7 @@
 import AuthDto from "../DTOS/auth.dto"
 import config from "../config"
 import jwt from 'jsonwebtoken'
+import {Response} from "express"
 import {AppDataSource} from "../connectDb"
 import {User, Token} from "../entity"
 
@@ -171,6 +172,41 @@ export default class AuthService {
             return {
                 message: e
             }
+        }
+    }
+
+    async getUserFromCookies(cookie: any, res: Response) {
+        try {
+            if (!cookie) {
+                return res
+                    .status(403)
+                    .send({
+                        message: 'Нет куков'
+                    })
+            }
+
+            const refreshToken = await new AuthService().getTokenFromCookie(cookie);
+            if (!refreshToken) {
+                return res
+                    .status(401)
+                    .send({
+                        message: 'Токен не найден. Код ошибки - 1020',
+                    })
+            }
+
+            const userFromDB: any = await new AuthService().getUserByToken(refreshToken)
+            if (!userFromDB) {
+                return res
+                    .status(401)
+                    .send({
+                        message: 'Пользователь указан неверно. Код ошибки - 1045'
+                    })
+            }
+
+            return userFromDB
+
+        } catch (e) {
+
         }
     }
 }
