@@ -72,4 +72,29 @@ export default class EmailService {
             console.log(e)
         }
     }
+
+    async sendEmailNotificationBlock(to: string, block: boolean) {
+        try {
+            const stroke: string = block ? "заблокирован" : "разблокирован"
+
+            const message = `
+                <div>
+                  <h1>Ваш аккаунт ${stroke}</h1>
+                  <br />
+                  <p>Ваш аккаунт ${stroke}! Теперь вы можете создавать посты</p>
+                </div>
+              `
+
+            await this.transporter.sendMail({
+                from: config.SMTP_USER,
+                to,
+                subject: `Ваш аккаунт ${stroke}`,
+                text: '',
+                html: message,
+            })
+        }
+        catch (e) {
+            console.log(e)
+        }
+    }
 }
