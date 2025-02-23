@@ -41,12 +41,20 @@ export async function checkValidAuth(req: Request, res: Response, next: NextFunc
                 })
         }
 
-        const userFromDB = await new AuthService().getUserByToken(refreshToken)
+        const userFromDB:any = await new AuthService().getUserByToken(refreshToken)
         if (!userFromDB) {
             return res
                 .status(401)
                 .send({
                     message: 'Пользователь указан неверно. Код ошибки - 1045'
+                })
+        }
+
+        if(userFromDB.block){
+            return res
+                .status(403)
+                .send({
+                    message: "Пользователь заблокирован. Код ошибки - 1090"
                 })
         }
 
