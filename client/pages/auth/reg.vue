@@ -123,8 +123,8 @@ export default class reg extends Vue {
 
         document.location.href = '/lk/'
       })
-      .catch(err => {
-        console.log(err);
+      .catch(error => {
+        console.log(error);
       })
       .finally(() => {
         this.loading = false

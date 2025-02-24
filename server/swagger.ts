@@ -12,15 +12,14 @@ const options: swaggerJsdoc.Options = {
             description: "Документация API с использованием Swagger",
         },
     },
-    apis: ["./controllers/*.ts"], // Указываем путь к маршрутам с аннотациями
+    apis: ["./controllers/**/*.ts"], // Указываем путь к маршрутам с аннотациями
 };
 
 const swaggerSpec = swaggerJsdoc(options);
 
 export const setupSwagger = (app: Express) => {
     if (config.prod) {
-        console.log("❌ Swagger отключен в продакшене");
-        return;
+        return console.log("❌ Swagger отключен в продакшене");
     }
 
     app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));

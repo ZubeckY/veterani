@@ -9,10 +9,6 @@ import {setupSwagger} from "./swagger";
 const app: express.Express = express()
 const port = config.port
 
-connectDataBase()
-setupSwagger(app);
-
-//app.use(cors());
 app.set('trust proxy', true)
 app.use(express.json())
 app.use(bodyParser.json())
@@ -23,6 +19,8 @@ app.listen(port, () => {
     try {
         logger.info('\x1b[34m%s\x1b[0m', '=> Server is running!')
         logger.info('\x1b[34m%s\x1b[0m', `=> PORT IS ${port}`)
+        connectDataBase()
+        setupSwagger(app)
     } catch (error) {
         logger.error('\x1b[31m%s\x1b[0m', `=> ❌  Server error: ${error}`);
     }

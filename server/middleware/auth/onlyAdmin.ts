@@ -36,8 +36,8 @@ export async function onlyAdmin(req: Request, res: Response, next: NextFunction)
         }
 
         return next()
-    } catch (e) {
-        console.log(e)
+    } catch (error) {
+        console.log(error)
         return res
             .status(500)
             .send({

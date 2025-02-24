@@ -75,8 +75,8 @@ export default class Login extends Vue {
 
         document.location.href = '/lk/'
       })
-      .catch(err => {
-        console.log(err)
+      .catch(error => {
+        console.log(error)
       })
   }
 }

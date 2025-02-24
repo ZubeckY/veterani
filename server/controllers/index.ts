@@ -1,6 +1,6 @@
-import userRouter from "./userController"
-import blogRouter from "./blogController";
-import adminRouter from "./adminController";
+import userRouter from "./user/controller"
+import blogRouter from "./blog/controller";
+import adminRouter from "./admin/controller";
 
 const controller: any = [userRouter, blogRouter, adminRouter];
 

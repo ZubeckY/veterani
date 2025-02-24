@@ -66,8 +66,8 @@ export default class Blog extends Vue {
         console.log(res.data)
         this.data = res.data
       })
-      .catch((err) => {
-        console.log(err)
+      .catch((error) => {
+        console.log(error)
       })
       .finally(() => {
         this.loading = false;
@@ -80,8 +80,8 @@ export default class Blog extends Vue {
         console.log(res)
         this.getData();
       })
-      .catch((err) => {
-        console.log(err)
+      .catch((error) => {
+        console.log(error)
       })
   }
 

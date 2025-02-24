@@ -19,7 +19,6 @@ export async function checkRole(req: Request, res: Response, next: NextFunction)
                 })
         }
 
-
         const userFromDB: any = await new AuthService().getUserByToken(refreshToken)
         if (!userFromDB) {
             return res
@@ -39,8 +38,8 @@ export async function checkRole(req: Request, res: Response, next: NextFunction)
         }
 
         return next()
-    } catch (e) {
-        console.log(e)
+    } catch (error) {
+        console.log(error)
         return res
             .status(500)
             .send({

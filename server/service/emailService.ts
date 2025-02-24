@@ -46,8 +46,8 @@ export default class EmailService {
                 text: '',
                 html: message,
             })
-        } catch (e) {
-            console.log(e);
+        } catch (error) {
+            console.log(error);
         }
     }
 
@@ -68,8 +68,8 @@ export default class EmailService {
                 text: '',
                 html: message,
             })
-        } catch (e) {
-            console.log(e)
+        } catch (error) {
+            console.log(error)
         }
     }
 
@@ -93,8 +93,8 @@ export default class EmailService {
                 html: message,
             })
         }
-        catch (e) {
-            console.log(e)
+        catch (error) {
+            console.log(error)
         }
     }
 }

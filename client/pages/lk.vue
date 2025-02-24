@@ -211,8 +211,8 @@ export default class Lk extends Vue {
         console.log(res.data)
         this.startTimerResend()
       })
-      .catch((err) => {
-        console.log(err)
+      .catch((error) => {
+        console.log(error)
       })
       .finally(() => {
         this.activatedEmail.disabled = false
@@ -242,8 +242,8 @@ export default class Lk extends Vue {
         console.log(res)
         this.getUserInfo()
       })
-      .catch((err) => {
-        console.log(err)
+      .catch((error) => {
+        console.log(error)
       })
       .finally(() => {
         this.activatedEmail.dialog = false

@@ -22,10 +22,10 @@ export default class AuthService {
                 accessToken,
                 refreshToken,
             }
-        } catch (e) {
+        } catch (error) {
             return {
                 message: 'Ошибка сервера',
-                error: e,
+              error,
             }
         }
     }
@@ -42,10 +42,10 @@ export default class AuthService {
             }
 
             return jwt.sign(dto, config.JWT_ACCESS_SECRET, {expiresIn: config.JWT_EXPIRES_IN.ACCESS})
-        } catch (e) {
+        } catch (error) {
             return {
                 message: 'Ошибка сервера',
-                error: e,
+              error,
             }
         }
     }
@@ -61,10 +61,10 @@ export default class AuthService {
             }
 
             return jwt.sign(dto, config.JWT_REFRESH_SECRET, {expiresIn: config.JWT_EXPIRES_IN.REFRESH})
-        } catch (e) {
+        } catch (error) {
             return {
                 message: 'Ошибка сервера',
-                error: e,
+              error,
             }
         }
     }
@@ -72,7 +72,7 @@ export default class AuthService {
     validateToken(token: any, secret: any) {
         try {
             return jwt.verify(token, secret)
-        } catch (e) {
+        } catch (error) {
             return null
         }
     }
@@ -96,10 +96,10 @@ export default class AuthService {
             createToken.value = value.refreshToken
 
             return await tokenRepository.save(createToken)
-        } catch (e) {
+        } catch (error) {
             return {
                 message: 'Ошибка сервера',
-                error: e,
+              error,
             }
         }
     }
@@ -112,7 +112,7 @@ export default class AuthService {
             })
 
             return tokenFromDB ?? null
-        } catch (e) {
+        } catch (error) {
             return null
         }
     }
@@ -134,9 +134,9 @@ export default class AuthService {
             })
 
             return this.generateAccessToken(DTO) ?? null
-        } catch (e) {
+        } catch (error) {
             return {
-                message: e
+                message: error
             }
         }
     }
@@ -144,8 +144,8 @@ export default class AuthService {
     async getTokenFromCookie(cookie: any) {
         try {
             return cookie.split('refreshToken=')[1] ?? null
-        } catch (e) {
-            console.log(e)
+        } catch (error) {
+            console.log(error)
             return null
         }
     }
@@ -168,9 +168,9 @@ export default class AuthService {
             })
 
             return userFromDB ?? null
-        } catch (e) {
+        } catch (error) {
             return {
-                message: e
+                message: error
             }
         }
     }
@@ -205,7 +205,7 @@ export default class AuthService {
 
             return userFromDB
 
-        } catch (e) {
+        } catch (error) {
 
         }
     }
