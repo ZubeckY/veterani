@@ -7,14 +7,38 @@
                   :headers="headers">
       <!-- Роль -->
       <template v-slot:item.role="{ item }">
-        <v-chip :color="getRoleColor(item.role)" dark small>
-          {{ getRoleTypeText(item.role) }}
-        </v-chip>
+        <td class="text-start">
+          <v-chip :color="getRoleColor(item.role)" dark small>
+            {{ getRoleTypeText(item.role) }}
+          </v-chip>
+        </td>
+      </template>
+
+      <!-- Активирован -->
+      <template v-slot:item.activated="{ item }">
+        <td :class="'text-start ' + item.activated ? 'green--text' : 'red--text'"> {{
+            item.activated ? 'Да' : 'Нет'
+          }}
+        </td>
+      </template>
+
+      <!-- Заблокирован -->
+      <template v-slot:item.block="{ item }">
+        <td :class="'text-start ' + item.block ? 'green--text' : 'red--text'"> {{
+            item.block ? 'Да' : 'Нет'
+          }}
+        </td>
+      </template>
+
+      <!-- Дата создания -->
+      <template v-slot:item.created="{ item }">
+        <td class="text-start"> {{ getCreatedDate(item.created) }}</td>
       </template>
 
       <!-- Кнопки -->
       <template v-slot:item.actions="{ item }">
-
+        <v-icon color="primary" class="mr-2">mdi-pencil</v-icon>
+        <v-icon color="red">mdi-delete</v-icon>
       </template>
     </v-data-table>
   </div>
@@ -34,25 +58,20 @@ import {Vue, Component} from 'vue-property-decorator';
 export default class Users extends Vue {
   loading: boolean = false;
 
+  data: any = []
   roles: any = []
   colors: string[] = [
     'red', 'green', 'yellow', 'blue',
   ]
 
-  data: any = [
-    {
-      role: 'admin',
-    }
-  ]
-
   headers: any = [
     {text: 'ID', value: 'id'},
     {text: 'Имя', value: 'firstName'},
-    {text: 'Фамилия', value: 'secondName'},
+    {text: 'Фамилия', value: 'lastName'},
     {text: 'Email', value: 'email'},
     {text: 'Роль', value: 'role'},
-    {text: 'Статус активации', value: 'activated'},
-    {text: 'Статус блокировки', value: 'block'},
+    {text: 'Активирован', value: 'activated'},
+    {text: 'Заблокирован', value: 'block'},
     {text: 'Дата регистрации', value: 'created'},
     {text: '', value: 'actions', sortable: false},
   ]
@@ -60,11 +79,24 @@ export default class Users extends Vue {
 
   async mounted() {
     this.loading = true;
+    await this.getRoleList()
+    await this.getUserList()
+
+    this.loading = false;
+
+  }
+
+  async getRoleList() {
     await this.$axios.post('/api/admin/user/role-list/')
       .then((response) => {
         this.roles = response.data.roles;
-        console.log(this.roles)
-        this.loading = false;
+      })
+  }
+
+  async getUserList() {
+    await this.$axios.get('/api/admin/user/list/')
+      .then((response) => {
+        this.data = response.data.users;
       })
   }
 
@@ -96,6 +128,14 @@ export default class Users extends Vue {
       default:
         return 'danger'
     }
+  }
+
+  getCreatedDate(created: Date) {
+    return new Date(created).toLocaleDateString("ru", {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    })
   }
 }
 </script>

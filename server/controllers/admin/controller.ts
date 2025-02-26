@@ -44,7 +44,7 @@ adminRouter.post("/admin/user/block/:id", onlyAdmin, async (req: Request, res: R
     }
 });
 
-adminRouter.get("admin/user/list", checkRole, async (req: Request, res: Response): Promise<any> => {
+adminRouter.get("/admin/user/list", checkRole, async (req: Request, res: Response): Promise<any> => {
     try {
         const userRepository = AppDataSource.getRepository(User);
 

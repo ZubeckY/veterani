@@ -271,7 +271,7 @@ export default class Lk extends Vue {
         .catch((error: any) => {
           console.log(error.response)
 
-          if (error.response.status === 401) {
+          if (error.response.status === 401 || error.response.status === 403) {
             this.logoutFunction()
           }
         })
