@@ -73,6 +73,7 @@ export default class EmailService {
         }
     }
 
+    //уведомление о блокировке
     async sendEmailNotificationBlock(to: string, block: boolean) {
         try {
             const stroke: string = block ? "заблокирован" : "разблокирован"
@@ -89,6 +90,30 @@ export default class EmailService {
                 from: config.SMTP_USER,
                 to,
                 subject: `Ваш аккаунт ${stroke}`,
+                text: '',
+                html: message,
+            })
+        }
+        catch (error) {
+            console.log(error)
+        }
+    }
+
+    //уведомление об удалении учётной записи
+    async sendEmailNotificationDelete(to: string) {
+        try {
+            const message = `
+                <div>
+                  <h1>Ваш аккаунт был удалён</h1>
+                  <br />
+                  <p>Ваша учётная запись была удалена администрацией!</p>
+                </div>
+              `
+
+            await this.transporter.sendMail({
+                from: config.SMTP_USER,
+                to,
+                subject: `Ваша учётная запись заблокирована`,
                 text: '',
                 html: message,
             })

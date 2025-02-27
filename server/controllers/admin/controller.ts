@@ -121,6 +121,37 @@ adminRouter.get('/admin/user/:id', checkRole, async (req: Request, res: Response
     }
 })
 
+adminRouter.delete('/admin/user/delete/:id', checkRole, async (req: Request, res: Response): Promise<any> => {
+    try {
+        const {id} = req.params
+        if (!(Number.isInteger(+id))) {
+            return res.status(404).send({
+                message: "Пользователь не выбран"
+            })
+        }
+
+        const userRepository = AppDataSource.getRepository(User);
+        const userFromDB = await userRepository.findOneBy({id: +id});
+        if (!userFromDB) {
+            return res.status(404).send({
+                message: "Пользователь с таким id не найден"
+            })
+        }
+
+        await userRepository.delete({id: +id})
+
+        await emailService.sendEmailNotificationDelete(userFromDB.email)
+
+        return res.status(200).send({message: "Пользователь успешно удалён"});
+    } catch (error) {
+        console.log(error)
+        return res
+            .send({
+                message: 'Не удалось удалить пользователя'
+            })
+    }
+})
+
 adminRouter.post('/admin/user/role-list/', async (req: Request, res: Response): Promise<any> => {
     try {
         const roles = [
