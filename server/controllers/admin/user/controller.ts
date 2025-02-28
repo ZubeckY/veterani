@@ -1,11 +1,12 @@
 import {Request, Response, Router} from "express";
-import {onlyAdmin} from "../../middleware/auth/onlyAdmin";
-import {AppDataSource} from "../../connectDb";
-import {User} from "../../entity";
-import EmailService from "../../service/emailService";
-import {checkRole} from "../../middleware/auth/checkRole";
-import {Role, roleTypeText} from "../../types/role";
-import AdminUser from "../../DTOS/admin.user";
+import {onlyAdmin} from "../../../middleware/auth/onlyAdmin";
+import {AppDataSource} from "../../../connectDb";
+import {User} from "../../../entity";
+import EmailService from "../../../service/emailService";
+import {checkRole} from "../../../middleware/auth/checkRole";
+import {Role, roleTypeText} from "../../../types/role";
+import AdminUser from "../../../DTOS/admin.user";
+import AuthService from "../../../service/authService";
 
 const emailService = new EmailService();
 const adminRouter = Router()
@@ -123,6 +124,11 @@ adminRouter.get('/admin/user/:id', checkRole, async (req: Request, res: Response
 
 adminRouter.delete('/admin/user/delete/:id', checkRole, async (req: Request, res: Response): Promise<any> => {
     try {
+        const currentUser: any = await new AuthService().getUserFromCookies(req.headers['cookie'], res)
+        if (!currentUser.id) {
+            return currentUser
+        }
+
         const {id} = req.params
         if (!(Number.isInteger(+id))) {
             return res.status(404).send({
@@ -138,8 +144,35 @@ adminRouter.delete('/admin/user/delete/:id', checkRole, async (req: Request, res
             })
         }
 
-        await userRepository.delete({id: +id})
+        const ourRole = currentUser.role
+        const deletedUserRole = userFromDB.role
 
+        if (userFromDB.id == currentUser.id) {
+            return res
+                .status(403)
+                .send({
+                    message: 'Нельзя удалить себя!'
+                })
+        }
+
+        if (ourRole != Role.admin && deletedUserRole == Role.admin) {
+            return res
+                .status(403)
+                .send({
+                    message: 'Нельзя удалить пользователя с текущей ролью'
+                })
+        }
+
+        if (ourRole == Role.admin && deletedUserRole == Role.admin) {
+            return res
+                .status(403)
+                .send({
+                    message: 'Для удаления пользователя нужно создать голосование'
+                })
+        }
+
+
+        await userRepository.delete({id: +id})
         await emailService.sendEmailNotificationDelete(userFromDB.email)
 
         return res.status(200).send({message: "Пользователь успешно удалён"});

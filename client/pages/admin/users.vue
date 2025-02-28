@@ -1,5 +1,8 @@
 <template>
   <div>
+
+    <v-btn @click="createTestVote">Создать тестовое голосование</v-btn>
+
     <v-skeleton-loader v-if="loading" type="table"/>
 
     <v-data-table v-else
@@ -38,7 +41,7 @@
       <!-- Кнопки -->
       <template v-slot:item.actions="{ item }">
         <v-icon color="primary" class="mr-2">mdi-pencil</v-icon>
-        <v-icon color="red">mdi-delete</v-icon>
+        <admin-user-delete :item="item" @deleteUser="deleteUser"/>
       </template>
     </v-data-table>
   </div>
@@ -77,13 +80,27 @@ export default class Users extends Vue {
   ]
 
 
+  async createTestVote() {
+    // await this.$axios.post('/api/admin/voting/create')
+    await this.$axios.get('/api/admin/voting/list')
+      .then(res => {
+        console.log(res)
+
+        const item = res.data[0].votingResult
+        console.log(JSON.parse(item))
+
+      })
+      .catch(err => {
+        console.log(err)
+      })
+  }
+
   async mounted() {
     this.loading = true;
     await this.getRoleList()
     await this.getUserList()
 
     this.loading = false;
-
   }
 
   async getRoleList() {
@@ -97,6 +114,16 @@ export default class Users extends Vue {
     await this.$axios.get('/api/admin/user/list/')
       .then((response) => {
         this.data = response.data.users;
+      })
+  }
+
+  async deleteUser(id: any) {
+    await this.$axios.delete('/api/admin/user/delete/' + id)
+      .then((response) => {
+        this.getUserList()
+      })
+      .catch((error) => {
+        console.log(error);
       })
   }
 

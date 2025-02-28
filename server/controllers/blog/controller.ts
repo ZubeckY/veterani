@@ -146,21 +146,9 @@ blogRouter.delete('/post/delete/:link', checkValidAuth, async (req: Request, res
             })
         }
 
-        const cookie: any = req.headers['cookie']
-        const refreshToken = await new AuthService().getTokenFromCookie(cookie);
-        if (!refreshToken) {
-            return res
-                .status(401)
-                .send({
-                    message: 'Токен не найден. Код ошибки - 1020',
-                })
-        }
-
-        const userFromDB: any = await new AuthService().getUserByToken(refreshToken)
-        if (!userFromDB) {
-            res.status(401).send({
-                message: "user undefind"
-            })
+        const userFromDB: any = await new AuthService().getUserFromCookies(req.headers['cookie'], res)
+        if (!userFromDB.id) {
+            return userFromDB
         }
 
         const requiredRoles = [
@@ -209,21 +197,9 @@ blogRouter.patch('/post/update/:link', checkValidAuth, async (req: Request, res:
             })
         }
 
-        const cookie: any = req.headers['cookie']
-        const refreshToken = await new AuthService().getTokenFromCookie(cookie);
-        if (!refreshToken) {
-            return res
-                .status(401)
-                .send({
-                    message: 'Токен не найден. Код ошибки - 1020',
-                })
-        }
-
-        const userFromDB: any = await new AuthService().getUserByToken(refreshToken)
-        if (!userFromDB) {
-            res.status(401).send({
-                message: "user undefind"
-            })
+        const userFromDB: any = await new AuthService().getUserFromCookies(req.headers['cookie'], res)
+        if (!userFromDB.id) {
+            return userFromDB
         }
 
         const requiredRoles = [

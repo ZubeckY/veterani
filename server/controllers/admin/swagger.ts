@@ -76,7 +76,7 @@
  *             schema:
  *               type: object
  *               properties:
- *                 users:
+ *                 user:
  *                   type: array
  *                   items:
  *                     type: object
