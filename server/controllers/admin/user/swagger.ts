@@ -62,21 +62,34 @@
  * @swagger
  * /admin/user/list:
  *   get:
- *     summary: Получить список всех пользователей
+ *     summary: Получить список пользователей
  *     tags:
  *       - Администратор
  *     security:
  *       - BearerAuth: []
- *     description: Этот эндпоинт возвращает список всех пользователей системы. Доступен только для администраторов.
+ *     description: Эндпоинт позволяет администратору получить список пользователей с поддержкой пагинации.
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Номер страницы (по умолчанию 1)
+ *       - in: query
+ *         name: size
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Количество пользователей на странице (по умолчанию 10)
  *     responses:
  *       200:
- *         description: Успешный ответ. Возвращает массив пользователей.
+ *         description: Успешный ответ. Возвращает список пользователей.
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 user:
+ *                 users:
  *                   type: array
  *                   items:
  *                     type: object
@@ -106,6 +119,8 @@
  *                       block:
  *                         type: boolean
  *                         example: false
+ *       400:
+ *         description: Некорректный запрос (например, неправильные параметры пагинации).
  *       401:
  *         description: Ошибка аутентификации. Отсутствует или недействительный токен.
  *       403:
@@ -113,6 +128,7 @@
  *       500:
  *         description: Ошибка сервера.
  */
+
 
 /**
  * @swagger

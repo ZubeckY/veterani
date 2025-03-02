@@ -12,8 +12,12 @@ export class Voting {
     @Column({comment: 'Тема голосования'})
     theme!: string;
 
-    @Column()
-    votingResult!: string;
+    @Column({
+        comment: "Голосующие и голоса",
+        nullable: true,
+        default: { }
+    })
+    votingResult!: votingModel[];
 
     @Column({
         comment: 'Голосование закрыто',

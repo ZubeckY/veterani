@@ -47,28 +47,29 @@ adminRouter.post("/admin/user/block/:id", onlyAdmin, async (req: Request, res: R
 
 adminRouter.get("/admin/user/list", checkRole, async (req: Request, res: Response): Promise<any> => {
     try {
+        const skip = (+(req.query?.page ?? 1) - 1) * +(req.query?.size ?? 10);
+        const take = +(req.query?.size ?? 10);
+
         const userRepository = AppDataSource.getRepository(User);
 
-        const usersFromDB = await userRepository.find();
-
-        const users = usersFromDB.map(user => {
-            const DTO = {
-                id: user.id,
-                firstName: user.firstName,
-                lastName: user.lastName,
-                email: user.email,
-                role: user.role,
-                created: user.created,
-                activated: user.activated,
-                block: user.block
-            };
-
-            return new AdminUser(DTO);
+        const usersFromDB = await userRepository.find({
+            skip,
+            take
         });
 
-        return res.status(200).send({
-            users
-        })
+        const users = usersFromDB.map(user => new AdminUser({
+            id: user.id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            role: user.role,
+            created: user.created,
+            activated: user.activated,
+            block: user.block
+        }));
+
+        return res.status(200).json({ users });
+
 
     } catch (error) {
         console.log(error)
