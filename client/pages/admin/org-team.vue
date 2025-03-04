@@ -7,13 +7,13 @@ import {Vue, Component} from 'vue-property-decorator';
 
 @Component({
   layout: 'admin',
-  head(this: Docs): object  {
+  head(this: OrgTeam): object  {
     return {
-      title: 'Админ панель - Документы',
+      title: 'Админ панель - Члены организации',
     }
   }
 })
-export default class Docs extends Vue {
+export default class OrgTeam extends Vue {
 
 }
 </script>

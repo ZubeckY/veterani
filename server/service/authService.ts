@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken'
 import {Response} from "express"
 import {AppDataSource} from "../connectDb"
 import {User, Token} from "../entity"
+import {Role} from "../types/role";
 
 export default class AuthService {
     generateTokens(payload: AuthDto) {
@@ -25,7 +26,7 @@ export default class AuthService {
         } catch (error) {
             return {
                 message: 'Ошибка сервера',
-              error,
+                error,
             }
         }
     }
@@ -45,7 +46,7 @@ export default class AuthService {
         } catch (error) {
             return {
                 message: 'Ошибка сервера',
-              error,
+                error,
             }
         }
     }
@@ -64,7 +65,7 @@ export default class AuthService {
         } catch (error) {
             return {
                 message: 'Ошибка сервера',
-              error,
+                error,
             }
         }
     }
@@ -99,7 +100,7 @@ export default class AuthService {
         } catch (error) {
             return {
                 message: 'Ошибка сервера',
-              error,
+                error,
             }
         }
     }
@@ -206,7 +207,46 @@ export default class AuthService {
             return userFromDB
 
         } catch (error) {
+            return res
+                .status(500)
+                .send({
+                    message: 'Ошибка сервера'
+                })
+        }
+    }
 
+    async userRoleIsCorrect(cookie: any, res: Response) {
+        try {
+            const userFromDB: any = await this.getUserFromCookies(cookie, res)
+            if (!userFromDB.id) {
+                return userFromDB
+            }
+
+            const requiredRoles = [
+                Role.admin,
+                Role.manager,
+            ]
+
+            const roleIncludes = requiredRoles.includes(userFromDB.role)
+            if (!roleIncludes) {
+                return res
+                    .status(403)
+                    .send({
+                        message: 'Роль не соответствует запрашиваемой'
+                    })
+            }
+
+            return {
+                userFromDB,
+                roleIncludes,
+                correct: true
+            }
+        } catch (error) {
+            return res
+                .status(500)
+                .send({
+                    message: 'Ошибка сервера'
+                })
         }
     }
 }

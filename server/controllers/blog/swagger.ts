@@ -1,6 +1,6 @@
 /**
  * @swagger
- * /post/getMany:
+ * /post/list:
  *   get:
  *     summary: Получить список постов
  *     description: Возвращает список опубликованных постов с пагинацией.

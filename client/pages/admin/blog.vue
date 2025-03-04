@@ -16,7 +16,7 @@ import {Vue, Component} from 'vue-property-decorator';
   layout: 'admin',
   head(this: Blog): object {
     return {
-      title: 'Админ панель - Новости',
+      title: 'Админ панель - Публикации',
     }
   }
 })

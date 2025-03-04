@@ -1,49 +1,55 @@
 <template>
   <div>
-
-    <v-btn @click="createTestVote">Создать тестовое голосование</v-btn>
-
     <v-skeleton-loader v-if="loading" type="table"/>
 
-    <v-data-table v-else
-                  :items="data"
-                  :headers="headers">
-      <!-- Роль -->
-      <template v-slot:item.role="{ item }">
-        <td class="text-start">
-          <v-chip :color="getRoleColor(item.role)" dark small>
-            {{ getRoleTypeText(item.role) }}
-          </v-chip>
-        </td>
-      </template>
+    <div class="d-flex flex-column" style="width: 100%; height: calc(100vh - 30px)" v-else>
+      <v-data-table :items="data"
+                    :headers="headers"
+                    hide-default-footer>
+        <!-- Роль -->
+        <template v-slot:item.role="{ item }">
+          <td class="text-start">
+            <v-chip :color="getRoleColor(item.role)" dark small>
+              {{ getRoleTypeText(item.role) }}
+            </v-chip>
+          </td>
+        </template>
 
-      <!-- Активирован -->
-      <template v-slot:item.activated="{ item }">
-        <td :class="'text-start ' + item.activated ? 'green--text' : 'red--text'"> {{
-            item.activated ? 'Да' : 'Нет'
-          }}
-        </td>
-      </template>
+        <!-- Активирован -->
+        <template v-slot:item.activated="{ item }">
+          <td :class="'text-start ' + item.activated ? 'green--text' : 'red--text'">
+            {{ item.activated ? 'Да' : 'Нет' }}
+          </td>
+        </template>
 
-      <!-- Заблокирован -->
-      <template v-slot:item.block="{ item }">
-        <td :class="'text-start ' + item.block ? 'green--text' : 'red--text'"> {{
-            item.block ? 'Да' : 'Нет'
-          }}
-        </td>
-      </template>
+        <!-- Заблокирован -->
+        <template v-slot:item.block="{ item }">
+          <td :class="'text-start ' + item.block ? 'green--text' : 'red--text'">
+            {{ item.block ? 'Да' : 'Нет' }}
+          </td>
+        </template>
 
-      <!-- Дата создания -->
-      <template v-slot:item.created="{ item }">
-        <td class="text-start"> {{ getCreatedDate(item.created) }}</td>
-      </template>
+        <!-- Дата создания -->
+        <template v-slot:item.created="{ item }">
+          <td class="text-start"> {{ getCreatedDate(item.created) }}</td>
+        </template>
 
-      <!-- Кнопки -->
-      <template v-slot:item.actions="{ item }">
-        <v-icon color="primary" class="mr-2">mdi-pencil</v-icon>
-        <admin-user-delete :item="item" @deleteUser="deleteUser"/>
-      </template>
-    </v-data-table>
+        <!-- Кнопки -->
+        <template v-slot:item.actions="{ item }">
+          <div class="d-flex">
+            <v-icon color="primary" class="mr-2">mdi-pencil</v-icon>
+            <admin-user-delete :item="item" @deleteUser="deleteUser"/>
+          </div>
+        </template>
+      </v-data-table>
+
+      <vertical-spacer/>
+
+      <v-pagination v-model="pagPage"
+                    :length="pagSize"
+                    :total-visible="7"/>
+    </div>
+
   </div>
 </template>
 
@@ -60,6 +66,10 @@ import {Vue, Component} from 'vue-property-decorator';
 })
 export default class Users extends Vue {
   loading: boolean = false;
+
+  page: number = 1;
+  size: number = 10;
+  pagPage: number = 1;
 
   data: any = []
   roles: any = []
@@ -79,8 +89,15 @@ export default class Users extends Vue {
     {text: '', value: 'actions', sortable: false},
   ]
 
+  async mounted() {
+    this.loading = true;
+    await this.getRoleList()
+    await this.getUserList()
 
-  async createTestVote() {
+    this.loading = false;
+  }
+
+  async createVote() {
     // await this.$axios.post('/api/admin/voting/create')
     await this.$axios.get('/api/admin/voting/list')
       .then(res => {
@@ -93,14 +110,6 @@ export default class Users extends Vue {
       .catch(err => {
         console.log(err)
       })
-  }
-
-  async mounted() {
-    this.loading = true;
-    await this.getRoleList()
-    await this.getUserList()
-
-    this.loading = false;
   }
 
   async getRoleList() {
@@ -163,6 +172,14 @@ export default class Users extends Vue {
       month: 'short',
       year: 'numeric',
     })
+  }
+
+  get pagSize(): number {
+    return Math.ceil(this.data.length / this.size)
+  }
+
+  get getLink(): string {
+    return '/api/post/list?page=' + this.page + '&size=' + this.size;
   }
 }
 </script>

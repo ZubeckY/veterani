@@ -9,7 +9,7 @@ import {Role} from "../../types/role";
 
 const blogRouter = Router();
 
-blogRouter.get('/post/getMany', async (req: Request, res: Response): Promise<any> => {
+blogRouter.get('/post/list', async (req: Request, res: Response): Promise<any> => {
     try {
         const skip = (+(req.query?.page ?? 1) - 1) * +(req.query?.size ?? 10)
         const take = +(req.query?.page ?? 1) * +(req.query?.size ?? 10)
@@ -121,7 +121,7 @@ blogRouter.post('/post/create', checkValidAuth, async (req: Request, res: Respon
         const postRepository = AppDataSource.getRepository(Post)
         const saved = await postRepository.save(post)
 
-        return res.send(saved)
+        return res.status(201).send(saved)
     } catch (error) {
         res.status(503).send({
             message: "Ошибка"
@@ -146,38 +146,37 @@ blogRouter.delete('/post/delete/:link', checkValidAuth, async (req: Request, res
             })
         }
 
-        const userFromDB: any = await new AuthService().getUserFromCookies(req.headers['cookie'], res)
-        if (!userFromDB.id) {
-            return userFromDB
+        const cookies = req.headers['cookie']
+        const specifiedId = post.user.id
+
+        const correctId = await new AuthService().userRoleIsCorrect(cookies, res)
+        if (!correctId.correct) {
+            return correctId
         }
 
-        const requiredRoles = [
-            Role.admin,
-            Role.manager,
-        ]
-
-        const roleIncludes = requiredRoles.includes(userFromDB.role)
-
-        if (userFromDB.id !== post.user.id) {
-            if (!roleIncludes) {
-                return res.status(403).send({
-                    message: "роль не совпадает"
-                })
+        const userId = correctId.userFromDB.id
+        if (userId !== specifiedId) {
+            if (!correctId.roleIncludes) {
+                return res
+                    .status(403)
+                    .send({
+                        message: "роль не совпадает"
+                    })
             }
         }
 
         await postRepository.remove(post)
-
-        return res.status(200).send({
-            message: "Ok"
-        })
+        return res
+            .status(200)
+            .send({
+                message: "Ok"
+            })
     } catch (error) {
         res.status(503).send({
             message: "Ошибка"
         })
     }
 })
-
 
 blogRouter.patch('/post/update/:link', checkValidAuth, async (req: Request, res: Response): Promise<any> => {
     try {
@@ -197,23 +196,22 @@ blogRouter.patch('/post/update/:link', checkValidAuth, async (req: Request, res:
             })
         }
 
-        const userFromDB: any = await new AuthService().getUserFromCookies(req.headers['cookie'], res)
-        if (!userFromDB.id) {
-            return userFromDB
+        const cookies = req.headers['cookie']
+        const specifiedId = post.user.id
+
+        const correctId = await new AuthService().userRoleIsCorrect(cookies, res)
+        if (!correctId.correct) {
+            return correctId
         }
 
-        const requiredRoles = [
-            Role.admin,
-            Role.manager,
-        ]
-
-        const roleIncludes = requiredRoles.includes(userFromDB.role)
-
-        if (userFromDB.id !== post.user.id) {
-            if (!roleIncludes) {
-                return res.status(403).send({
-                    message: "роль не совпадает"
-                })
+        const userId = correctId.userFromDB.id
+        if (userId !== specifiedId) {
+            if (!correctId.roleIncludes) {
+                return res
+                    .status(403)
+                    .send({
+                        message: "роль не совпадает"
+                    })
             }
         }
 
@@ -229,7 +227,6 @@ blogRouter.patch('/post/update/:link', checkValidAuth, async (req: Request, res:
         res.status(200).send(saved)
     } catch (error) {
         console.log(error)
-
         res.status(503).send({
             message: "Ошибка"
         })

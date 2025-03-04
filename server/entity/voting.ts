@@ -15,9 +15,8 @@ export class Voting {
     @Column({
         comment: "Голосующие и голоса",
         nullable: true,
-        default: { }
     })
-    votingResult!: votingModel[];
+    votingResult!: string;
 
     @Column({
         comment: 'Голосование закрыто',

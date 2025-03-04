@@ -25,7 +25,8 @@
     "translit-rus-eng": "^1.0.8",
     "ts-node": "^10.9.2",
     "typeorm": "^0.3.20",
-    "typescript": "^5.6.3"
+    "typescript": "^5.6.3",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",

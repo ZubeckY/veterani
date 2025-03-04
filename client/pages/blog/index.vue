@@ -94,7 +94,7 @@ export default class Blog extends Vue {
   }
 
   get getLink(): string {
-    return '/api/post/getMany?page=' + this.page + '&size=' + this.size;
+    return '/api/post/list?page=' + this.page + '&size=' + this.size;
   }
 }
 </script>

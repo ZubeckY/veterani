@@ -4,6 +4,11 @@ import {Voting} from "../../../entity";
 import AuthService from "../../../service/authService";
 import {onlyAdmin} from "../../../middleware/auth/onlyAdmin";
 
+interface votingModel {
+    userId: number;
+    result: boolean;
+}
+
 const votingRouter = Router();
 
 votingRouter.get("/admin/voting/list", onlyAdmin, async (req: Request, res: Response) => {
@@ -11,64 +16,53 @@ votingRouter.get("/admin/voting/list", onlyAdmin, async (req: Request, res: Resp
         const votingRepository = AppDataSource.getRepository(Voting);
         const list = await votingRepository.find()
 
-        res.send(list)
+        res
+            .status(200)
+            .send(list)
 
     } catch (e) {
         res.send({message: e});
     }
 })
 
-votingRouter.post("/admin/voting/create", onlyAdmin,  async (req: Request, res: Response): Promise<any> => {
+votingRouter.post("/admin/voting/create", onlyAdmin, async (req: Request, res: Response): Promise<any> => {
     try {
+        const {theme} = req.body
+
         const votingRepository = AppDataSource.getRepository(Voting);
         const voting = new Voting()
 
-        interface votingModel {
-            userId: number;
-            result: boolean;
-        }
-
-
-        const item: votingModel = {
-            userId: 4,
-            result: false,
-        }
-
-        const data = []
-        data.push(item);
-
-        voting.theme = 'Тестовое голосование'
+        voting.theme = theme
         voting.isClosed = false
 
-        await votingRepository.save(voting)
+        const created = await votingRepository.save(voting)
 
-        res.send(voting)
+        res
+            .status(201)
+            .send({voting: created})
 
     } catch (e: any) {
         res.send({message: e})
     }
 })
 
-votingRouter.put("/admin/voting/update/:id", onlyAdmin, async (req: Request, res: Response) : Promise<any> => {
+votingRouter.put("/admin/voting/update/:id", onlyAdmin, async (req: Request, res: Response): Promise<any> => {
     try {
-        const model = req.body
-
+        const {model} = req.body
         const {id} = req.params
         if (!(Number.isInteger(+id))) {
             return res.status(404).send({
-                message: "Пользователь не выбран"
+                message: "ID голосования указан неверно"
             })
         }
 
         const userFromDB: any = await new AuthService().getUserFromCookies(req.headers['cookie'], res)
-        if (!userFromDB || !userFromDB.id) {
+        if (!userFromDB.id) {
             return userFromDB
         }
 
         const votingRepository = AppDataSource.getRepository(Voting);
-
-        const voting = await votingRepository.findOne({where: {id: +id}});
-
+        const voting = await votingRepository.findOneBy({id: +id});
         if (!voting) {
             return res.status(404).send({
                 message: "Нет такого голосования"
@@ -76,25 +70,54 @@ votingRouter.put("/admin/voting/update/:id", onlyAdmin, async (req: Request, res
         }
 
         if (voting.isClosed) {
-            return res.status(404).send({
+            return res.status(200).send({
                 message: "Голосование закрыто"
             })
         }
 
-        const hasVoted = voting.votingResult.some(vote => vote.userId === userFromDB.id);
+        // Переводим с JSON'а в массив объектов
+        const data = JSON.parse(voting.votingResult)
+
+        // Создаём условие для фильтраций
+        const condition = (vote: votingModel) => vote.userId === userFromDB.id
+
+        // Если есть, меняем голос
+        const hasVoted = data.some(condition);
         if (hasVoted) {
-            return res.status(400).json({ message: "Вы уже голосовали" });
+            const i = data.findIndex(condition);
+            data[i].result = model.result
+
+            voting.votingResult = JSON.stringify(data)
+            const saveVoting = await votingRepository.save(voting);
+
+            return res
+                .status(200)
+                .send(
+                    {
+                        voting: saveVoting,
+                        message: "Голос изменён"
+                    });
         }
 
-        const userId = userFromDB.id
-        const result = model.result
-        voting.votingResult.push({ userId, result});
+        // Если голоса не было, создаем новый
+        const votingModel: votingModel = {
+            userId: userFromDB.id,
+            result: model.result,
+        }
 
-        await votingRepository.save(voting);
+        data.push(votingModel)
 
-        return res.status(200).json({ message: "Голос учтен", voting });
-    }
-    catch (e: any) {
+        voting.votingResult = JSON.stringify(data)
+        const saveVoting = await votingRepository.save(voting);
+
+        return res
+            .status(200)
+            .send(
+                {
+                    voting: saveVoting,
+                    message: "Голос учтен"
+                });
+    } catch (e: any) {
         res.send({message: e})
     }
 })
