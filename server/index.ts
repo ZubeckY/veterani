@@ -6,13 +6,15 @@ import controller from "./controllers";
 import connectDataBase from "./connectDb";
 import logger from "./modules/logger";
 import {setupSwagger} from "./swagger";
+
 const app: express.Express = express()
 const port = config.port
 
 app.set('trust proxy', true)
 app.use(express.json())
 app.use(bodyParser.json())
-app.use(express.urlencoded({ extended: true }))
+app.use(express.urlencoded({extended: true}))
+app.use('/uploads', express.static('uploads'));
 app.use('/api/', controller)
 
 app.listen(port, () => {
