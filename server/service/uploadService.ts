@@ -1,52 +1,57 @@
-import multer from "multer"
-import {Request, Response} from "express"
 import sharp from "sharp"
-import uuid from "uuid"
+import multer from "multer"
+import * as uuid from 'uuid'
 
 export default class UploadService {
+    uploadImage = (fieldName: string) => {
+        return multer({
+            storage: multer.diskStorage({
+                destination: 'uploads/',
+                filename: function (req, file, callback) {
+                    const ext = file.originalname.substring(
+                        file.originalname.lastIndexOf("."),
+                        file.originalname.length
+                    );
 
+                    const date: any = new Date().toLocaleDateString("ru", {
+                        day: 'numeric',
+                        month: 'numeric',
+                        year: 'numeric',
+                    })
 
+                    const normDate = date.toString().replaceAll('-', '.')
+                    const fullNameVal = normDate + '-' + uuid.v4() + ext
 
-     storage = multer.diskStorage({
-        destination: function (req, file, cb) {
-            cb(null, '/uploads')
-        },
-        filename: function (req, file, cb) {
-            const date: any = new Date().toLocaleDateString("ru", {
-                day: 'numeric',
-                month: 'numeric',
-                year: 'numeric',
-            })
+                    callback(null, fullNameVal)
+                }
+            }),
 
-            const normDate = date.toString().replaceAll('-','.')
+            limits: {
+                fileSize: 50 * 1024 * 1024
+            },
 
-            cb(null, normDate+ '-' + uuid.v4())
-        }
-    })
-
-    filterImage (req: Request, file: any, cb: any){
-        if (file.mimetype.split("/")[0] === 'image') {
-            cb(null, true);
-        } else {
-            cb(new Error("Only images are allowed!"));
-        }
+            fileFilter: (req: Express.Request, file: Express.Multer.File, cb: Function) => {
+                if (file.mimetype.split("/")[0] === 'image') {
+                    cb(null, true);
+                } else {
+                    cb(new Error('Only JPEG and PNG images are allowed.'), false);
+                }
+            }
+        }).single(fieldName);
     }
 
-    async sharp(file: any){
+    async sharpImage(file: any) {
         const sharpImage = sharp(file)
         const metadata = await sharpImage.metadata()
+
+        const roundValue = (value: number): number => {
+            return Math.ceil(value! * 50 / 100)
+        }
+
         return await sharpImage.resize({
-            width: Math.ceil(metadata.width! * 50 / 100),
-            height: Math.ceil(metadata.height! * 50 / 100),
+            width: roundValue(Number(metadata.width)),
+            height: roundValue(Number(metadata.height)),
             fit: "inside",
         }).toBuffer()
     }
-
-    upload = multer ({
-        storage: this.storage,
-        fileFilter: this.filterImage,
-        limits: {
-            fileSize: 50 * 1024 * 1024
-        }
-    })
-}
+};

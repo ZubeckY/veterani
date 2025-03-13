@@ -235,12 +235,17 @@ blogRouter.patch('/post/update/:link', checkValidAuth, async (req: Request, res:
         })
     }
 })
-//, uploadService.upload.single("photo")
-blogRouter.post("/post/test", checkValidAuth , async (req: Request, res: Response): Promise<any> => {
+
+// uploadService.uploadImage("file")
+blogRouter.post("/post/test", checkValidAuth, async (req: Request, res: Response): Promise<any> => {
     try {
-        const path = req.file?.filename
-        console.log(req.file)
-        await uploadService.sharp(path)
+        console.log('file', req.file)
+        console.log('files', req.files)
+
+        // const path = req.file?.filename
+        // await uploadService.sharp(path)
+
+
         res.status(200).send({
             message: "заКонченный"
         })
