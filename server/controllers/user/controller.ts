@@ -267,4 +267,27 @@ userRouter.patch("/auth/user/refresh-code", checkValidAuth, async (req: Request,
     }
 })
 
+userRouter.delete("/user/delete", checkValidAuth, async (req: Request, res: Response): Promise<any> => {
+    try {
+        const userFromDB: any = await new AuthService().getUserFromCookies(req.headers['cookie'], res)
+        if (!userFromDB.id) {
+            return userFromDB
+        }
+
+        const userRepository = AppDataSource.getRepository(User)
+        await userRepository.delete(userFromDB)
+
+        await emailService.sendEmailNotificationDelete(userFromDB.email)
+
+        res.status(200).send({
+            message: "Пользователь удалён"
+        })
+
+    } catch (error) {
+        return res.status(500).send({
+            message: "Ошибка изменения кода"
+        })
+    }
+})
+
 export default userRouter;

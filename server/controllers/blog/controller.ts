@@ -6,8 +6,11 @@ import AuthService from "../../service/authService";
 //@ts-ignore
 import translitRusEng from 'translit-rus-eng'
 import {Role} from "../../types/role";
+import UploadService from "../../service/uploadService";
+import sharp from "sharp";
 
 const blogRouter = Router();
+const uploadService = new UploadService();
 
 blogRouter.get('/post/list', async (req: Request, res: Response): Promise<any> => {
     try {
@@ -230,6 +233,20 @@ blogRouter.patch('/post/update/:link', checkValidAuth, async (req: Request, res:
         res.status(503).send({
             message: "Ошибка"
         })
+    }
+})
+//, uploadService.upload.single("photo")
+blogRouter.post("/post/test", checkValidAuth , async (req: Request, res: Response): Promise<any> => {
+    try {
+        const path = req.file?.filename
+        console.log(req.file)
+        await uploadService.sharp(path)
+        res.status(200).send({
+            message: "заКонченный"
+        })
+    }
+    catch (error) {
+        return res.status(503).send({})
     }
 })
 
