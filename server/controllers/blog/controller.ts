@@ -1,13 +1,12 @@
+//@ts-ignore
+import translitRusEng from 'translit-rus-eng'
 import {Router, Request, Response} from "express";
 import {Post} from "../../entity";
 import {AppDataSource} from "../../connectDb";
 import {checkValidAuth} from "../../middleware/auth/checkValidAuth";
 import AuthService from "../../service/authService";
-//@ts-ignore
-import translitRusEng from 'translit-rus-eng'
 import {Role} from "../../types/role";
 import UploadService from "../../service/uploadService";
-import sharp from "sharp";
 
 const blogRouter = Router();
 const uploadService = new UploadService();
@@ -236,22 +235,26 @@ blogRouter.patch('/post/update/:link', checkValidAuth, async (req: Request, res:
     }
 })
 
-// uploadService.uploadImage("file")
-blogRouter.post("/post/test", checkValidAuth, async (req: Request, res: Response): Promise<any> => {
+//
+blogRouter.post("/post/test", checkValidAuth, uploadService.uploadImage("file"), async (req: Request, res: Response): Promise<any> => {
     try {
-        console.log('file', req.file)
-        console.log('files', req.files)
+        if (!req.file) {
+            console.log('нет файла')
+        }
 
-        // const path = req.file?.filename
-        // await uploadService.sharp(path)
+        const path: any = req.file?.path
+        await uploadService.sharpImage(path)
 
-
-        res.status(200).send({
-            message: "заКонченный"
+        return res
+            .status(200)
+            .send({
+                message: "Успешно"
+            })
+    } catch (error) {
+        console.log(error)
+        return res.status(503).send({
+            message: error
         })
-    }
-    catch (error) {
-        return res.status(503).send({})
     }
 })
 

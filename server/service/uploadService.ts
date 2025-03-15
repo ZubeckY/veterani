@@ -1,6 +1,7 @@
 import sharp from "sharp"
 import multer from "multer"
 import * as uuid from 'uuid'
+import * as fs from "fs";
 
 export default class UploadService {
     uploadImage = (fieldName: string) => {
@@ -19,7 +20,7 @@ export default class UploadService {
                         year: 'numeric',
                     })
 
-                    const normDate = date.toString().replaceAll('-', '.')
+                    const normDate = date.toString().replaceAll('.', '-')
                     const fullNameVal = normDate + '-' + uuid.v4() + ext
 
                     callback(null, fullNameVal)
@@ -40,18 +41,22 @@ export default class UploadService {
         }).single(fieldName);
     }
 
-    async sharpImage(file: any) {
-        const sharpImage = sharp(file)
+    async sharpImage(path: any) {
+        const sharpImage = sharp(path)
         const metadata = await sharpImage.metadata()
 
         const roundValue = (value: number): number => {
             return Math.ceil(value! * 50 / 100)
         }
 
-        return await sharpImage.resize({
-            width: roundValue(Number(metadata.width)),
-            height: roundValue(Number(metadata.height)),
-            fit: "inside",
-        }).toBuffer()
+        const width = roundValue(Number(metadata.width))
+        const height = roundValue(Number(metadata.height))
+
+        const compressedImageBuffer: any = await sharpImage
+            .resize(width, height)
+            .jpeg({quality: 80})
+            .toBuffer()
+
+        return fs.writeFileSync(path, compressedImageBuffer);
     }
 };
