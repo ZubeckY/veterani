@@ -3,7 +3,7 @@ import blogRouter from "./blog/controller";
 import mainRouter from "./admin/main/controller";
 import adminRouter from "./admin/user/controller";
 import votingRouter from "./admin/voting/controller";
-import fileRouter from "./File/controller";
+import fileRouter from "./file/controller";
 
 const controller: any = [
     userRouter,

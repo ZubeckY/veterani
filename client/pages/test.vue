@@ -1,39 +1,74 @@
 <template>
   <div>
     <!-- todo редизайн! Сделать компонент и выключение при отправке! -->
-    <v-form ref="form" @submit.prevent="submitForm">
-      <v-file-input
-        v-model="file"
-        label="Выберите файл"
-        accept="image/*"
-      ></v-file-input>
-      <v-btn type="submit" color="primary">Загрузить</v-btn>
+    <v-form ref="form" @submit.prevent>
+      <v-file-input @change="onFileChange"
+                    v-model="file"
+                    label="Выберите файл"
+                    accept=" image/*" />
+
+      <v-card max-width="450" elevation="0">
+        <v-img max-width="450"
+               :src="imageValue"
+               :lazy-src="imageValue">
+          <template v-slot:placeholder>
+
+            <v-row class="fill-height ma-0"
+                   align="center"
+                   justify="center">
+              <v-progress-circular indeterminate color="primary"/>
+            </v-row>
+
+          </template>
+        </v-img>
+
+        <v-overlay opacity=".2" absolute :value="overlay">
+          <v-progress-circular size="60" color="primary"
+                               :value="uploadProgressValue"/>
+        </v-overlay>
+      </v-card>
+
     </v-form>
+
     <v-alert v-if="error" type="error" dismissible>{{ error }}</v-alert>
     <v-alert v-if="success" type="success" dismissible>{{ success }}</v-alert>
-    <v-img
-        width="450"
-        :src="value ?? ``"/>
+
   </div>
 </template>
 
 <script lang="ts">
-import {Vue, Component} from 'vue-property-decorator';
+import {Vue, Component, Watch} from 'vue-property-decorator';
 
 @Component({})
 export default class test extends Vue {
-
   file: File | null = null;
   success: string | null = null;
   error: string | null = null;
-  host = "http://localhost:4000/";
-  value = ""
 
-  submitForm() {
+  uploadProgressValue: number = 0;
+  overlay: boolean = false;
+  imageValue: any = ""
+
+  onFileChange() {
     if (!this.file) {
       this.error = 'Пожалуйста, выберите файл';
-      return;
+      this.imageValue = ''
+      return
     }
+
+    if (!this.file.type.match('image.*')) {
+      return false;
+    }
+
+    const that = this
+    const reader = new FileReader()
+
+    reader.onload = function (e: any) {
+      that.imageValue = e.target.result;
+    }
+
+    reader.readAsDataURL(this.file);
+    this.overlay = true;
 
     const formData = new FormData();
     formData.append('file', this.file);
@@ -44,19 +79,20 @@ export default class test extends Vue {
       },
       onUploadProgress: progressEvent => {
         let {loaded, total} = progressEvent;
-        console.log('progress: ', (loaded / total) * 100)
+        this.uploadProgressValue = (loaded / total) * 100
       }
     })
       .then((response: any) => {
         this.success = 'Файл успешно загружен: ' + response.data.message;
-        console.log('response: ', response.data);
-        this.value = this.host + response.data.file.path;
         this.error = null; // очищаем предыдущее сообщение об ошибке
       })
       .catch((error: any) => {
         this.error = 'Произошла ошибка при загрузке файла: ' + error.message;
         this.success = null; // очищаем предыдущее сообщение об успехе
-      });
+      })
+      .finally(() => {
+        this.overlay = false;
+      })
   }
 }
 </script>
