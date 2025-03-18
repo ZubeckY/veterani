@@ -1,5 +1,14 @@
-import {Column, Relation, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn} from "typeorm";
-import {User} from "./user";
+import {
+    Column,
+    Relation,
+    CreateDateColumn,
+    Entity,
+    JoinColumn,
+    ManyToOne,
+    PrimaryGeneratedColumn,
+    ManyToMany
+} from "typeorm";
+import {User, File} from "./";
 
 @Entity()
 export class Post {
@@ -32,6 +41,13 @@ export class Post {
     })
     @JoinColumn()
     user!: Relation<User>;
+
+    @ManyToMany(() => File, (file) => file.id, {
+        cascade: false,
+        nullable: true,
+    })
+    @JoinColumn()
+    file!: Relation<File>[];
 
     @Column({
         comment: "Ссылка на пост",
