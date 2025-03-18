@@ -11,6 +11,9 @@
     </v-form>
     <v-alert v-if="error" type="error" dismissible>{{ error }}</v-alert>
     <v-alert v-if="success" type="success" dismissible>{{ success }}</v-alert>
+    <v-img
+        width="450"
+        :src="value ?? ``"/>
   </div>
 </template>
 
@@ -23,6 +26,8 @@ export default class test extends Vue {
   file: File | null = null;
   success: string | null = null;
   error: string | null = null;
+  host = "http://localhost:4000/";
+  value = ""
 
   submitForm() {
     if (!this.file) {
@@ -33,7 +38,7 @@ export default class test extends Vue {
     const formData = new FormData();
     formData.append('file', this.file);
 
-    this.$axios.post('/api/post/test', formData, {
+    this.$axios.post('/api/file/upload', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -44,6 +49,8 @@ export default class test extends Vue {
     })
       .then((response: any) => {
         this.success = 'Файл успешно загружен: ' + response.data.message;
+        console.log('response: ', response.data);
+        this.value = this.host + response.data.file.path;
         this.error = null; // очищаем предыдущее сообщение об ошибке
       })
       .catch((error: any) => {

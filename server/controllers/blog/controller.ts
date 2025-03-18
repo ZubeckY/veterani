@@ -6,10 +6,8 @@ import {AppDataSource} from "../../connectDb";
 import {checkValidAuth} from "../../middleware/auth/checkValidAuth";
 import AuthService from "../../service/authService";
 import {Role} from "../../types/role";
-import UploadService from "../../service/uploadService";
 
 const blogRouter = Router();
-const uploadService = new UploadService();
 
 blogRouter.get('/post/list', async (req: Request, res: Response): Promise<any> => {
     try {
@@ -231,29 +229,6 @@ blogRouter.patch('/post/update/:link', checkValidAuth, async (req: Request, res:
         console.log(error)
         res.status(503).send({
             message: "Ошибка"
-        })
-    }
-})
-
-//
-blogRouter.post("/post/test", checkValidAuth, uploadService.uploadImage("file"), async (req: Request, res: Response): Promise<any> => {
-    try {
-        if (!req.file) {
-            console.log('нет файла')
-        }
-
-        const path: any = req.file?.path
-        await uploadService.sharpImage(path)
-
-        return res
-            .status(200)
-            .send({
-                message: "Успешно"
-            })
-    } catch (error) {
-        console.log(error)
-        return res.status(503).send({
-            message: error
         })
     }
 })
