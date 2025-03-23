@@ -3,130 +3,150 @@
     <div v-if="loading">
       Загрузка...
     </div>
-    <div v-else>
-      <div style="max-width: 500px">
-        <v-row>
-          <v-col cols="3">id:</v-col>
-          <v-col v-text="user.id"></v-col>
-        </v-row>
+    <div v-else class="lk">
+      <div class="lk-container">
 
-        <v-row>
-          <v-col cols="3">Имя:</v-col>
-          <v-col v-text="user.firstName"></v-col>
-        </v-row>
+        <div class="lk-content d-flex flex-wrap justify-center">
+          <div>
+            <v-img src="/placeholder_lk.jpg"/>
+          </div>
 
-        <v-row>
-          <v-col cols="3">Фамилия:</v-col>
-          <v-col v-text="user.lastName"></v-col>
-        </v-row>
+          <div class="d-flex flex-column ml-9">
+            <div class="lk-info__group">
+              <div class="lk-info__title">Имя Фамилия</div>
+              <div class="lk-info__value" v-text="getUserName"></div>
+            </div>
 
-        <v-row>
-          <v-col cols="3">Отчество:</v-col>
-          <v-col v-text="user.middleName"></v-col>
-        </v-row>
+            <div class="lk-info__group">
+              <div class="lk-info__title">Отчество</div>
+              <div class="lk-info__value" v-text="user.middleName"></div>
+            </div>
 
-        <v-row>
-          <v-col cols="3">email:</v-col>
-          <v-col v-text="user.email"></v-col>
-          <v-col>
+            <div class="lk-info__group">
+              <div class="lk-info__title">Роль</div>
+              <div class="lk-info__value" v-text="user.rolePublic"></div>
+            </div>
 
-            <v-dialog v-model="activatedEmail.dialog"
-                      v-if="!user.activated"
-                      max-width="400">
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn v-bind="attrs"
-                       v-on="on">
-                  Подтвердить email
+            <div class="lk-info__group">
+              <div class="lk-info__title">Email</div>
+              <div class="lk-info__value" v-text="user.email"></div>
+              <div class="lk-info__value">
+                <v-dialog v-model="activatedEmail.dialog"
+                          v-if="!user.activated"
+                          max-width="400">
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn v-bind="attrs"
+                           v-on="on">
+                      Подтвердить email
+                    </v-btn>
+                  </template>
+
+                  <v-card class="ma-0 py-2">
+                    <v-card-title class="mt-2 mb-1 pa-0 px-2">
+                      Подтверждение почты
+                    </v-card-title>
+
+                    <div class="px-3">
+                      <v-otp-input v-model="activatedCode"
+                                   :disabled="activatedEmail.disabled"
+                                   @finish="tryActivateAccount" length="5"/>
+                    </div>
+
+                    <v-card-actions>
+                      <v-btn class="ma-0 pa-0"
+                             height="fit-content"
+                             color="error"
+                             small text
+                             @click="activatedEmail.dialog = false"
+                      >
+                        Отмена
+                      </v-btn>
+
+                      <v-spacer></v-spacer>
+                      <v-btn :disabled="activatedEmail.timerDisabled"
+                             v-text="sendCodeButtonValue"
+                             @click="activatedEmailSendCode"
+                             class="ma-0 pa-0"
+                             height="fit-content"
+                             color="primary"
+                             small text>
+                      </v-btn>
+                    </v-card-actions>
+                  </v-card>
+                </v-dialog>
+              </div>
+            </div>
+
+            <div class="lk-info__group">
+              <div class="lk-info__title">Активирован</div>
+              <div class="lk-info__value" v-text="user.activated ? 'Да' : 'Нет'"></div>
+            </div>
+
+            <vertical-spacer/>
+
+            <div class="d-flex flex-column">
+              <div v-if="userAdminButton">
+                <v-btn width="240px"
+                       outlined
+                       color="primary"
+                       @click="$router.push('/admin')">Админ панель
                 </v-btn>
-              </template>
+              </div>
 
-              <v-card class="ma-0 py-2">
-                <v-card-title class="mt-2 mb-1 pa-0 px-2">
-                  Подтверждение почты
-                </v-card-title>
 
-                <div class="px-3">
-                  <v-otp-input v-model="activatedCode"
-                               :disabled="activatedEmail.disabled"
-                               @finish="tryActivateAccount" length="5"/>
-                </div>
+              <v-btn width="240px"
+                     outlined
+                     color="primary">
+                Редактировать профиль
+              </v-btn>
 
-                <v-card-actions>
-                  <v-btn class="ma-0 pa-0"
-                         height="fit-content"
-                         color="error"
-                         small text
-                         @click="activatedEmail.dialog = false"
-                  >
-                    Отмена
+
+
+              <v-dialog v-model="logoutDialog"
+                        max-width="360">
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn width="240px"
+                         outlined
+                         color="red"
+                         v-bind="attrs"
+                         v-on="on">
+                    Выйти из профиля
                   </v-btn>
+                </template>
 
-                  <v-spacer></v-spacer>
-                  <v-btn :disabled="activatedEmail.timerDisabled"
-                         v-text="sendCodeButtonValue"
-                         @click="activatedEmailSendCode"
-                         class="ma-0 pa-0"
-                         height="fit-content"
-                         color="primary"
-                         small text>
-                  </v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-dialog>
-          </v-col>
-        </v-row>
+                <v-card class="ma-0 py-2">
+                  <v-card-text class="mt-2 pa-0 pl-4">
+                    Вы действительно хотите выйти из профиля?
+                  </v-card-text>
 
-        <v-row>
-          <v-col cols="3">Активирован:</v-col>
-          <v-col v-text="user.activated ? 'Да' : 'Нет'"></v-col>
-        </v-row>
+                  <v-card-actions>
+                    <v-btn class="ma-0 pa-0"
+                           height="fit-content"
+                           color="error"
+                           small text
+                           @click="logoutDialog = false"
+                    >
+                      Отмена
+                    </v-btn>
 
-        <v-row>
-          <v-col cols="3">Роль:</v-col>
-          <v-col v-text="user.rolePublic"></v-col>
-        </v-row>
+                    <v-spacer></v-spacer>
+                    <v-btn class="ma-0 pa-0"
+                           height="fit-content"
+                           color="primary"
+                           small text
+                           @click="logoutFunction"
+                    >
+                      Подтвердить
+                    </v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-dialog>
+            </div>
+
+          </div>
+        </div>
+
       </div>
-
-      <div v-if="userAdminButton">
-        <v-btn @click="$router.push('/admin')">Админ панель</v-btn>
-      </div>
-
-      <v-dialog v-model="logoutDialog"
-                max-width="360">
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn v-bind="attrs"
-                 v-on="on">
-            Выйти из профиля
-          </v-btn>
-        </template>
-
-        <v-card class="ma-0 py-2">
-          <v-card-text class="mt-2 pa-0 pl-4">
-            Вы действительно хотите выйти из профиля?
-          </v-card-text>
-
-          <v-card-actions>
-            <v-btn class="ma-0 pa-0"
-                   height="fit-content"
-                   color="error"
-                   small text
-                   @click="logoutDialog = false"
-            >
-              Отмена
-            </v-btn>
-
-            <v-spacer></v-spacer>
-            <v-btn class="ma-0 pa-0"
-                   height="fit-content"
-                   color="primary"
-                   small text
-                   @click="logoutFunction"
-            >
-              Подтвердить
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
     </div>
   </div>
 </template>
@@ -208,7 +228,6 @@ export default class Lk extends Vue {
 
     this.$axios.patch('/api/auth/user/refresh-code/')
       .then((res) => {
-        console.log(res.data)
         this.startTimerResend()
       })
       .catch((error) => {
@@ -239,7 +258,6 @@ export default class Lk extends Vue {
 
     this.$axios.patch('/api/auth/user/activate-account/', {model: this.activatedCode})
       .then((res) => {
-        console.log(res)
         this.getUserInfo()
       })
       .catch((error) => {
@@ -264,13 +282,10 @@ export default class Lk extends Vue {
     if (process.client) {
       await this.$axios.get('/api/auth/lk/')
         .then((res) => {
-          console.log(res.data.user)
           this.user = res.data.user
           this.linkTitle = 'Личный кабинет - ' + res.data.user.firstName + ' ' + res.data.user.lastName
         })
         .catch((error: any) => {
-          console.log(error.response)
-
           if (error.response.status === 401 || error.response.status === 403) {
             this.logoutFunction()
           }
@@ -290,6 +305,10 @@ export default class Lk extends Vue {
   get userAdminButton() {
     const successRoles = ['admin', 'manager']
     return successRoles.includes(this.user['role'])
+  }
+
+  get getUserName() {
+    return this.user.firstName + ' ' + this.user.lastName
   }
 }
 </script>
