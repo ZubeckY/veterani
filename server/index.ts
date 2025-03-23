@@ -1,4 +1,4 @@
-import cors from 'cors';
+require('dotenv').config()
 import config from './config';
 import express from 'express';
 import bodyParser from 'body-parser';
@@ -18,7 +18,7 @@ app.use(express.urlencoded({extended: true,}))
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true,}))
 
-app.use('/uploads', express.static('uploads'));
+app.use('/api/media/', express.static('uploads'));
 app.use('/api/', controller)
 
 app.listen(port, () => {

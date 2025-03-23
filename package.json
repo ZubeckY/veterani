@@ -1,0 +1,11 @@
+{
+  "name": "veterani",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start_dev": "concurrently \"npm run dev --prefix client\" \"npm run dev_server --prefix server\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
