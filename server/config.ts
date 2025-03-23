@@ -37,17 +37,17 @@ function ENV_VAL(key: string): string {
 }
 
 function dbHost(): string {
-    return is_prod ? ENV_VAL('DATABASE_HOST_PROD') : ENV_VAL('DATABASE_HOST_DEV')
+    return ENV_VAL('DATABASE_HOST_' + (is_prod ? 'PROD' : 'DEV'))
 }
 
 function dbUsername(): string {
-    return is_prod ? ENV_VAL('DATABASE_USERNAME_PROD') : ENV_VAL('DATABASE_USERNAME_DEV')
+    return ENV_VAL('DATABASE_USERNAME_' + (is_prod ? 'PROD' : 'DEV'))
 }
 
 function dbPassword(): string {
-    return is_prod ? ENV_VAL('DATABASE_PASSWORD_PROD') : ENV_VAL('DATABASE_PASSWORD_DEV')
+    return ENV_VAL('DATABASE_PASSWORD_' + (is_prod ? 'PROD' : 'DEV'))
 }
 
 function dbDATABASE(): string {
-    return is_prod ? ENV_VAL('DATABASE_DATABASE_PROD') : ENV_VAL('DATABASE_DATABASE_DEV')
+    return ENV_VAL('DATABASE_DATABASE_' + (is_prod ? 'PROD' : 'DEV'))
 }
