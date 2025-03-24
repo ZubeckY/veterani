@@ -22,10 +22,16 @@
   background-color: var(--mainBlue) !important;
 }
 
+.mainBlueTransparent {
+  background-color: var(--mainBlueTransparent) !important;
+}
+
 .header {
-  position: relative;
-  margin-bottom: 20px;
+  position: absolute;
+  width: 100%;
   top: 20px;
+  z-index: 1000;
+  margin-bottom: 20px;
 }
 
 .header-container {
@@ -39,6 +45,25 @@
 .header-link + .header-link {
   margin-left: 16px !important;
 
+}
+
+.header-carousel {
+  position: relative;
+  margin-top: -140px
+}
+
+.header-carousel__content {
+  display: flex;
+  position: absolute;
+  width: 100%;
+  top: 172px;
+  bottom: 30px;
+  justify-content: center;
+}
+
+.header-carousel__content-container {
+  width: 100%;
+  max-width: 1200px
 }
 
 .cursor-pointer:hover {

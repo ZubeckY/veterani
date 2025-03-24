@@ -2,7 +2,7 @@
   <v-app>
     <main-header :user="userFromDB.value"/>
 
-    <v-main>
+    <v-main style="margin-top: 140px;">
       <Nuxt :userFromDB="userFromDB"/>
     </v-main>
 
