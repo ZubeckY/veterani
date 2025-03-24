@@ -9,6 +9,10 @@
   --mainBlueTransparent: #4874B870;
 }
 
+.loadingBlock {
+  height: calc(100vh - 140px)
+}
+
 .fullSize {
   width: 100% !important;
   height: 100vh !important;
@@ -16,6 +20,33 @@
 
 .mainBlue {
   background-color: var(--mainBlue) !important;
+}
+
+.header {
+  position: relative;
+  margin-bottom: 20px;
+  top: 20px;
+}
+
+.header-container {
+  border-radius: 13px !important;
+}
+
+.header-link {
+  font-size: 18px !important;
+}
+
+.header-link + .header-link {
+  margin-left: 16px !important;
+
+}
+
+.cursor-pointer:hover {
+  cursor: pointer !important;
+}
+
+.lk {
+  margin-top: 40px;
 }
 
 .lk-container {

@@ -1,8 +1,6 @@
 <template>
   <div>
-    <div v-if="loading">
-      Загрузка...
-    </div>
+    <loading-block v-if="loading"/>
     <div v-else class="lk">
       <div class="lk-container">
 
@@ -12,20 +10,9 @@
           </div>
 
           <div class="d-flex flex-column ml-9">
-            <div class="lk-info__group">
-              <div class="lk-info__title">Имя Фамилия</div>
-              <div class="lk-info__value" v-text="getUserName"></div>
-            </div>
-
-            <div class="lk-info__group">
-              <div class="lk-info__title">Отчество</div>
-              <div class="lk-info__value" v-text="user.middleName"></div>
-            </div>
-
-            <div class="lk-info__group">
-              <div class="lk-info__title">Роль</div>
-              <div class="lk-info__value" v-text="user.rolePublic"></div>
-            </div>
+            <lk-info-group :group="{ label: 'Имя Фамилия', value: getUserName }"/>
+            <lk-info-group :group="{ label: 'Отчество', value: user.middleName }"/>
+            <lk-info-group :group="{ label: 'Роль', value: user.rolePublic }"/>
 
             <div class="lk-info__group">
               <div class="lk-info__title">Email</div>
@@ -77,35 +64,32 @@
               </div>
             </div>
 
-            <div class="lk-info__group">
-              <div class="lk-info__title">Активирован</div>
-              <div class="lk-info__value" v-text="user.activated ? 'Да' : 'Нет'"></div>
-            </div>
+            <lk-info-group :group="{ label: 'Активирован', value: user.activated ? 'Да' : 'Нет' }"/>
 
             <vertical-spacer/>
 
             <div class="d-flex flex-column">
               <div v-if="userAdminButton">
-                <v-btn width="240px"
+                <v-btn class="mt-2"
+                       width="240px"
                        outlined
                        color="primary"
                        @click="$router.push('/admin')">Админ панель
                 </v-btn>
               </div>
 
-
-              <v-btn width="240px"
+              <v-btn class="mt-2"
+                     width="240px"
                      outlined
                      color="primary">
                 Редактировать профиль
               </v-btn>
 
-
-
               <v-dialog v-model="logoutDialog"
                         max-width="360">
                 <template v-slot:activator="{ on, attrs }">
-                  <v-btn width="240px"
+                  <v-btn class="mt-2"
+                         width="240px"
                          outlined
                          color="red"
                          v-bind="attrs"
@@ -124,8 +108,7 @@
                            height="fit-content"
                            color="error"
                            small text
-                           @click="logoutDialog = false"
-                    >
+                           @click="logoutDialog = false">
                       Отмена
                     </v-btn>
 
@@ -134,8 +117,7 @@
                            height="fit-content"
                            color="primary"
                            small text
-                           @click="logoutFunction"
-                    >
+                           @click="logoutFunction">
                       Подтвердить
                     </v-btn>
                   </v-card-actions>
@@ -153,7 +135,7 @@
 
 <script lang="ts">
 import Cookie from 'cookie-universal'
-import {Vue, Component, Watch} from 'vue-property-decorator';
+import {Vue, Component, Watch, Inject} from 'vue-property-decorator';
 
 @Component({
   head(this: Lk): object {
@@ -163,6 +145,9 @@ import {Vue, Component, Watch} from 'vue-property-decorator';
   }
 })
 export default class Lk extends Vue {
+  @Inject('userFromDB') userFromDB: any;
+  user: any = {};
+
   loading: boolean = true;
   linkTitle: string = 'Личный кабинет пользователя - ';
   logoutDialog: boolean = false;
@@ -176,13 +161,49 @@ export default class Lk extends Vue {
     interval: undefined
   }
 
-  user: any = {};
-
   async mounted() {
     await this.getUserInfo()
     this.turningOnActivateDialog()
   }
 
+  /* Получаем пользователя, если он есть */
+  async getUserInfo() {
+    if (process.client) {
+
+      // Если не получилось взять пользователя с Default'а, пытаемся сделать запрос на БД еще раз
+      if (!this.userFromDB.value.id) {
+
+        return await this.$axios.get('/api/auth/lk/')
+          .then((res) => {
+            this.user = res.data.user
+            this.linkTitle = 'Личный кабинет - ' + res.data.user.firstName + ' ' + res.data.user.lastName
+          })
+          .catch((error: any) => {
+            if (error.response.status === 401 || error.response.status === 403) {
+              this.logoutFunction()
+            }
+          })
+          .finally(() => {
+            this.loading = false
+          })
+      }
+
+      // Если пользователя получили, просто присваиваем значения
+      this.user = this.userFromDB.value
+      this.linkTitle = 'Личный кабинет - ' + this.user.firstName + ' ' + this.user.lastName
+
+      this.loading = false
+    }
+  }
+
+  /* logout функция */
+  logoutFunction() {
+    const cookies = Cookie()
+    cookies.removeAll()
+    this.$router.push('/auth/login/')
+  }
+
+  /*АКТИВАЦИЯ EMAIL'А*/
   turningOnActivateDialog() {
     const {query} = this.$router.currentRoute
     const activateDialogFromQuery = query['activate-dialog']
@@ -192,33 +213,6 @@ export default class Lk extends Vue {
       }
     }
     this.activatedEmail.dialog = true
-  }
-
-  setQueryRouter() {
-    if (this.activatedEmail.dialog) {
-      const {query} = this.$router.currentRoute
-      if (!Object.keys(query).length) {
-        this.$router.replace({query: {'activate-dialog': 'true'}}).then(() => {
-          this.$nuxt.refresh();
-        });
-      }
-    }
-  }
-
-  clearQueryRouter() {
-    if (!this.activatedEmail.dialog) {
-      const {query} = this.$router.currentRoute
-      if (Object.keys(query).length) {
-        this.$router.replace({query: {}}).then(() => {
-          this.$nuxt.refresh();
-        });
-      }
-    }
-  }
-
-  @Watch('activatedEmail.dialog')
-  turningOffActivateDialog() {
-    return this.activatedEmail.dialog ? this.setQueryRouter() : this.clearQueryRouter()
   }
 
   activatedEmailSendCode() {
@@ -270,6 +264,35 @@ export default class Lk extends Vue {
       })
   }
 
+  /* Следим за статусом активации */
+  @Watch('activatedEmail.dialog')
+  turningOffActivateDialog() {
+    return this.activatedEmail.dialog ? this.setQueryRouter() : this.clearQueryRouter()
+  }
+
+  setQueryRouter() {
+    if (this.activatedEmail.dialog) {
+      const {query} = this.$router.currentRoute
+      if (!Object.keys(query).length) {
+        this.$router.replace({query: {'activate-dialog': 'true'}}).then(() => {
+          this.$nuxt.refresh();
+        });
+      }
+    }
+  }
+
+  clearQueryRouter() {
+    if (!this.activatedEmail.dialog) {
+      const {query} = this.$router.currentRoute
+      if (Object.keys(query).length) {
+        this.$router.replace({query: {}}).then(() => {
+          this.$nuxt.refresh();
+        });
+      }
+    }
+  }
+
+  /* Текст сообщения для подтверждения email'а */
   get sendCodeButtonValue() {
     if (this.activatedEmail.sendCodeAgain) {
       return 'Отправить код повторно' + (this.activatedEmail.timerDisabled ? (' ' + this.activatedEmail.timer) : '')
@@ -278,35 +301,13 @@ export default class Lk extends Vue {
     }
   }
 
-  async getUserInfo() {
-    if (process.client) {
-      await this.$axios.get('/api/auth/lk/')
-        .then((res) => {
-          this.user = res.data.user
-          this.linkTitle = 'Личный кабинет - ' + res.data.user.firstName + ' ' + res.data.user.lastName
-        })
-        .catch((error: any) => {
-          if (error.response.status === 401 || error.response.status === 403) {
-            this.logoutFunction()
-          }
-        })
-        .finally(() => {
-          this.loading = false
-        })
-    }
-  }
-
-  logoutFunction() {
-    const cookies = Cookie()
-    cookies.removeAll()
-    this.$router.push('/auth/login/')
-  }
-
+  /* Выводим кнопку админки */
   get userAdminButton() {
     const successRoles = ['admin', 'manager']
     return successRoles.includes(this.user['role'])
   }
 
+  /* Имя пользователя (имя + фамилия) */
   get getUserName() {
     return this.user.firstName + ' ' + this.user.lastName
   }
