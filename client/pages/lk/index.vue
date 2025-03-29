@@ -78,7 +78,8 @@
                 </v-btn>
               </div>
 
-              <v-btn class="mt-2"
+              <v-btn @click="$router.push('/lk/edit/')"
+                     class="mt-2"
                      width="240px"
                      outlined
                      color="primary">
@@ -149,7 +150,7 @@ export default class Lk extends Vue {
   user: any = {};
 
   loading: boolean = true;
-  linkTitle: string = 'Личный кабинет пользователя - ';
+  linkTitle: string = 'Личный кабинет пользователя';
   logoutDialog: boolean = false;
   activatedCode: string = '';
   activatedEmail: any = {
