@@ -291,7 +291,7 @@ userRouter.delete("/user/delete", checkValidAuth, async (req: Request, res: Resp
     }
 })
 
-userRouter.patch("/user/email/change", checkValidAuth, async (req: Request, res: Response): Promise<any> => {
+userRouter.post("/user/email/change", checkValidAuth, async (req: Request, res: Response): Promise<any> => {
     try {
         const userFromDB: any = await new AuthService().getUserFromCookies(req.headers['cookie'], res)
         if (!userFromDB.id) {
@@ -306,7 +306,7 @@ userRouter.patch("/user/email/change", checkValidAuth, async (req: Request, res:
             })
         }
 
-        if(!EmailValidator.validate(body.newEmail)) {
+        if (!EmailValidator.validate(body.newEmail)) {
             return res.status(400).send({
                 message: "Неправильный формат почты"
             })
@@ -314,7 +314,7 @@ userRouter.patch("/user/email/change", checkValidAuth, async (req: Request, res:
 
         userFromDB.activatedCode = emailService.generateOTPCode()
 
-        const userRepository = await AppDataSource.getRepository(User)
+        const userRepository = AppDataSource.getRepository(User)
         await userRepository.save(userFromDB)
 
         await emailService.sendAcceptCode(userFromDB.email, userFromDB.activatedCode)
@@ -323,8 +323,7 @@ userRouter.patch("/user/email/change", checkValidAuth, async (req: Request, res:
             email: body.email,
             message: "Письмо отправлено"
         })
-    }
-    catch (error) {
+    } catch (error) {
         return res.status(500).send({
             message: "ошибка"
         })
@@ -340,7 +339,7 @@ userRouter.patch("/user/email/accept", checkValidAuth, async (req: Request, res:
 
         const body: any = req.body
 
-        if (!(userFromDB.activatedCode == body.code)) {
+        if (userFromDB.activatedCode != body.code) {
             return res.status(400).send({
                 message: "Неверный код"
             })
@@ -350,14 +349,13 @@ userRouter.patch("/user/email/accept", checkValidAuth, async (req: Request, res:
         userFromDB.activatedCode = ""
         userFromDB.activated = false
 
-        const userRepository = await AppDataSource.getRepository(User)
+        const userRepository = AppDataSource.getRepository(User)
         await userRepository.save(userFromDB)
 
         res.status(200).send({
             message: "Почта обнавлена"
         })
-    }
-    catch (error) {
+    } catch (error) {
         return res.status(500).send({
             message: "ошибка"
         })

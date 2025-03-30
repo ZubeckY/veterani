@@ -15,10 +15,9 @@
                           type="email"
                           outlined/>
 
-            <v-text-field class="authCard__input"
+            <v-text-field label="Пароль"
+                          class="authCard__input"
                           v-model="model.password"
-                          label="Пароль"
-                          type="password"
                           :append-icon="showPass ? 'mdi-eye' : 'mdi-eye-off'"
                           :type="showPass ? 'text' : 'password'"
                           @click:append="showPass = !showPass"

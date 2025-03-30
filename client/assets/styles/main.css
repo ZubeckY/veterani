@@ -82,6 +82,10 @@
   justify-content: center;
 }
 
+.lk-content {
+  width: 100%;
+}
+
 .lk-info__group {
   display: flex;
 }

@@ -2,12 +2,11 @@
   <v-app>
     <main-header :user="userFromDB.value"/>
 
-    <v-main style="margin-top: 140px;">
+    <v-main style="margin-top: 140px; min-height: 70vh">
       <Nuxt :userFromDB="userFromDB"/>
     </v-main>
 
-    <footer>Footer</footer>
-
+    <main-footer/>
   </v-app>
 </template>
 

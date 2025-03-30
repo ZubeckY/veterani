@@ -13,76 +13,70 @@
             <lk-info-group :group="{ label: 'Имя Фамилия', value: getUserName }"/>
             <lk-info-group :group="{ label: 'Отчество', value: user.middleName }"/>
             <lk-info-group :group="{ label: 'Роль', value: user.rolePublic }"/>
+            <lk-info-group :useContent="true" :group="{ label: 'Email', value: user.email}">
+              <v-dialog v-model="activatedEmail.dialog"
+                        v-if="!user.activated"
+                        max-width="400">
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn v-bind="attrs"
+                         v-on="on">
+                    Подтвердить email
+                  </v-btn>
+                </template>
 
-            <div class="lk-info__group">
-              <div class="lk-info__title">Email</div>
-              <div class="lk-info__value" v-text="user.email"></div>
-              <div class="lk-info__value">
-                <v-dialog v-model="activatedEmail.dialog"
-                          v-if="!user.activated"
-                          max-width="400">
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn v-bind="attrs"
-                           v-on="on">
-                      Подтвердить email
+                <v-card class="ma-0 py-2">
+                  <v-card-title class="mt-2 mb-1 pa-0 px-2">
+                    Подтверждение почты
+                  </v-card-title>
+
+                  <div class="px-3">
+                    <v-otp-input v-model="activatedCode"
+                                 :disabled="activatedEmail.disabled"
+                                 @finish="tryActivateAccount" length="5"/>
+                  </div>
+
+                  <v-card-actions>
+                    <v-btn class="ma-0 pa-0"
+                           height="fit-content"
+                           color="error"
+                           small text
+                           @click="activatedEmail.dialog = false">
+                      Отмена
                     </v-btn>
-                  </template>
 
-                  <v-card class="ma-0 py-2">
-                    <v-card-title class="mt-2 mb-1 pa-0 px-2">
-                      Подтверждение почты
-                    </v-card-title>
-
-                    <div class="px-3">
-                      <v-otp-input v-model="activatedCode"
-                                   :disabled="activatedEmail.disabled"
-                                   @finish="tryActivateAccount" length="5"/>
-                    </div>
-
-                    <v-card-actions>
-                      <v-btn class="ma-0 pa-0"
-                             height="fit-content"
-                             color="error"
-                             small text
-                             @click="activatedEmail.dialog = false"
-                      >
-                        Отмена
-                      </v-btn>
-
-                      <v-spacer></v-spacer>
-                      <v-btn :disabled="activatedEmail.timerDisabled"
-                             v-text="sendCodeButtonValue"
-                             @click="activatedEmailSendCode"
-                             class="ma-0 pa-0"
-                             height="fit-content"
-                             color="primary"
-                             small text>
-                      </v-btn>
-                    </v-card-actions>
-                  </v-card>
-                </v-dialog>
-              </div>
-            </div>
-
+                    <v-spacer></v-spacer>
+                    <v-btn :disabled="activatedEmail.timerDisabled"
+                           @click="activatedEmailSendCode"
+                           v-text="sendCodeButtonValue"
+                           class="ma-0 pa-0"
+                           height="fit-content"
+                           color="primary"
+                           small text>
+                    </v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-dialog>
+            </lk-info-group>
             <lk-info-group :group="{ label: 'Активирован', value: user.activated ? 'Да' : 'Нет' }"/>
 
             <vertical-spacer/>
 
             <div class="d-flex flex-column">
               <div v-if="userAdminButton">
-                <v-btn class="mt-2"
+                <v-btn @click="$router.push('/admin')"
+                       class="mt-2"
                        width="240px"
-                       outlined
                        color="primary"
-                       @click="$router.push('/admin')">Админ панель
+                       outlined>
+                  Админ панель
                 </v-btn>
               </div>
 
               <v-btn @click="$router.push('/lk/edit/')"
                      class="mt-2"
                      width="240px"
-                     outlined
-                     color="primary">
+                     color="primary"
+                     outlined>
                 Редактировать профиль
               </v-btn>
 
@@ -90,11 +84,11 @@
                         max-width="360">
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn class="mt-2"
-                         width="240px"
-                         outlined
-                         color="red"
                          v-bind="attrs"
-                         v-on="on">
+                         v-on="on"
+                         width="240px"
+                         color="red"
+                         outlined>
                     Выйти из профиля
                   </v-btn>
                 </template>
@@ -105,20 +99,20 @@
                   </v-card-text>
 
                   <v-card-actions>
-                    <v-btn class="ma-0 pa-0"
+                    <v-btn @click="logoutDialog = false"
+                           class="ma-0 pa-0"
                            height="fit-content"
                            color="error"
-                           small text
-                           @click="logoutDialog = false">
+                           small text>
                       Отмена
                     </v-btn>
 
                     <v-spacer></v-spacer>
                     <v-btn class="ma-0 pa-0"
+                           @click="logoutFunction"
                            height="fit-content"
                            color="primary"
-                           small text
-                           @click="logoutFunction">
+                           small text>
                       Подтвердить
                     </v-btn>
                   </v-card-actions>
