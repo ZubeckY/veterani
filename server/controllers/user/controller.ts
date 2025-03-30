@@ -7,6 +7,7 @@ import AuthService from "../../service/authService";
 import EmailService from "../../service/emailService";
 import {checkValidAuth} from "../../middleware/auth/checkValidAuth";
 import {Role, roleTypeText} from "../../types/role";
+import * as EmailValidator from 'email-validator';
 
 const emailService = new EmailService();
 const userRouter = Router();
@@ -286,6 +287,79 @@ userRouter.delete("/user/delete", checkValidAuth, async (req: Request, res: Resp
     } catch (error) {
         return res.status(500).send({
             message: "Ошибка изменения кода"
+        })
+    }
+})
+
+userRouter.patch("/user/email/change", checkValidAuth, async (req: Request, res: Response): Promise<any> => {
+    try {
+        const userFromDB: any = await new AuthService().getUserFromCookies(req.headers['cookie'], res)
+        if (!userFromDB.id) {
+            return userFromDB
+        }
+
+        const body: any = req.body
+
+        if (body.currentEmail != userFromDB.email) {
+            return res.status(400).send({
+                message: "Неправильная подключенная почта"
+            })
+        }
+
+        if(!EmailValidator.validate(body.newEmail)) {
+            return res.status(400).send({
+                message: "Неправильный формат почты"
+            })
+        }
+
+        userFromDB.activatedCode = emailService.generateOTPCode()
+
+        const userRepository = await AppDataSource.getRepository(User)
+        await userRepository.save(userFromDB)
+
+        await emailService.sendAcceptCode(userFromDB.email, userFromDB.activatedCode)
+
+        res.status(200).send({
+            email: body.email,
+            message: "Письмо отправлено"
+        })
+    }
+    catch (error) {
+        return res.status(500).send({
+            message: "ошибка"
+        })
+    }
+})
+
+userRouter.patch("/user/email/accept", checkValidAuth, async (req: Request, res: Response): Promise<any> => {
+    try {
+        const userFromDB: any = await new AuthService().getUserFromCookies(req.headers['cookie'], res)
+        if (!userFromDB.id) {
+            return userFromDB
+        }
+
+        const body: any = req.body
+
+        if (!(userFromDB.activatedCode == body.code)) {
+            return res.status(400).send({
+                message: "Неверный код"
+            })
+        }
+
+        userFromDB.email = body.newEmail
+        userFromDB.activatedCode = ""
+        userFromDB.activated = false
+
+        const userRepository = await AppDataSource.getRepository(User)
+        await userRepository.save(userFromDB)
+
+        res.status(200).send({
+            message: "Почта обнавлена"
+        })
+    }
+    catch (error) {
+        return res.status(500).send({
+            message: "ошибка"
         })
     }
 })

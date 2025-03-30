@@ -51,6 +51,28 @@ export default class EmailService {
         }
     }
 
+    async sendAcceptCode(to: string, code: string) {
+        try {
+            const message = `
+                <div>
+                  <h1>Ваш код потверждения: ${code}</h1>
+                  <br />
+                  <p>Если действие выполняете не вы, проигнорируйте это письмо</p>
+                </div>
+              `
+
+            await this.transporter.sendMail({
+                from: config.SMTP_USER,
+                to,
+                subject: 'Код потверждения смены почты',
+                text: '',
+                html: message,
+            })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     async sendMessageYouActivated(to: string) {
         try {
             const message = `
