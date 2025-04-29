@@ -7,23 +7,25 @@ import {File} from "../../entity"
 const fileRouter = Router();
 const uploadService = new UploadService();
 
-fileRouter.post("/file/upload", checkValidAuth, uploadService.uploadImage("file"), async (req: Request, res: Response): Promise<any> => {
+fileRouter.post("/file/upload", checkValidAuth, uploadService.upload("file"), async (req: Request, res: Response): Promise<any> => {
     try {
         if (!req.file) {
             console.log('нет файла')
         }
 
-        const fileFromReq: any= req.file;
-
+        const fileFromReq: any = req.file;
+        const fileType = fileFromReq.mimetype
         const path: any = fileFromReq.path
-        await uploadService.sharpImage(path)
+
+        if (fileType.split("/")[0] === 'image') {
+            await uploadService.sharpImage(path)
+        }
 
         const fileRepository = AppDataSource.getRepository(File)
-
         const file = new File()
 
         file.name = fileFromReq.filename
-        file.typeFile = "image"
+        file.typeFile = fileType
         file.path = path
         file.published = false
         file.used = false

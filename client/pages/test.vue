@@ -4,9 +4,7 @@
     <v-form ref="form" @submit.prevent>
       <v-file-input @change="onFileChange"
                     v-model="file"
-                    label="Выберите файл"
-                    accept=" image/*" />
-
+                    label="Выберите файл"/>
       <v-card max-width="450" elevation="0">
         <v-img max-width="450"
                :src="imageValue"
@@ -56,10 +54,6 @@ export default class test extends Vue {
       return
     }
 
-    if (!this.file.type.match('image.*')) {
-      return false;
-    }
-
     const that = this
     const reader = new FileReader()
 
@@ -84,11 +78,11 @@ export default class test extends Vue {
     })
       .then((response: any) => {
         this.success = 'Файл успешно загружен: ' + response.data.message;
-        this.error = null; // очищаем предыдущее сообщение об ошибке
+        this.error = null;
       })
       .catch((error: any) => {
         this.error = 'Произошла ошибка при загрузке файла: ' + error.message;
-        this.success = null; // очищаем предыдущее сообщение об успехе
+        this.success = null;
       })
       .finally(() => {
         this.overlay = false;

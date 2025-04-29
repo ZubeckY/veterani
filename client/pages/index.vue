@@ -24,6 +24,10 @@
 
     </div>
 
+    <iframe src="https://yandex.ru/map-widget/v1/?um=constructor%3A0d1b68e21fa797ec4e13fe0f17a586d57858fa3af35d57a4488319675ea84521&amp;source=constructor"
+            width="100%" height="540" frameborder="0">
+    </iframe>
+
   </div>
 </template>
 

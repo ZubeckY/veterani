@@ -1,10 +1,10 @@
 import sharp from "sharp"
 import multer from "multer"
 import * as uuid from 'uuid'
-import * as fs from "fs";
+import * as fs from "fs"
 
 export default class UploadService {
-    uploadImage = (fieldName: string) => {
+    upload = (fieldName: string) => {
         return multer({
             storage: multer.diskStorage({
                 destination: 'uploads/',
@@ -26,16 +26,48 @@ export default class UploadService {
                     callback(null, fullNameVal)
                 }
             }),
-
             limits: {
                 fileSize: 50 * 1024 * 1024
             },
-
             fileFilter: (req: Express.Request, file: Express.Multer.File, cb: Function) => {
-                if (file.mimetype.split("/")[0] === 'image') {
+                const requiredFileTypes: any = [
+                    // image files
+                    'image/jpeg',
+                    'image/jpg',
+                    'image/png',
+                    'image/gif',
+                    'image/webp',
+                    'image/avif',
+                    'image/apng',
+                    'image/bmp',
+                    'image/svg+xml',
+                    'image/tiff',
+                    // zip files
+                    'application/vnd.rar',
+                    'application/x-tar',
+                    'application/zip',
+                    'application/x-zip-compressed',
+                    'application/x-7z-compressed',
+                    // text and office files
+                    'text/plain',
+                    'application/msword',
+                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                    'application/vnd.oasis.opendocument.presentation',
+                    'application/vnd.oasis.opendocument.spreadsheet',
+                    'application/vnd.oasis.opendocument.csv',
+                    'application/vnd.oasis.opendocument.text',
+                    'application/pdf',
+                    'application/vnd.ms-powerpoint',
+                    'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+                    'application/vnd.openxmlformats-officedocument.spreadsheetml.presentation',
+                    'application/rtf',
+                    'application/vnd.ms-excel',
+                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                ]
+                if (requiredFileTypes.includes(file.mimetype)) {
                     cb(null, true);
                 } else {
-                    cb(new Error('Only JPEG and PNG images are allowed.'), false);
+                    cb(new Error('Файл не поддерживается!'), false);
                 }
             }
         }).single(fieldName);
@@ -57,6 +89,10 @@ export default class UploadService {
             .jpeg({quality: 80})
             .toBuffer()
 
-        return fs.writeFileSync(path, compressedImageBuffer);
+        return this.save(path, compressedImageBuffer)
+    }
+
+    save(path: string, data: any) {
+        return fs.writeFileSync(path, data);
     }
 };
