@@ -4,6 +4,7 @@ import mainRouter from "./admin/main/controller";
 import adminRouter from "./admin/user/controller";
 import votingRouter from "./admin/voting/controller";
 import fileRouter from "./file/controller";
+import contactInfoRouter from "./admin/contactInfo/controller";
 
 const controller: any = [
     userRouter,
@@ -12,6 +13,7 @@ const controller: any = [
     adminRouter,
     votingRouter,
     fileRouter,
+    contactInfoRouter,
 ];
 
 export default controller;
