@@ -353,7 +353,7 @@ userRouter.patch("/user/email/accept", checkValidAuth, async (req: Request, res:
         await userRepository.save(userFromDB)
 
         res.status(200).send({
-            message: "Почта обнавлена"
+            message: "Почта обновлена"
         })
     } catch (error) {
         return res.status(500).send({
