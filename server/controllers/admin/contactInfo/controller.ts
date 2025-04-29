@@ -18,7 +18,7 @@ contactInfoRouter.get("/admin/contactInfo/get", async (req: Request, res: Respon
     }
 })
 
-contactInfoRouter.post("/admin/contactInfo/post", checkRole, async (req: Request, res: Response): Promise<any> => {
+contactInfoRouter.post("/admin/contactInfo/false", checkRole, async (req: Request, res: Response): Promise<any> => {
     try {
         const contactInfo = req.body;
 
@@ -32,7 +32,7 @@ contactInfoRouter.post("/admin/contactInfo/post", checkRole, async (req: Request
         }
 
         const contactInfoRepository = AppDataSource.getRepository(ContactInfo)
-        contactInfoRepository.save(contactInfo)
+        await contactInfoRepository.save(contactInfo)
 
         return res.status(200).send({
             message: "Данные обновлены"
@@ -44,7 +44,7 @@ contactInfoRouter.post("/admin/contactInfo/post", checkRole, async (req: Request
     }
 })
 
-contactInfoRouter.put("/admin/contactInfo/put", checkRole, async (req: Request, res: Response): Promise<any> => {
+contactInfoRouter.put("/admin/contactInfo/true", checkRole, async (req: Request, res: Response): Promise<any> => {
     try {
         const contactInfo = req.body;
 
@@ -58,20 +58,21 @@ contactInfoRouter.put("/admin/contactInfo/put", checkRole, async (req: Request, 
         }
 
         const contactInfoRepository = AppDataSource.getRepository(ContactInfo)
-        const contactInfoEntity: any = contactInfoRepository.findOneBy({id: contactInfo.id})
+        const contactInfoEntity: any = await contactInfoRepository.find()
 
-        if(contactInfoEntity == null) {
+        if(!contactInfoEntity.length) {
             return res.status(403).send({
                 message: "Ошибка записи"
             })
         }
+        const contactElement = contactInfoEntity[0]
 
-        contactInfoEntity.phone = contactInfo.phone
-        contactInfoEntity.email= contactInfo.email
-        contactInfoEntity.address = contactInfo.address
-        contactInfoEntity.mapping = contactInfo.mapping
+        contactElement.phone = contactInfo.phone
+        contactElement.email= contactInfo.email
+        contactElement.address = contactInfo.address
+        contactElement.mapping = contactInfo.mapping
 
-        contactInfoRepository.save(contactInfoEntity)
+        await contactInfoRepository.save(contactElement)
 
         return res.status(200).send({
             message: "Данные обновлены"
