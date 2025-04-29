@@ -62,11 +62,11 @@ mainRouter.post("/admin/init-user/", checkRole, async (req: Request, res: Respon
                         text: "Публикации",
                         link: '/admin/blog'
                     },
-                    {
-                        icon: "mdi-poll",
-                        text: "Журнал событий",
-                        link: '/admin/journal'
-                    },
+                    // {
+                    //     icon: "mdi-poll",
+                    //     text: "Журнал событий",
+                    //     link: '/admin/journal'
+                    // },
                     {
                         icon: "mdi-text-box-outline",
                         text: "Данные организации",
