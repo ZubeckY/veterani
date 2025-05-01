@@ -21,17 +21,89 @@
 
         </div>
       </div>
-
     </div>
 
-    <iframe src="https://yandex.ru/map-widget/v1/?um=constructor%3A0d1b68e21fa797ec4e13fe0f17a586d57858fa3af35d57a4488319675ea84521&amp;source=constructor"
-            width="100%" height="540" frameborder="0">
+    <div class="flag-bkg mainFlagBlock" :style="'background-image: url('+ bkgFlagImage +');'">
+      <section class="aboutUs">
+        <div class="aboutUs-container">
+          <v-card-title class="aboutUs-title block-title">О нас</v-card-title>
+          <v-card-text class="aboutUs-text block-text">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+            sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
+            nisi ut aliquip ex ea commodo consequat.
+          </v-card-text>
+          <div class="aboutUs-video">
+            <v-img contain src="/aboutUs.png" width="100%" height="590px"></v-img>
+          </div>
+        </div>
+      </section>
+
+      <section class="imageGroup">
+        <div class="imageGroup-container">
+
+          <article class="imageGroup-card">
+            <v-img class="imageGroup-card__image"
+                   width="610px" height="420px"
+                   src="/imageGroup1.png"/>
+
+            <v-card-text class="imageGroup-text block-text">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+              sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            </v-card-text>
+          </article>
+
+          <article class="imageGroup-card">
+            <v-img class="imageGroup-card__image"
+                   width="610px" height="420px"
+                   src="/imageGroup2.png"/>
+
+            <v-card-text class="imageGroup-text block-text">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+              sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            </v-card-text>
+          </article>
+        </div>
+      </section>
+    </div>
+
+    <section class="ourTeam">
+      <div class="ourTeam-container">
+
+        <v-card-title class="ourTeam-title block-title">Наша команда</v-card-title>
+        <v-card-text class="ourTeam-text block-text">Познакомьтесь с нашей командой</v-card-text>
+
+        <div class="ourTeam-members">
+
+
+          <article class="ourTeam-card" v-for="i in 4" :key="i">
+            <div class="ourTeam-card__container">
+              <v-img class="ourTeam-card__image" src="/placeholder_lk.jpg"/>
+
+              <v-card-text class="ourTeam-card__name">Фамилия Имя Отчество</v-card-text>
+              <v-card-text class="ourTeam-card__memberLabel">Член нашей команды</v-card-text>
+
+            </div>
+          </article>
+
+
+        </div>
+
+      </div>
+    </section>
+
+    <iframe
+      style="margin-top: 80px;"
+      src="https://yandex.ru/map-widget/v1/?um=constructor%3A0d1b68e21fa797ec4e13fe0f17a586d57858fa3af35d57a4488319675ea84521&amp;source=constructor"
+      width="100%" height="540" frameborder="0">
     </iframe>
 
   </div>
 </template>
 
 <script lang="ts">
+// @ts-ignore
+import bkgFlagImage from '~/static/flag-russia.png'
 import {Vue, Component} from 'vue-property-decorator';
 
 @Component({
@@ -42,6 +114,7 @@ import {Vue, Component} from 'vue-property-decorator';
   }
 })
 export default class Pages extends Vue {
+  bkgFlagImage: any = bkgFlagImage;
   items: any = [
     {
       src: '/api/media/24-03-2025-df69489b-fbcd-4a62-88f3-661be8e94a0b.png'

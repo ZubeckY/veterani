@@ -26,6 +26,7 @@
   background-color: var(--mainBlueTransparent) !important;
 }
 
+/* header */
 .header {
   position: absolute;
   width: 100%;
@@ -70,6 +71,7 @@
   cursor: pointer !important;
 }
 
+/* lk */
 .lk {
   margin-top: 40px;
 }
@@ -97,4 +99,144 @@
 .lk-info__title {
   width: 100vw;
   max-width: 130px;
+}
+
+/* flag */
+.flag-bkg {
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+  background-size: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.mainFlagBlock {
+  position: relative;
+  margin-top: 250px;
+}
+
+.block-title {
+  justify-content: center;
+  font-size: 50px !important;
+  letter-spacing: normal !important;
+}
+
+.block-text {
+  font-size: 26px !important;
+  font-weight: 300 !important;
+  line-height: 1.25 !important;
+  letter-spacing: normal !important;
+}
+
+/* about-us */
+.aboutUs {
+  position: relative;
+  top: -200px;
+}
+
+.aboutUs-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.aboutUs-text {
+  max-width: 900px;
+  text-align: center;
+  margin: 20px auto 0;
+}
+
+.aboutUs-video {
+  margin-top: 20px;
+  border-radius: 13px;
+}
+
+/* imageGroup */
+.imageGroup-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.imageGroup-card {
+  width: 100%;
+  max-width: 620px;
+}
+
+.imageGroup-card + .imageGroup-card {
+  margin-left: 40px;
+}
+
+.imageGroup-card__image {
+  border-radius: 13px !important;
+}
+
+.imageGroup-card:last-child {
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+/* ourTeam */
+.ourTeam {
+  position: relative;
+  top: 0;
+  margin-top: 80px;
+}
+
+.ourTeam-container {
+  width: 100%;
+  margin: 0 auto;
+  max-width: 1200px;
+}
+
+.ourTeam-text {
+  text-align: center;
+  margin: 20px auto 0;
+}
+
+.ourTeam-members {
+  display: flex;
+  margin-top: 40px;
+  align-items: center;
+  justify-content: center;
+}
+
+.ourTeam-card {
+  width: 300px;
+  height: 430px;
+  padding: 1px;
+  border-radius: 13px;
+  background: #fdfdfd;
+  border: solid 1px #F1F1F1FF;
+}
+
+.ourTeam-card + .ourTeam-card {
+  margin-left: 30px;
+}
+
+.ourTeam-card__container {
+  width: 100%;
+  height: 100%;
+  border-radius: 13px;
+}
+
+.ourTeam-card__image {
+  margin: 7px !important;
+  border-radius: 13px !important;
+}
+
+.ourTeam-card__name {
+  margin-top: 30px;
+  font-weight: 500 !important;
+  font-size: 20px !important;
+  text-align: center;
+}
+
+.ourTeam-card__memberLabel {
+  font-size: 18px !important;
+  font-weight: 300 !important;
+  padding-top: 0 !important;
+  margin-top: 10px !important;
+  text-align: center;
 }
