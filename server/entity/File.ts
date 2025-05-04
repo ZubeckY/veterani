@@ -8,7 +8,7 @@ export class File {
 
     @Column({
         nullable: false,
-        comment: "Назвние файла"
+        comment: "Название файла"
     })
     name!: string;
 

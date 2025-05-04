@@ -3,9 +3,29 @@ import {checkValidAuth} from "../../middleware/auth/checkValidAuth";
 import UploadService from "../../service/uploadService";
 import {AppDataSource} from "../../connectDb";
 import {File} from "../../entity"
+import {onlyAdmin} from "../../middleware/auth/onlyAdmin";
 
 const fileRouter = Router();
 const uploadService = new UploadService();
+
+fileRouter.get("/admin/file/list", onlyAdmin, async (req: Request, res: Response): Promise<any> => {
+    try {
+        const fileRepository = AppDataSource.getRepository(File)
+        const files = await fileRepository.find()
+
+        return res
+            .status(200)
+            .send({
+                files
+            })
+
+    } catch (error) {
+        console.log(error)
+        return res.status(503).send({
+            message: error
+        })
+    }
+})
 
 fileRouter.post("/file/upload", checkValidAuth, uploadService.upload("file"), async (req: Request, res: Response): Promise<any> => {
     try {

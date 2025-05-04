@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="width: calc(100vw - 200px)">
     <v-skeleton-loader v-if="loading" type="table"/>
 
     <div class="d-flex flex-column" style="width: 100%; height: calc(100vh - 30px)" v-else>
@@ -17,14 +17,14 @@
 
         <!-- Активирован -->
         <template v-slot:item.activated="{ item }">
-          <td :class="'text-start ' + item.activated ? 'green--text' : 'red--text'">
+          <td :class="'text-start ' + getCurrentColor(item.activated)">
             {{ item.activated ? 'Да' : 'Нет' }}
           </td>
         </template>
 
         <!-- Заблокирован -->
         <template v-slot:item.block="{ item }">
-          <td :class="'text-start ' + item.block ? 'green--text' : 'red--text'">
+          <td :class="'text-start ' + getCurrentColor(item.block)">
             {{ item.block ? 'Да' : 'Нет' }}
           </td>
         </template>
@@ -172,6 +172,10 @@ export default class Users extends Vue {
       month: 'short',
       year: 'numeric',
     })
+  }
+
+  getCurrentColor(value: boolean) {
+    return value ? 'green--text' : 'red--text'
   }
 
   get pagSize(): number {
