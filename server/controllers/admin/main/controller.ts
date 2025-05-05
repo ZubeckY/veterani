@@ -48,11 +48,6 @@ mainRouter.post("/admin/init-user/", checkRole, async (req: Request, res: Respon
                         link: '/admin/users'
                     },
                     {
-                        icon: "mdi-vote-outline",
-                        text: "Голосования",
-                        link: '/admin/voting'
-                    },
-                    {
                         icon: "mdi-file-document-multiple-outline",
                         text: "Документы",
                         link: '/admin/docs'

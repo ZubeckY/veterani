@@ -99,21 +99,6 @@ export default class Users extends Vue {
     this.loading = false;
   }
 
-  async createVote() {
-    // await this.$axios.post('/api/admin/voting/create')
-    await this.$axios.get('/api/admin/voting/list')
-      .then(res => {
-        console.log(res)
-
-        const item = res.data[0].votingResult
-        console.log(JSON.parse(item))
-
-      })
-      .catch(err => {
-        console.log(err)
-      })
-  }
-
   async getRoleList() {
     await this.$axios.post('/api/admin/user/role-list/')
       .then((response) => {
