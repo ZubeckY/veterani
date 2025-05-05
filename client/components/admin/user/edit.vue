@@ -1,70 +1,36 @@
 <template>
   <div>
-
-    <v-dialog
-      v-model="dialog"
-      max-width="500px"
-    >
+    <v-dialog v-model="dialog" max-width="600px">
       <template v-slot:activator="{ on, attrs }">
-        <v-icon color="primary" v-bind="attrs" v-on="on">mdi-pencil</v-icon>
+        <v-icon v-bind="attrs"
+                v-on="on"
+                color="primary">
+          mdi-pencil
+        </v-icon>
       </template>
       <v-card v-if="dialog">
         <v-card-title>
           <span class="text-h5 text-pre-wrap">{{ dialogName }}</span>
         </v-card-title>
 
-        <v-card-text>
-          <v-container>
-            <v-row>
-              <v-col
-                cols="12"
-                sm="6"
-                md="4"
-              >
-                <v-checkbox
-                  v-model="itemEdit.activated"
-                  label="Активация"
-                ></v-checkbox>
-              </v-col>
-              <v-col
-                cols="12"
-                sm="6"
-                md="4"
-              >
-                <v-checkbox
-                  v-model="itemEdit.blocked"
-                  label="Заблокирован"
-                ></v-checkbox>
-              </v-col>
-              <v-col
-                cols="12"
-                sm="6"
-                md="4"
-              >
-                <v-autocomplete
-                  v-model="itemEdit.role"
-                  :items="items">
-
-                </v-autocomplete>
-              </v-col>
-            </v-row>
-          </v-container>
+        <v-card-text class="d-flex align-center justify-center">
+          <v-checkbox class="mr-3" v-model="itemEdit.activated" label="Активация"/>
+          <v-checkbox class="mr-3" v-model="itemEdit.blocked" label="Заблокирован"/>
+          <v-autocomplete v-model="itemEdit.role"
+                          item-text="value"
+                          item-value="key"
+                          :items="roles"
+                          hide-details
+                          outlined
+                          dense/>
         </v-card-text>
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn
-            color="blue darken-1"
-            text
-            @click="closeDialog"
-          >
+          <v-btn color="blue darken-1" text @click="closeDialog">
             Отменить
           </v-btn>
-          <v-btn
-            color="blue darken-1"
-            text
-            @click="saveEdit"
-          >
+          <v-btn color="blue darken-1" text @click="saveEdit">
             Сохранить
           </v-btn>
         </v-card-actions>
@@ -81,25 +47,33 @@ import {Vue, Component, Prop, Watch} from 'vue-property-decorator';
 export default class edit extends Vue {
   @Prop() item: any
 
-  itemEdit: any
   dialog: boolean = false;
   dialogName: string = '';
-  items: any
+
+  items: any = []
+  roles: any = []
+  itemEdit: any = {}
+
+  async mounted() {
+    await this.getRoleList()
+  }
 
   @Watch("dialog")
   DialogLoad() {
     if (!this.dialog) return
-    this.itemEdit = Object.assign(this.item)
+    this.itemEdit = JSON.parse(JSON.stringify(this.item))
     this.dialogName = `Редактирование пользователя:\n${this.userName}`
-    this.getItems()
+  }
+
+  async getRoleList() {
+    await this.$axios.post('/api/admin/user/role-list/')
+      .then((response) => {
+        this.roles = response.data.roles
+      })
   }
 
   get userName() {
     return `${this.itemEdit.firstName} ${this.itemEdit.lastName}`;
-  }
-
-  getItems() {
-    this.items = ["Пользователь", "Модератор", "Админ"];
   }
 
   saveEdit() {
@@ -107,10 +81,9 @@ export default class edit extends Vue {
     this.closeDialog();
   }
 
-  closeDialog () {
+  closeDialog() {
     this.dialog = false
   }
-
 }
 </script>
 

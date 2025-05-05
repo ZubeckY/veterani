@@ -96,7 +96,6 @@ export default class Users extends Vue {
     this.loading = true;
     await this.getRoleList()
     await this.getUserList()
-
     this.loading = false;
   }
 
