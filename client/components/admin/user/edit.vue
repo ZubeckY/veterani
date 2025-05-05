@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <v-form>
     <v-dialog v-model="dialog" max-width="600px">
       <template v-slot:activator="{ on, attrs }">
         <v-icon v-bind="attrs"
@@ -37,7 +37,7 @@
       </v-card>
     </v-dialog>
 
-  </div>
+  </v-form>
 </template>
 
 <script lang="ts">
@@ -76,9 +76,18 @@ export default class edit extends Vue {
     return `${this.itemEdit.firstName} ${this.itemEdit.lastName}`;
   }
 
-  saveEdit() {
-    this.$emit('saveEdit', this.itemEdit);
-    this.closeDialog();
+  async saveEdit() {
+    const link = '/api/admin/user/edit/' + this.itemEdit.id
+    await this.$axios.post(link, this.itemEdit)
+      .then((response) => {
+        this.$emit('saveEdit');
+      })
+      .then(() => {
+        this.closeDialog();
+      })
+      .catch((error) => {
+        console.log(error);
+      })
   }
 
   closeDialog() {

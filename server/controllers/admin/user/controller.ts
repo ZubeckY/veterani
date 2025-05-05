@@ -34,21 +34,29 @@ adminRouter.post("/admin/user/edit/:id", onlyAdmin, async (req: Request, res: Re
 
         let sendEmail = false
 
-        if(userFromDB.activated != body.activated)
+        if (userFromDB.activated != body.activated) {
             userFromDB.activated = body.activated
-        if(userFromDB.role != body.role)
+        }
+        if (userFromDB.role != body.role) {
             userFromDB.role = body.role
-        if(userFromDB.block != body.block) {
+        }
+        if (userFromDB.block != body.block) {
             userFromDB.block = body.block
             sendEmail = true
-            }
+        }
+
         await userRepository.save(userFromDB);
 
-        if(sendEmail)
+        if (sendEmail) {
             await emailService.sendEmailNotificationBlock(userFromDB.email, userFromDB.block ?? false)
+        }
 
-        return res.status(200);
+        return res
+            .status(200)
+            .send({message: 'ok'})
     } catch (error) {
+        console.log(error)
+
         return res
             .status(404)
             .send({
@@ -80,7 +88,7 @@ adminRouter.get("/admin/user/list", checkRole, async (req: Request, res: Respons
             block: user.block
         }));
 
-        return res.status(200).json({ users });
+        return res.status(200).json({users});
 
 
     } catch (error) {
