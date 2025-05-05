@@ -1,10 +1,12 @@
 <template>
-  <div style="width: calc(100vw - 200px)">
+  <div>
     <v-skeleton-loader v-if="loading" type="table"/>
 
     <div class="d-flex flex-column" style="width: 100%; height: calc(100vh - 30px)" v-else>
       <v-data-table :items="data"
                     :headers="headers"
+                    :sort-desc="true"
+                    sort-by="created"
                     hide-default-footer>
 
         <!-- Файл выложен -->
@@ -64,7 +66,7 @@ export default class Docs extends Vue {
     {text: 'Название файла', value: 'name'},
     {text: 'Тип файла', value: 'typeFile'},
     {text: 'Файл выложен', value: 'published'},
-    {text: 'Создан', value: 'created'},
+    {text: 'Дата создания', value: 'created'},
     {text: '', value: 'actions', sortable: false},
   ]
 
@@ -76,7 +78,7 @@ export default class Docs extends Vue {
     this.$axios.get('/api/admin/file/list')
       .then((res) => {
         this.data = res.data.files
-    })
+      })
   }
 
   getCreatedDate(created: Date) {

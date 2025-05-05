@@ -37,7 +37,11 @@
 }
 
 .header-container {
-  border-radius: 13px !important;
+  width: 100%;
+  max-width: 1200px;
+  border-radius: 13px;
+  background-color: var(--mainBlue);
+  box-shadow: rgba(43, 81, 137, 0.50) 0 7px 29px 0;
 }
 
 .header-link {

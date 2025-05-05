@@ -35,7 +35,7 @@
         </v-btn>
       </v-card>
 
-      <div>
+      <div style="width: calc(100vw - 200px)">
         <Nuxt/>
       </div>
 

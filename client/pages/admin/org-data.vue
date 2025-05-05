@@ -1,36 +1,46 @@
 <template>
-  <div>
-    <v-form class="mt-5 ml-5" style="width: 20vw">
-      <v-card-title class="pl-0 justify-center">Данные организации</v-card-title>
-      <v-text-field class="authCard__input"
-                    v-model="model.phone"
-                    label="Телефон"
-                    type="text"
-                    v-mask="`+7 (###) ###-##-##`"
-                    dense
-                    outlined/>
-      <v-text-field class="authCard__input"
-                    v-model="model.email"
-                    label="Email"
-                    type="email"
-                    dense
-                    outlined/>
-      <v-text-field class="authCard__input"
-                    v-model="model.address"
-                    label="Адрес"
-                    type="text"
-                    dense
-                    outlined/>
-      <v-text-field class="authCard__input"
-                    v-model="model.mapping"
-                    label="Карта"
-                    type="text"
-                    dense
-                    outlined/>
+  <div class="d-flex justify-center align-center">
+    <v-form class="mt-5 ml-5" style="width: 100%; max-width: 720px">
+      <v-card-title class="pa-0 pb-2 justify-center">Данные организации</v-card-title>
 
-      <div class="d-flex flex-column align-center">
-        <v-btn class="authCard__button"
-               large
+      <div class="d-flex justify-space-between flex-row flex-wrap">
+        <div style="width: 350px">
+          <v-text-field class="authCard__input"
+                        v-mask="`+7 (###) ###-##-##`"
+                        v-model="model.phone"
+                        label="Телефон"
+                        type="text"
+                        dense
+                        outlined/>
+          <v-text-field class="authCard__input"
+                        v-model="model.email"
+                        label="Email"
+                        type="email"
+                        dense
+                        outlined/>
+          <v-text-field class="authCard__input"
+                        v-model="model.address"
+                        label="Адрес"
+                        type="text"
+                        dense
+                        outlined/>
+          <v-text-field class="authCard__input"
+                        v-model="model.mapping"
+                        label="Карта"
+                        type="text"
+                        dense
+                        outlined/>
+        </div>
+
+        <iframe :src="model.mapping"
+                width="350"
+                height="260"
+                frameborder="0">
+        </iframe>
+      </div>
+
+      <div class="d-flex flex-column align-center mt-4">
+        <v-btn class="authCard__button px-9"
                width="fit-content"
                @click.prevent="save"
                outlined>Сохранить
@@ -63,10 +73,10 @@ export default class OrgData extends Vue {
   exist = false;
 
   async mounted() {
-    this.UpdateInfo()
+    await this.updateInfo()
   }
 
-  async UpdateInfo() {
+  async updateInfo() {
     await this.$axios.get("/api/admin/contactInfo/get")
       .then((res) => {
         const data = res.data
@@ -92,7 +102,7 @@ export default class OrgData extends Vue {
           console.log(err);
         })
     }
-    this.UpdateInfo()
+    await this.updateInfo()
   }
 }
 </script>
