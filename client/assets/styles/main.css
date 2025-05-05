@@ -7,6 +7,7 @@
 :root {
   --mainBlue: #2B5189;
   --mainBlueTransparent: #4874B870;
+  --box-shadow: rgba(149, 157, 165, 0.2) 0 8px 24px;
 }
 
 .loadingBlock {
@@ -111,7 +112,7 @@
   background-repeat: no-repeat;
 }
 
-.mainFlagBlock {
+.flag-bkg.mainFlagBlock {
   position: relative;
   margin-top: 250px;
 }

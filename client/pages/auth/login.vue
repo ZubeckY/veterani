@@ -1,44 +1,47 @@
 <template>
-  <div>
-    <v-form v-model="form" @submit.prevent lazy-validation>
-      <v-card class="authCard" elevation="0" :disabled="loading">
-        <div class="authCard__container">
+  <v-form v-model="form" @submit.prevent lazy-validation>
+    <v-card class="authCard" :disabled="loading">
+      <div class="authCard__container">
 
-          <div class="authCard__header">
-            <v-card-title class="authCard__title justify-center px-0">Авторизация</v-card-title>
-          </div>
-
-          <div class="authCard__body">
-            <v-text-field class="authCard__input"
-                          v-model="model.email"
-                          label="Email"
-                          type="email"
-                          outlined/>
-
-            <v-text-field label="Пароль"
-                          class="authCard__input"
-                          v-model="model.password"
-                          :append-icon="showPass ? 'mdi-eye' : 'mdi-eye-off'"
-                          :type="showPass ? 'text' : 'password'"
-                          @click:append="showPass = !showPass"
-                          outlined/>
-          </div>
-
-          <div class="authCard__footer d-flex align-center justify-center flex-column">
-
-            <v-btn class="authCard__button" large outlined @click="login">Вход</v-btn>
-            <v-btn class="authCard__button my-0 pa-0"
-                   small
-                   @click.prevent="$router.push('/auth/reg')"
-                   text>Зарегистрироваться
-            </v-btn>
-
-          </div>
-
+        <div class="authCard__header">
+          <v-card-title class="authCard__title justify-center px-0">Авторизация</v-card-title>
         </div>
-      </v-card>
-    </v-form>
-  </div>
+
+        <div class="authCard__body">
+          <v-text-field class="authCard__input"
+                        v-model="model.email"
+                        label="Email"
+                        type="email"
+                        outlined
+                        dense/>
+
+          <v-text-field label="Пароль"
+                        class="authCard__input"
+                        v-model="model.password"
+                        :append-icon="showPass ? 'mdi-eye' : 'mdi-eye-off'"
+                        :type="showPass ? 'text' : 'password'"
+                        @click:append="showPass = !showPass"
+                        outlined
+                        dense/>
+        </div>
+
+        <div class="authCard__footer login d-flex align-center justify-center flex-column">
+          <v-btn class="authCard__button px-9 mb-2" outlined @click="login">Вход</v-btn>
+          <v-btn class="authCard__button my-0 pa-0"
+                 @click.prevent="$router.push('/auth/reg')"
+                 color="primary" small text>
+            Зарегистрироваться
+          </v-btn>
+          <v-btn class="authCard__button my-0 pa-0"
+                 @click.prevent="$router.push('/')"
+                 color="primary" small text>
+            Перейти на сайт
+          </v-btn>
+        </div>
+
+      </div>
+    </v-card>
+  </v-form>
 </template>
 
 <script lang="ts">

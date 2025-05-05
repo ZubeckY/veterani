@@ -1,28 +1,31 @@
 .authCard {
-  padding: 100px 50px 30px;
-  border-radius: 70px !important;
-  border: 1px solid #000 !important;
-
+  display: flex;
+  padding: 30px 20px;
+  min-height: 480px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 30px !important;
+  box-shadow: var(--box-shadow) !important;
 }
 
 .authCard__container {
-  width: 620px;
+  width: 520px;
 }
 
 /* header */
 .authCard__title {
-  font-size: 80px;
+  font-size: 50px;
   font-weight: 300;
 }
 
 /* body */
 .authCard__body {
-  margin-top: 100px;
+  margin-top: 60px;
 }
 
 .authCard__input,
 .authCard__button {
-  border-radius: 20px !important;
+  border-radius: 13px !important;
 }
 
 /* footer */
@@ -30,9 +33,9 @@
   width: fit-content;
 }
 
-.authCard__button +
-.authCard__button {
-  margin-top: 20px !important;
+.authCard__footer.login {
+  position: relative;
+  top: 30px;
 }
 
 /* media screen */
