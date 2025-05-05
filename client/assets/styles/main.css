@@ -216,6 +216,10 @@
   border: solid 1px #F1F1F1FF;
 }
 
+.ourTeam-card.admin-card {
+  margin: 10px !important;
+}
+
 .ourTeam-card + .ourTeam-card {
   margin-left: 30px;
 }
@@ -229,6 +233,10 @@
 .ourTeam-card__image {
   margin: 7px !important;
   border-radius: 13px !important;
+}
+
+.ourTeam-card__image.admin-image {
+  position: relative;
 }
 
 .ourTeam-card__name {
