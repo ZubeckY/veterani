@@ -11,7 +11,7 @@ import AuthService from "../../../service/authService";
 const emailService = new EmailService();
 const adminRouter = Router()
 
-adminRouter.post("/admin/user/block/:id", onlyAdmin, async (req: Request, res: Response): Promise<any> => {
+adminRouter.post("/admin/user/edit/:id", onlyAdmin, async (req: Request, res: Response): Promise<any> => {
     try {
         const {id} = req.params
         if (!(Number.isInteger(+id))) {
@@ -22,20 +22,32 @@ adminRouter.post("/admin/user/block/:id", onlyAdmin, async (req: Request, res: R
                 })
         }
 
+        const body = req.body;
+
         const userRepository = AppDataSource.getRepository(User)
-        const userBlock = await userRepository.findOneBy({id: +id})
-        if (!userBlock) {
+        const userFromDB = await userRepository.findOneBy({id: +id})
+        if (!userFromDB) {
             return res.status(404).send({
                 error: "Пользователь найден"
             })
         }
 
-        userBlock.block = !(userBlock.block)
-        await userRepository.save(userBlock);
+        let sendEmail = false
 
-        await emailService.sendEmailNotificationBlock(userBlock.email, userBlock.block)
+        if(userFromDB.activated != body.activated)
+            userFromDB.activated = body.activated
+        if(userFromDB.role != body.role)
+            userFromDB.role = body.role
+        if(userFromDB.block != body.block) {
+            userFromDB.block = body.block
+            sendEmail = true
+            }
+        await userRepository.save(userFromDB);
 
-        return res.status(200).send({message: "Пользователь успешно " + (userBlock.block ? "заблокирован" : "разблокирован")});
+        if(sendEmail)
+            await emailService.sendEmailNotificationBlock(userFromDB.email, userFromDB.block ?? false)
+
+        return res.status(200);
     } catch (error) {
         return res
             .status(404)
