@@ -39,7 +39,7 @@
         <!-- Кнопки -->
         <template v-slot:item.actions="{ item }">
           <div class="d-flex">
-            <v-icon color="primary" class="mr-2">mdi-pencil</v-icon>
+            <admin-user-edit class="mr-3" :item="item" @saveEdit="saveEdit"/>
             <admin-user-delete :item="item" @deleteUser="deleteUser"/>
           </div>
         </template>
@@ -68,6 +68,7 @@ import {Vue, Component} from 'vue-property-decorator';
 })
 export default class Users extends Vue {
   loading: boolean = false;
+  dialog: boolean = false;
 
   page: number = 1;
   size: number = 10;
@@ -121,6 +122,10 @@ export default class Users extends Vue {
       .catch((error) => {
         console.log(error);
       })
+  }
+
+  async saveEdit (item: any) {
+    console.log(item);
   }
 
   getRoleColor(role: string): any {
