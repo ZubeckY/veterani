@@ -2,7 +2,7 @@
   <div>
     <div class="header-carousel">
 
-      <v-carousel height="100vh" hide-delimiters>
+      <v-carousel v-model="activeSlide" height="100vh" hide-delimiters>
         <v-carousel-item v-for="(item,i) in items" :key="i">
           <v-img :src="item.src" :lazy-src="item.src" contain/>
         </v-carousel-item>
@@ -11,12 +11,21 @@
       <div class="header-carousel__content">
         <div class="header-carousel__content-container">
 
-          <v-card style="border-radius: 13px"
-                  elevation="0"
-                  class="white--text"
+          <v-card class="header-carousel__content-card d-flex"
                   color="mainBlueTransparent"
                   width="100%" min-height="80%">
-            asfasfas
+            <div class="header-carousel__content-card-container">
+              <v-card-title class="header-carousel__content-title block-title">Lorem ipsum dolor</v-card-title>
+              <v-card-text class="header-carousel__content-text block-text">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+                sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
+                nisi ut aliquip ex ea commodo consequat.
+              </v-card-text>
+              <v-card-text class="header-carousel__content-text block-text">
+                {{ getCreatedDate(new Date()) }}
+              </v-card-text>
+            </div>
           </v-card>
 
         </div>
@@ -69,32 +78,24 @@
 
     <section class="ourTeam">
       <div class="ourTeam-container">
-
         <v-card-title class="ourTeam-title block-title">Наша команда</v-card-title>
         <v-card-text class="ourTeam-text block-text">Познакомьтесь с нашей командой</v-card-text>
-
         <div class="ourTeam-members">
-
-
           <article class="ourTeam-card" v-for="i in 4" :key="i">
             <div class="ourTeam-card__container">
               <v-img class="ourTeam-card__image" src="/placeholder_lk.jpg"/>
-
               <v-card-text class="ourTeam-card__name">Фамилия Имя Отчество</v-card-text>
               <v-card-text class="ourTeam-card__memberLabel">Член нашей команды</v-card-text>
-
             </div>
           </article>
-
         </div>
-
       </div>
     </section>
 
-    <iframe
-      style="margin-top: 80px;"
-      src="https://yandex.ru/map-widget/v1/?um=constructor%3A0d1b68e21fa797ec4e13fe0f17a586d57858fa3af35d57a4488319675ea84521&amp;source=constructor"
-      width="100%" height="540" frameborder="0">
+    <iframe :src="mapping"
+            style="margin-top: 80px;"
+            width="100%" height="540"
+            frameborder="0">
     </iframe>
 
   </div>
@@ -103,7 +104,7 @@
 <script lang="ts">
 // @ts-ignore
 import bkgFlagImage from '~/static/flag-russia.png'
-import {Vue, Component} from 'vue-property-decorator';
+import {Vue, Component, Inject} from 'vue-property-decorator';
 
 @Component({
   head(this: Pages): object {
@@ -113,6 +114,9 @@ import {Vue, Component} from 'vue-property-decorator';
   }
 })
 export default class Pages extends Vue {
+  @Inject('infoData') infoData: any
+
+  activeSlide: number = 0;
   bkgFlagImage: any = bkgFlagImage;
   items: any = [
     {
@@ -122,5 +126,17 @@ export default class Pages extends Vue {
       src: '/api/media/23-03-2025-bac14db0-1cb6-4f12-ab09-2af77e2af72c.jpeg'
     },
   ]
+
+  get mapping() {
+    return this.infoData.value.mapping ?? ''
+  }
+
+  getCreatedDate(created: Date) {
+    return new Date(created).toLocaleDateString("ru", {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    })
+  }
 }
 </script>

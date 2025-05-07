@@ -1,6 +1,7 @@
 import userRouter from "./user/controller"
 import blogRouter from "./blog/controller";
 import fileRouter from "./file/controller";
+import contInfoRouter from "./contactInfo/controller";
 import mainRouter from "./admin/main/controller";
 import adminRouter from "./admin/user/controller";
 import memberOrgController from "./admin/memberOrg/controller";
@@ -9,12 +10,13 @@ import contactInfoRouter from "./admin/contactInfo/controller";
 const controller: any = [
     userRouter,
     blogRouter,
-    mainRouter,
     fileRouter,
-
+    contInfoRouter,
+    /* admin */
+    mainRouter,
     adminRouter,
-    contactInfoRouter,
     memberOrgController,
+    contactInfoRouter,
 ];
 
 export default controller;

@@ -6,7 +6,7 @@
 
 :root {
   --mainBlue: #2B5189;
-  --mainBlueTransparent: #4874B870;
+  --mainBlueTransparent: rgba(72, 116, 184, 0.44);
   --box-shadow: rgba(149, 157, 165, 0.2) 0 8px 24px;
 }
 
@@ -70,6 +70,30 @@
 .header-carousel__content-container {
   width: 100%;
   max-width: 1200px
+}
+
+.header-carousel__content-card {
+  align-items: center;
+  justify-content: center;
+  border-radius: 13px !important;
+  box-shadow: var(--mainBlueTransparent) 0 7px 29px 0 !important;
+}
+
+.header-carousel__content-card-container {
+  width: 100%;
+  max-width: 70%;
+  margin: 0 auto;
+}
+
+.header-carousel__content-title,
+.header-carousel__content-text {
+  text-align: start;
+  color: white !important;
+  justify-content: flex-start !important;
+}
+
+.header-carousel__content-text {
+  margin-top: 14px;
 }
 
 .cursor-pointer:hover {
