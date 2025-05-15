@@ -4,11 +4,12 @@
   letter-spacing: normal !important;
 }
 
+/* #F1F1F1FF */
 :root {
   --mainBlue: #2B5189;
   --mainBlueTransparent: rgba(72, 116, 184, 0.44);
   --box-shadow: rgba(149, 157, 165, 0.2) 0 8px 24px;
-  --box-shadow__light: rgba(149, 157, 165, 0.08) 0 8px 24px
+  --box-shadow__light: rgba(149, 157, 165, 0.15) 0 8px 24px
 }
 
 .loadingBlock {
@@ -95,6 +96,7 @@
 
 .header-carousel__content-text {
   margin-top: 14px;
+  text-align: justify !important;
 }
 
 .cursor-pointer:hover {
@@ -157,6 +159,8 @@
   font-weight: 300 !important;
   line-height: 1.25 !important;
   letter-spacing: normal !important;
+  text-align: center;
+  margin: 8px auto 0;
 }
 
 /* about-us */
@@ -173,8 +177,6 @@
 
 .aboutUs-text {
   max-width: 900px;
-  text-align: center;
-  margin: 20px auto 0;
 }
 
 .aboutUs-video {
@@ -212,17 +214,14 @@
   position: relative;
   top: 0;
   margin-top: 80px;
+  padding: 40px 0 80px;
+  background: #F1F1F130;
 }
 
 .ourTeam-container {
   width: 100%;
   margin: 0 auto;
   max-width: 1200px;
-}
-
-.ourTeam-text {
-  text-align: center;
-  margin: 20px auto 0;
 }
 
 .ourTeam-members {
@@ -238,7 +237,6 @@
   padding: 1px;
   border-radius: 13px;
   background: #fdfdfd;
-  border: solid 1px #F1F1F1FF;
   box-shadow: var(--box-shadow__light);
 }
 
@@ -280,3 +278,66 @@
   margin-top: 10px !important;
   text-align: center;
 }
+
+/* news */
+.news {
+  margin-top: 40px;
+}
+
+.news-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.news-list {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+}
+
+.news-card {
+  width: 100%;
+  max-width: 580px;
+  height: 420px;
+  padding: 1px;
+  margin: 15px 10px;
+  border-radius: 13px;
+  background: #fdfdfd;
+  box-shadow: var(--box-shadow__light);
+}
+
+.news-card__image {
+  position: relative;
+}
+
+.news-card__image-carousel {
+  border-radius: 13px !important;
+}
+
+.news-card__image-title {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  padding: 5px 10px;
+  color: #F1F1F1FF;
+  font-size: 20px;
+  border-radius: 13px;
+  backdrop-filter: blur(40px);
+  background: rgba(241, 241, 241, 0.5);
+}
+
+.news-card__text {
+  font-size: 18px !important;
+}
+
+.news-card__body {
+  display: flex;
+  height: 110px;
+  flex-direction: column;
+}
+
+.news-card__button {
+  border-radius: 13px !important;
+}
+

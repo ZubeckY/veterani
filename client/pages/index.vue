@@ -1,16 +1,13 @@
 <template>
   <div>
-    <div class="header-carousel">
-
+    <section class="header-carousel">
       <v-carousel v-model="activeSlide" height="100vh" hide-delimiters>
         <v-carousel-item v-for="(item,i) in items" :key="i">
           <v-img :src="item.src" :lazy-src="item.src" contain/>
         </v-carousel-item>
       </v-carousel>
-
       <div class="header-carousel__content">
         <div class="header-carousel__content-container">
-
           <v-card class="header-carousel__content-card d-flex"
                   color="mainBlueTransparent"
                   width="100%" min-height="80%">
@@ -27,13 +24,12 @@
               </v-card-text>
             </div>
           </v-card>
-
         </div>
       </div>
-    </div>
+    </section>
 
     <div class="flag-bkg mainFlagBlock" :style="'background-image: url('+ bkgFlagImage +');'">
-      <section class="aboutUs">
+      <section class="aboutUs" id="about-us">
         <div class="aboutUs-container">
           <v-card-title class="aboutUs-title block-title">О нас</v-card-title>
           <v-card-text class="aboutUs-text block-text">
@@ -50,7 +46,6 @@
 
       <section class="imageGroup">
         <div class="imageGroup-container">
-
           <article class="imageGroup-card">
             <v-img class="imageGroup-card__image"
                    width="610px" height="420px"
@@ -61,12 +56,10 @@
               sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
             </v-card-text>
           </article>
-
           <article class="imageGroup-card">
             <v-img class="imageGroup-card__image"
                    width="610px" height="420px"
                    src="/imageGroup2.png"/>
-
             <v-card-text class="imageGroup-text block-text">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit,
               sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
@@ -88,6 +81,52 @@
               <v-card-text class="ourTeam-card__memberLabel">Член нашей команды</v-card-text>
             </div>
           </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="news">
+      <div class="news-container">
+        <v-card-title class="news-title block-title">Новости</v-card-title>
+        <v-card-text class="news-text block-text">Смотри наши новости</v-card-text>
+        <div class="news-list">
+          <article class="news-card" v-for="i in 4" :key="i">
+            <div class="news-card__container">
+              <div class="news-card__image">
+                <v-carousel class="news-card__image-carousel"
+                            height="280px"
+                            show-arrows-on-hover
+                            delimiter-icon="mdi-minus-thick"
+                            hide-delimiter-background>
+                  <v-carousel-item v-for="i in 3" :key="i">
+                    <v-img src="/imageGroup1.png"
+                           height="100%"
+                           contain
+                           class="grey lighten-1"/>
+                  </v-carousel-item>
+                </v-carousel>
+                <div class="news-card__image-title">Название поста</div>
+              </div>
+              <div class="news-card__body mt-3">
+                <v-card-text class="news-card__text my-0 py-0">
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+                  sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                  Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
+                </v-card-text>
+                <vertical-spacer/>
+                <v-card-text class="news-card__text my-0 py-0">
+                  {{ getCreatedDate(new Date()) }}
+                </v-card-text>
+              </div>
+            </div>
+          </article>
+          <div class="mx-auto">
+            <v-btn class="news-card__button px-9 mt-5"
+                   @click.prevent="$router.push('/blog')"
+                   outlined large>
+              Смотреть еще
+            </v-btn>
+          </div>
         </div>
       </div>
     </section>
