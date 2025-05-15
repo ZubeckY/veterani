@@ -84,7 +84,7 @@
         </div>
       </div>
     </section>
-
+    `
     <section class="news">
       <div class="news-container">
         <v-card-title class="news-title block-title">Новости</v-card-title>
@@ -131,8 +131,31 @@
       </div>
     </section>
 
+    <section class="pleaseDonate">
+      <div class="pleaseDonate-container">
+        <v-card-title class="pleaseDonate-title block-title">Поддержите нас</v-card-title>
+        <v-card-text class="pleaseDonate-text block-text" v-text="pleaseDonateText"></v-card-text>
+        <div class="d-flex justify-center align-center">
+          <div>
+            <v-img width="300px" src="/qrCode.jpg"/>
+          </div>
+
+          <div class="text-pre">
+            Реквизиты банка: КБ «Кубань кредит»
+            ООО ОГРН - 1022300003703
+            Кор счет -30101810200000000722
+            Расчетный счет – 40703810700840000010
+            БИК – 040349722
+            ИНН - 2368011780
+            КПП - 231001001
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
     <iframe :src="mapping"
-            style="margin-top: 80px;"
             width="100%" height="540"
             frameborder="0">
     </iframe>
@@ -154,9 +177,10 @@ import {Vue, Component, Inject} from 'vue-property-decorator';
 })
 export default class Pages extends Vue {
   @Inject('infoData') infoData: any
+  readonly pleaseDonateText = 'Поддержите нашу деятельность, отсканировав QR код, можете\nотправить любую сумму'
+  readonly bkgFlagImage: any = bkgFlagImage;
 
   activeSlide: number = 0;
-  bkgFlagImage: any = bkgFlagImage;
   items: any = [
     {
       src: '/api/media/24-03-2025-df69489b-fbcd-4a62-88f3-661be8e94a0b.png'

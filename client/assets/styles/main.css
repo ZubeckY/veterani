@@ -341,3 +341,18 @@
   border-radius: 13px !important;
 }
 
+.pleaseDonate {
+  margin-top: 80px;
+  padding: 40px 0 80px;
+  background: #F1F1F130;
+}
+
+.pleaseDonate-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.pleaseDonate-text {
+  white-space: pre-wrap;
+}
