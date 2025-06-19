@@ -8,8 +8,9 @@
 :root {
   --mainBlue: #2B5189;
   --mainBlueTransparent: rgba(72, 116, 184, 0.44);
+  --grayBox: rgba(149, 157, 165, 0.15);
   --box-shadow: rgba(149, 157, 165, 0.2) 0 8px 24px;
-  --box-shadow__light: rgba(149, 157, 165, 0.15) 0 8px 24px
+  --box-shadow__light: var(--grayBox) 0 8px 24px
 }
 
 .loadingBlock {
@@ -242,6 +243,7 @@
 
 .ourTeam-card.admin-card {
   margin: 10px !important;
+  border: 1px solid var(--grayBox);
   box-shadow: none !important;
 }
 
