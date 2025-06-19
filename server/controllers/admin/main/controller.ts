@@ -38,11 +38,6 @@ mainRouter.post("/admin/init-user/", checkRole, async (req: Request, res: Respon
             case Role.admin:
                 menu = [
                     {
-                        icon: "mdi-home-outline",
-                        text: "Главная",
-                        link: '/admin'
-                    },
-                    {
                         icon: "mdi-account-group-outline",
                         text: "Пользователи",
                         link: '/admin/users'
