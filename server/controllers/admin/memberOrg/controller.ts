@@ -2,6 +2,7 @@ import {Request, Response, Router} from "express";
 import {onlyAdmin} from "../../../middleware/auth/onlyAdmin";
 import {AppDataSource} from "../../../connectDb";
 import {MemberOrg, User} from "../../../entity";
+import {Role} from "../../../types/role";
 
 const memberOrgController = Router()
 
@@ -30,8 +31,8 @@ memberOrgController.post("/admin/members/create", onlyAdmin, async (req: Request
         const memberRole = req.body.memberRole;
 
         const userRepository = AppDataSource.getRepository(User);
-        const userFromDB:User|null = await userRepository.findOneBy(id);
-        if(userFromDB == null) {
+        const userFromDB: User | null = await userRepository.findOneBy(id);
+        if (userFromDB == null) {
             return res
                 .status(401)
                 .send({
@@ -39,15 +40,14 @@ memberOrgController.post("/admin/members/create", onlyAdmin, async (req: Request
                 })
         }
 
-        if(userFromDB.role == "admin" || userFromDB.role == "manager") {
+        if (userFromDB.role == Role.admin || userFromDB.role == Role.manager) {
             const memberOrgRepository = AppDataSource.getRepository(MemberOrg)
-
             const member = {
                 id: id,
                 memberRole: memberRole
             }
 
-            memberOrgRepository.save(member);
+            await memberOrgRepository.save(member);
 
             return res
                 .status(200)
@@ -75,8 +75,8 @@ memberOrgController.post("/admin/members/delete", onlyAdmin, async (req: Request
         const id = req.body.id;
 
         const userRepository = AppDataSource.getRepository(User);
-        const userFromDB:User|null = await userRepository.findOneBy(id);
-        if(userFromDB == null) {
+        const userFromDB: User | null = await userRepository.findOneBy(id);
+        if (userFromDB == null) {
             return res
                 .status(401)
                 .send({
@@ -84,10 +84,9 @@ memberOrgController.post("/admin/members/delete", onlyAdmin, async (req: Request
                 })
         }
 
-        if(userFromDB.role == "admin" || userFromDB.role == "manager") {
+        if (userFromDB.role == "admin" || userFromDB.role == "manager") {
             const memberOrgRepository = AppDataSource.getRepository(MemberOrg)
-
-            memberOrgRepository.delete(id);
+            await memberOrgRepository.delete(id);
 
             return res
                 .status(200)

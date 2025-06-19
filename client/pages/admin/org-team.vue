@@ -10,7 +10,6 @@
       <v-dialog v-model="addDialog"
                 max-width="360">
         <template v-slot:activator="{ on, attrs }">
-
           <v-btn v-bind="attrs" v-on="on"
                  class="ml-3" color="green" outlined>
             Добавить
@@ -19,37 +18,15 @@
 
         <v-card>
           <v-card-title>Добавить члена организации</v-card-title>
-
-          <v-autocomplete v-model="selectedUser"
-                          class="ma-1"
-                          label="Выбрать пользователя"
-                          :items="users"
-                          item-text="name"
-                          item-value="name"
-                          chips dense outlined>
-            <template v-slot:selection="data">
-              <v-chip v-bind="data.attrs"
-                      :input-value="data.selected"
-                      @click="data.select"
-                      @click:close="remove(data.item)"
-                      close>
-                <v-avatar left>
-                  <v-img :src="data.item.avatar"></v-img>
-                </v-avatar>
-                {{ data.item.name }}
-              </v-chip>
-            </template>
-            <template v-slot:item="data">
-              <v-list-item-avatar>
-                <img :src="data.item.avatar">
-              </v-list-item-avatar>
-              <v-list-item-content>
-                <v-list-item-title v-html="data.item.name"></v-list-item-title>
-                <v-list-item-subtitle v-html="data.item.group"></v-list-item-subtitle>
-              </v-list-item-content>
-            </template>
-          </v-autocomplete>
-
+          <select-user v-model="selectedUser" :users="users"/>
+          <v-text-field label="Занимаемое положение в организации"
+                        v-model="memberRole"
+                        placeholder="Председатель, член организации..."
+                        :disabled="emptyValue" class="mx-3" outlined dense/>
+          <div>
+            <v-btn @click="addDialog = false">Отмена</v-btn>
+            <v-btn :disabled="memberRoleEmpty">Добавить</v-btn>
+          </div>
         </v-card>
       </v-dialog>
     </header>
@@ -98,8 +75,9 @@ import {Vue, Component} from 'vue-property-decorator';
 })
 export default class OrgTeam extends Vue {
   addDialog: boolean = false;
-  selectedUser: any = {}
-  users: any = [{}, {}]
+  memberRole: string = ''
+  selectedUser: object | number = {}
+  users: any = []
 
   data: any = []
   items: any = [
@@ -115,6 +93,15 @@ export default class OrgTeam extends Vue {
 
   async mounted() {
     await this.getMembersList()
+    await this.getUsersList()
+  }
+
+
+  async getUsersList() {
+    this.$axios.get('/api/admin/user/list')
+      .then((res) => {
+        this.users = res.data.users
+      })
   }
 
   async getMembersList() {
@@ -122,6 +109,14 @@ export default class OrgTeam extends Vue {
       .then((res) => {
         this.data = res.data
       })
+  }
+
+  get emptyValue() {
+    return typeof this.selectedUser == 'object'
+  }
+
+  get memberRoleEmpty() {
+    return this.memberRole.length <= 0
   }
 }
 </script>
