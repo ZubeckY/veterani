@@ -1,42 +1,50 @@
 <template>
   <div>
     <div v-if="loading">
-      загрузка
+      <div class="d-flex justify-center align-center" style="width: 100%; height: 90vh">
+        <v-progress-circular size="100" color="primary" indeterminate/>
+      </div>
     </div>
-    <div v-else>
 
-      <v-card v-for="(item, i) in data"
-              :key="'blog-' + i"
-              class="mx-auto"
-              max-width="800">
-        <div class="d-flex">
-          <div class="ml-2 mr-4" style="font-size: 22px; font-weight: bold">{{ item.id }}</div>
-          <div @click="$router.push('/blog/' + item.link)"
-               class="ml-2 mr-4 font-weight-bold primary--text"
-               style="font-size: 22px; cursor: pointer">{{ item.headLine }}</div>
-          <v-spacer/>
-          <div class="ml-2 mr-4" style="font-size: 22px; font-weight: bold">{{ userInfo(item.user) }}</div>
-          <div>
-            <v-btn @click="$router.push('/blog/edit/' + item.link)" icon>
-              <v-icon>mdi-pencil</v-icon>
-            </v-btn>
+    <section v-else>
+      <div class="news-container">
+        <v-card-text class="news-text block-text">Смотри наши новости</v-card-text>
 
-            <blog-delete @deleteItem="deleteItem(item.link)"/>
+        <div class="news-console">
+          <div class="news-console__group">
+            <v-card-text class="news-console__text">Кем опубликован</v-card-text>
+
+            <v-item-group class="d-flex flex-row" mandatory
+                          v-model="selectedParam">
+              <v-item v-for="obj in selectParamsPosts"
+                      :key="obj.key" :value="obj.key"
+                      v-slot="{ active, toggle }">
+                <v-card @click="toggle"
+                        v-text="obj.value"
+                        class="news-console__button"
+                        :color="active ? 'primary white--text' : ''"/>
+              </v-item>
+            </v-item-group>
+          </div>
+
+          <div class="news-console__group">
+            <v-card-text class="news-console__text">Действия</v-card-text>
+            <v-card @click="$router.push('/blog/create/')"
+                    v-text="'Добавить пост'" class="news-console__button"/>
           </div>
         </div>
-      </v-card>
 
-      <!-- пагинация -->
-      <v-pagination v-model="pagPage"
-                    :length="pagSize"
-                    :total-visible="7"/>
+        <div class="news-list">
+          <blog-card v-for="(post, i) in data" :post="post" :key="i"/>
 
-      <v-btn @click="$router.push('/blog/create')"
-             color="success" fab>
-        <v-icon>mdi-plus</v-icon>
-      </v-btn>
-
-    </div>
+          <div class="d-flex justify-center my-6" style="width: 100%;">
+            <v-pagination v-model="pagPage"
+                          :length="pagSize"
+                          :total-visible="7"/>
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
 </template>
 <script lang="ts">
@@ -50,6 +58,21 @@ import {Vue, Component} from 'vue-property-decorator';
   }
 })
 export default class Blog extends Vue {
+  selectedParam: string = ''
+  selectParamsPosts: any = [
+    {
+      key: 'all',
+      value: 'Все'
+    },
+    {
+      key: 'community',
+      value: 'Сообщество'
+    },
+    {
+      key: 'my',
+      value: 'Только мои'
+    }
+  ]
   loading: boolean = true;
   data: any = []
   page: number = 1;
@@ -63,7 +86,6 @@ export default class Blog extends Vue {
   async getData() {
     this.$axios.get(this.getLink)
       .then(res => {
-        console.log(res.data)
         this.data = res.data
       })
       .catch((error) => {
@@ -83,10 +105,6 @@ export default class Blog extends Vue {
       .catch((error) => {
         console.log(error)
       })
-  }
-
-  userInfo(user: any) {
-    return user.id + ', ' + user.firstName + ' ' + user.lastName + ', ' + user.role
   }
 
   get pagSize(): number {

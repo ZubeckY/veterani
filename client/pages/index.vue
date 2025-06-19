@@ -50,7 +50,6 @@
             <v-img class="imageGroup-card__image"
                    width="610px" height="420px"
                    src="/imageGroup1.png"/>
-
             <v-card-text class="imageGroup-text block-text">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit,
               sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
@@ -84,43 +83,17 @@
         </div>
       </div>
     </section>
-    `
+
     <section class="news">
       <div class="news-container">
         <v-card-title class="news-title block-title">Новости</v-card-title>
         <v-card-text class="news-text block-text">Смотри наши новости</v-card-text>
-        <div class="news-list">
-          <article class="news-card" v-for="i in 4" :key="i">
-            <div class="news-card__container">
-              <div class="news-card__image">
-                <v-carousel class="news-card__image-carousel"
-                            height="280px"
-                            show-arrows-on-hover
-                            delimiter-icon="mdi-minus-thick"
-                            hide-delimiter-background>
-                  <v-carousel-item v-for="i in 3" :key="i">
-                    <v-img src="/imageGroup1.png"
-                           height="100%"
-                           contain
-                           class="grey lighten-1"/>
-                  </v-carousel-item>
-                </v-carousel>
-                <div class="news-card__image-title">Название поста</div>
-              </div>
-              <div class="news-card__body mt-3">
-                <v-card-text class="news-card__text my-0 py-0">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-                  sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                  Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
-                </v-card-text>
-                <vertical-spacer/>
-                <v-card-text class="news-card__text my-0 py-0">
-                  {{ getCreatedDate(new Date()) }}
-                </v-card-text>
-              </div>
-            </div>
-          </article>
-          <div class="mx-auto">
+        <div class="news-wrapper">
+          <div class="news-list">
+            <blog-card v-for="(post, i) in posts" :post="post" :key="i"/>
+          </div>
+
+          <div class="mx-auto" style="width: fit-content">
             <v-btn class="news-card__button px-9 mt-5"
                    @click.prevent="$router.push('/blog')"
                    outlined large>
@@ -139,7 +112,6 @@
           <div>
             <v-img width="300px" src="/qrCode.jpg"/>
           </div>
-
           <div class="text-pre">
             Реквизиты банка: КБ «Кубань кредит»
             ООО ОГРН - 1022300003703
@@ -149,16 +121,11 @@
             ИНН - 2368011780
             КПП - 231001001
           </div>
-
         </div>
-
       </div>
     </section>
 
-    <iframe :src="mapping"
-            width="100%" height="540"
-            frameborder="0">
-    </iframe>
+    <iframe :src="mapping" width="100%" height="540" frameborder="0" />
 
   </div>
 </template>
@@ -177,8 +144,9 @@ import {Vue, Component, Inject} from 'vue-property-decorator';
 })
 export default class Pages extends Vue {
   @Inject('infoData') infoData: any
-  readonly pleaseDonateText = 'Поддержите нашу деятельность, отсканировав QR код, можете\nотправить любую сумму'
+  readonly pleaseDonateText = 'Поддержите нашу деятельность, сканировав QR код, можете\nотправить любую сумму'
   readonly bkgFlagImage: any = bkgFlagImage;
+  posts: any = []
 
   activeSlide: number = 0;
   items: any = [
@@ -190,8 +158,26 @@ export default class Pages extends Vue {
     },
   ]
 
+  async mounted() {
+    await this.getData();
+  }
+
+  async getData() {
+    this.$axios.get(this.getLink)
+      .then(res => {
+        this.posts = res.data
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  }
+
   get mapping() {
     return this.infoData.value.mapping ?? ''
+  }
+
+  get getLink(): string {
+    return '/api/post/list?give=' + 6
   }
 
   getCreatedDate(created: Date) {

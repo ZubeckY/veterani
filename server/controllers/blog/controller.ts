@@ -12,7 +12,10 @@ const blogRouter = Router();
 blogRouter.get('/post/list', async (req: Request, res: Response): Promise<any> => {
     try {
         const skip = (+(req.query?.page ?? 1) - 1) * +(req.query?.size ?? 10)
-        const take = +(req.query?.page ?? 1) * +(req.query?.size ?? 10)
+        const takePage = +(req.query?.page ?? 1) * +(req.query?.size ?? 10)
+        const give = +(req.query?.give ?? 10)
+        const take = takePage ?? give
+
         const postRepository = AppDataSource.getRepository(Post)
         const post = await postRepository
             .createQueryBuilder('post')
