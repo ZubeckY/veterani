@@ -1,11 +1,23 @@
-import {Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn} from "typeorm";
+import {
+    Relation,
+    Column,
+    CreateDateColumn,
+    Entity,
+    JoinColumn,
+    ManyToMany,
+    PrimaryGeneratedColumn,
+    UpdateDateColumn, JoinTable
+} from "typeorm";
 import {Role} from "../types/role";
+import {File} from "./file";
+import {MemberOrg} from "./memberOrg";
 
 @Entity()
 export class User {
     @PrimaryGeneratedColumn()
     id!: number;
 
+    /** ФИО */
     @Column({
         comment: "Имя",
         length: 50,
@@ -26,6 +38,7 @@ export class User {
     })
     middleName!: string;
 
+    /** EMAIL */
     @Column({
         comment: "Почта",
         length: 255,
@@ -34,12 +47,7 @@ export class User {
     })
     email!: string;
 
-    @Column({
-        comment: "Пароль",
-        nullable: false,
-    })
-    password!: string;
-
+    /** Дополнительная информация */
     @Column({
         comment: "Роль",
         enum: Role,
@@ -48,10 +56,26 @@ export class User {
     })
     role?: Role;
 
-    @CreateDateColumn({
-        comment: "Дата создания",
+    @Column({
+        nullable: true,
+        comment: "Кем является в организации",
     })
-    created!: Date;
+    memberRole?: string
+
+    /** Файл */
+    @ManyToMany(() => File, (file) => file.id, {
+        cascade: false,
+        nullable: true,
+    })
+    @JoinColumn()
+    file!: Relation<File>;
+
+    /** Системная информация */
+    @Column({
+        comment: "Пароль",
+        nullable: false,
+    })
+    password!: string;
 
     @Column({
         comment: "Активация",
@@ -64,14 +88,20 @@ export class User {
     })
     activatedCode!: string;
 
-    @UpdateDateColumn({
-        comment: "Дата редактирования"
-    })
-    updated!: Date;
-
     @Column({
         comment: "Заблокирован",
         default: false,
     })
     block?: boolean;
+
+    @CreateDateColumn({
+        comment: "Дата создания",
+    })
+    created!: Date;
+
+    @UpdateDateColumn({
+        comment: "Дата редактирования"
+    })
+    updated!: Date;
+
 }

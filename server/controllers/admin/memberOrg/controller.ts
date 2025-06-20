@@ -3,24 +3,40 @@ import {onlyAdmin} from "../../../middleware/auth/onlyAdmin";
 import {AppDataSource} from "../../../connectDb";
 import {MemberOrg, User} from "../../../entity";
 import {Role} from "../../../types/role";
+import * as uuid from "uuid";
 
 const memberOrgController = Router()
 
-export default memberOrgController
+/**
+ * TODO ПЕРЕДЕЛАТЬ !!!!
+ *
+ * ПРИВЯЗКА ТАБЛИЦЫ MEMBERORG ОСУЩЕСТВЛЯЕТСЯ К ТАБЛИЦЕ USER,
+ * В ЗАПРОСАХ ПОЛУЧАЕМ ТОЛЬКО ПОЛЬЗОВАТЕЛЕЙ
+ *
+ * */
 
 memberOrgController.get("/admin/members/list", onlyAdmin, async (req: Request, res: Response): Promise<any> => {
     try {
-        const memberOrgRepository = AppDataSource.getRepository(MemberOrg)
-        const memberOrg = await memberOrgRepository.find()
+        const memberRepository = AppDataSource.getRepository(MemberOrg);
+        let memberOrgFromDB = await memberRepository.find()
 
-        return res
-            .status(200)
-            .send(memberOrg)
+        if (!memberOrgFromDB.length) {
+            const value = {
+                value: uuid.v4()
+            }
+            await memberRepository.save(value)
+
+            memberOrgFromDB = await memberRepository.find()
+        }
+
+
     } catch (error) {
+        console.log(error);
+
         return res
             .status(501)
             .send({
-                message: "Ошибка операции"
+                message: 'Ошибка запроса'
             })
     }
 })
@@ -102,3 +118,5 @@ memberOrgController.post("/admin/members/delete", onlyAdmin, async (req: Request
             })
     }
 })
+
+export default memberOrgController

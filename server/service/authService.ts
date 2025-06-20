@@ -3,7 +3,7 @@ import config from "../config"
 import jwt from 'jsonwebtoken'
 import {Response} from "express"
 import {AppDataSource} from "../connectDb"
-import {User, Token} from "../entity"
+import {User} from "../entity"
 import {Role} from "../types/role";
 
 export default class AuthService {
@@ -78,45 +78,45 @@ export default class AuthService {
         }
     }
 
-    async saveToken(model: any) {
-        try {
-            const {user, value} = model
+    // async saveToken(model: any) {
+    //     try {
+    //         const {user, value} = model
+    //
+    //         const tokenRepository = AppDataSource.getRepository(Token)
+    //         const tokenData = await tokenRepository.findOneBy({
+    //             user: user
+    //         })
+    //
+    //         if (tokenData) {
+    //             tokenData.value = value.refreshToken
+    //             return await tokenRepository.save(tokenData)
+    //         }
+    //
+    //         const createToken = new Token()
+    //         createToken.user = user
+    //         createToken.value = value.refreshToken
+    //
+    //         return await tokenRepository.save(createToken)
+    //     } catch (error) {
+    //         return {
+    //             message: 'Ошибка сервера',
+    //             error,
+    //         }
+    //     }
+    // }
 
-            const tokenRepository = AppDataSource.getRepository(Token)
-            const tokenData = await tokenRepository.findOneBy({
-                user: user
-            })
-
-            if (tokenData) {
-                tokenData.value = value.refreshToken
-                return await tokenRepository.save(tokenData)
-            }
-
-            const createToken = new Token()
-            createToken.user = user
-            createToken.value = value.refreshToken
-
-            return await tokenRepository.save(createToken)
-        } catch (error) {
-            return {
-                message: 'Ошибка сервера',
-                error,
-            }
-        }
-    }
-
-    async findToken(token: string) {
-        try {
-            const tokenRepository = AppDataSource.getRepository(Token)
-            const tokenFromDB = await tokenRepository.findOneBy({
-                value: token,
-            })
-
-            return tokenFromDB ?? null
-        } catch (error) {
-            return null
-        }
-    }
+    // async findToken(token: string) {
+    //     try {
+    //         const tokenRepository = AppDataSource.getRepository(Token)
+    //         const tokenFromDB = await tokenRepository.findOneBy({
+    //             value: token,
+    //         })
+    //
+    //         return tokenFromDB ?? null
+    //     } catch (error) {
+    //         return null
+    //     }
+    // }
 
     async refreshToken(token: string) {
         if (!token) {

@@ -20,12 +20,31 @@
           <v-card-title>Добавить члена организации</v-card-title>
           <select-user v-model="selectedUser" :users="users"/>
           <v-text-field label="Занимаемое положение в организации"
-                        v-model="memberRole"
                         placeholder="Председатель, член организации..."
-                        :disabled="emptyValue" class="mx-3" outlined dense/>
-          <div>
-            <v-btn @click="addDialog = false">Отмена</v-btn>
-            <v-btn :disabled="memberRoleEmpty">Добавить</v-btn>
+                        :disabled="emptyValue"
+                        v-model="memberRole"
+                        class="mx-3"
+                        outlined dense
+                        hide-details/>
+          <div class="d-flex px-3 mt-2 py-2" style="width: 100%">
+            <v-btn class="ma-0 pa-0"
+                   small text
+                   color="red"
+                   width="fit-content"
+                   height="fit-content"
+                   @click="addDialog = false">
+              Отмена
+            </v-btn>
+
+            <v-spacer/>
+
+            <v-btn :disabled="memberRoleEmpty"
+                   class="ma-0 pa-0"
+                   small text
+                   color="primary"
+                   width="fit-content"
+                   height="fit-content"
+            >Добавить</v-btn>
           </div>
         </v-card>
       </v-dialog>
