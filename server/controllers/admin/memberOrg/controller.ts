@@ -10,10 +10,9 @@ memberOrgController.get("/admin/members/list", onlyAdmin, async (req: Request, r
     try {
         const userRepository = AppDataSource.getRepository(User);
         const membersListFromDB = await userRepository.find({
-            where: [
-                {memberRole: OrgRole.member},
-                {memberRole: OrgRole.owner},
-            ]
+            where: {
+                memberRole: OrgRole.member
+            }
         })
 
         const users = membersListFromDB.map(user => new MemberUser({
