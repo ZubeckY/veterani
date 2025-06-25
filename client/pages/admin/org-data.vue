@@ -106,7 +106,3 @@ export default class OrgData extends Vue {
   }
 }
 </script>
-
-<style scoped>
-
-</style>

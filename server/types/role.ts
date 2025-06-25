@@ -8,8 +8,8 @@ export enum Role {
 }
 
 export const roleTypeText : DictionaryValue<Role> = {
-    [Role["admin"]]: "администратор",
-    [Role["manager"]]: "менеджер",
-    [Role["user"]]: "пользователь",
-    [Role["guest"]]: "гость",
+    [Role["admin"]]: "Администратор",
+    [Role["manager"]]: "Менеджер",
+    [Role["user"]]: "Пользователь",
+    [Role["guest"]]: "Гость",
 }

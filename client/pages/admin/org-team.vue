@@ -44,39 +44,15 @@
                    color="primary"
                    width="fit-content"
                    height="fit-content"
-            >Добавить</v-btn>
+            >Добавить
+            </v-btn>
           </div>
         </v-card>
       </v-dialog>
     </header>
 
     <div class="d-flex flex-row flex-wrap">
-      <article class="ourTeam-card admin-card" v-for="i in 4" :key="i">
-        <div class="ourTeam-card__container">
-          <div class="d-flex justify-end">
-            <v-img class="ourTeam-card__image admin-image" width="calc(100% - 10px)" src="/placeholder_lk.jpg"/>
-            <div style="position: absolute; z-index: 1000;">
-              <v-menu offset-y>
-                <template v-slot:activator="{ attrs, on }">
-                  <v-btn v-bind="attrs" v-on="on" icon>
-                    <v-icon>mdi-dots-vertical-circle-outline</v-icon>
-                  </v-btn>
-                </template>
-
-                <v-list class="pa-0" dense>
-                  <v-list-item v-for="item in items"
-                               :class="item.color + ' py-0'"
-                               :key="item.text" link>
-                    <v-list-item-title v-text="item.text"></v-list-item-title>
-                  </v-list-item>
-                </v-list>
-              </v-menu>
-            </div>
-          </div>
-          <v-card-text class="ourTeam-card__name">Фамилия Имя Отчество</v-card-text>
-          <v-card-text class="ourTeam-card__memberLabel">Член нашей команды</v-card-text>
-        </div>
-      </article>
+      <org-card v-for="(item, i) in data" :key="i" :item="item"/>
     </div>
   </div>
 </template>
@@ -99,22 +75,12 @@ export default class OrgTeam extends Vue {
   users: any = []
 
   data: any = []
-  items: any = [
-    {
-      text: 'Изменить',
-      color: 'primary--text',
-    },
-    {
-      text: 'Удалить',
-      color: 'red--text',
-    },
-  ]
+
 
   async mounted() {
     await this.getMembersList()
     await this.getUsersList()
   }
-
 
   async getUsersList() {
     this.$axios.get('/api/admin/user/list')

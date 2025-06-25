@@ -10,7 +10,7 @@ import {
 } from "typeorm";
 import {Role} from "../types/role";
 import {File} from "./file";
-import {MemberOrg} from "./memberOrg";
+import {OrgRole} from "../types/orgRole";
 
 @Entity()
 export class User {
@@ -57,10 +57,18 @@ export class User {
     role?: Role;
 
     @Column({
+        comment: "Роль в организации",
+        enum: OrgRole,
+        default: OrgRole.user,
+        type: "enum"
+    })
+    memberRole?: OrgRole;
+
+    @Column({
         nullable: true,
         comment: "Кем является в организации",
     })
-    memberRole?: string
+    memberRoleTitle?: string;
 
     /** Файл */
     @ManyToMany(() => File, (file) => file.id, {
