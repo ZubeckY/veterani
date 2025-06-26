@@ -7,7 +7,12 @@
                     :headers="headers"
                     :sort-desc="false"
                     sort-by="role"
-                    hide-default-footer>
+                    :footer-props="{
+                      showFirstLastPage: true,
+                      itemsPerPageAllText: 'Все',
+                      itemsPerPageText: 'Показывать элементов в списке:',
+                      itemsPerPageOptions: [10, 15, 20, -1]
+                    }">
         <!-- Роль -->
         <template v-slot:item.role="{ item }">
           <td class="text-start">
@@ -44,12 +49,6 @@
           </div>
         </template>
       </v-data-table>
-
-      <vertical-spacer/>
-
-      <v-pagination v-model="pagPage"
-                    :length="pagSize"
-                    :total-visible="7"/>
     </div>
 
   </div>
@@ -69,10 +68,6 @@ import {Vue, Component} from 'vue-property-decorator';
 export default class Users extends Vue {
   loading: boolean = false;
   dialog: boolean = false;
-
-  page: number = 1;
-  size: number = 10;
-  pagPage: number = 1;
 
   data: any = []
   roles: any = []
@@ -164,17 +159,5 @@ export default class Users extends Vue {
   getCurrentColor(value: boolean) {
     return value ? 'green--text' : 'red--text'
   }
-
-  get pagSize(): number {
-    return Math.ceil(this.data.length / this.size)
-  }
-
-  get getLink(): string {
-    return '/api/post/list?page=' + this.page + '&size=' + this.size;
-  }
 }
 </script>
-
-<style scoped>
-
-</style>

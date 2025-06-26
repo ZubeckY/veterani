@@ -7,11 +7,23 @@
                     :headers="headers"
                     :sort-desc="true"
                     sort-by="created"
-                    hide-default-footer>
+                    :footer-props="{
+                      showFirstLastPage: true,
+                      itemsPerPageAllText: 'Все',
+                      itemsPerPageText: 'Показывать элементов в списке:',
+                      itemsPerPageOptions: [10, 15, 20, -1]
+                    }">
 
         <!-- Файл выложен -->
         <template v-slot:item.published="{ item }">
           <td :class="'text-start ' + getCurrentColor(item.published)">
+            {{ item.published ? 'Да' : 'Нет' }}
+          </td>
+        </template>
+
+        <!-- Файл используется -->
+        <template v-slot:item.used="{ item }">
+          <td :class="'text-start ' + getCurrentColor(item.used)">
             {{ item.published ? 'Да' : 'Нет' }}
           </td>
         </template>
@@ -30,13 +42,6 @@
         </template>
 
       </v-data-table>
-
-      <vertical-spacer/>
-
-      <v-pagination v-model="pagPage"
-                    :length="pagSize"
-                    :total-visible="7"/>
-
     </div>
   </div>
 </template>
@@ -54,11 +59,6 @@ import {Vue, Component} from 'vue-property-decorator';
 })
 export default class Docs extends Vue {
   loading: boolean = false;
-
-  page: number = 1;
-  size: number = 10;
-  pagPage: number = 1;
-
   data: any = []
 
   headers: any = [
@@ -66,6 +66,7 @@ export default class Docs extends Vue {
     {text: 'Название файла', value: 'name'},
     {text: 'Тип файла', value: 'typeFile'},
     {text: 'Файл выложен', value: 'published'},
+    {text: 'Файл используется', value: 'used'},
     {text: 'Дата создания', value: 'created'},
     {text: '', value: 'actions', sortable: false},
   ]
@@ -92,13 +93,5 @@ export default class Docs extends Vue {
   getCurrentColor(value: boolean) {
     return value ? 'green--text' : 'red--text'
   }
-
-  get pagSize(): number {
-    return Math.ceil(this.data.length / this.size)
-  }
 }
 </script>
-
-<style scoped>
-
-</style>

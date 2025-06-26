@@ -1,6 +1,6 @@
 <template>
   <footer>
-    <v-card elevation="0" color="mainBlue" min-height="300">
+    <v-card elevation="0" color="mainBlue" rounded="0" min-height="300">
       <div class="footer-container">
 
       </div>

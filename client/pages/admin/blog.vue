@@ -7,8 +7,14 @@
                     :headers="headers"
                     :sort-desc="true"
                     sort-by="created"
-                    hide-default-footer>
-        <!-- Опубликованно -->
+                    :footer-props="{
+                      showFirstLastPage: true,
+                      itemsPerPageAllText: 'Все',
+                      itemsPerPageText: 'Показывать элементов в списке:',
+                      itemsPerPageOptions: [10, 15, 20, -1]
+                    }">
+
+        <!-- Опубликовано -->
         <template v-slot:item.published="{ item }">
           <td :class="'text-start ' + getCurrentColor(item.published)">
             {{ item.published ? 'Да' : 'Нет' }}
@@ -42,12 +48,6 @@
           </div>
         </template>
       </v-data-table>
-
-      <vertical-spacer/>
-
-      <v-pagination v-model="pagPage"
-                    :length="pagSize"
-                    :total-visible="7"/>
     </div>
 
   </div>
@@ -66,10 +66,6 @@ import {Vue, Component} from 'vue-property-decorator';
 })
 export default class Blog extends Vue {
   loading: boolean = false;
-
-  page: number = 1;
-  size: number = 10;
-  pagPage: number = 1;
 
   data: any = []
   headers: any = [
@@ -114,17 +110,9 @@ export default class Blog extends Vue {
     })
   }
 
-  get pagSize(): number {
-    return Math.ceil(this.data.length / this.size)
-  }
-
   getCurrentColor(value: boolean) {
     return value ? 'green--text' : 'red--text'
   }
 
 }
 </script>
-
-<style scoped>
-
-</style>
