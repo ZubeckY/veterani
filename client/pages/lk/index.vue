@@ -5,9 +5,10 @@
       <div class="lk-container">
 
         <div class="lk-content d-flex flex-wrap justify-center">
-          <div>
-            <v-img src="/placeholder_lk.jpg"/>
-          </div>
+          <v-card width="300"
+                  height="300"
+                  class="lk-img"
+                  img="/placeholder_lk.jpg"/>
 
           <div class="d-flex flex-column ml-9">
             <lk-info-group :group="{ label: 'Имя Фамилия', value: getUserName }"/>
@@ -142,7 +143,6 @@ import {Vue, Component, Watch, Inject} from 'vue-property-decorator';
 export default class Lk extends Vue {
   @Inject('userFromDB') userFromDB: any;
   user: any = {};
-
   loading: boolean = true;
   linkTitle: string = 'Личный кабинет пользователя';
   logoutDialog: boolean = false;

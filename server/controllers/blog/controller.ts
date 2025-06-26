@@ -32,6 +32,29 @@ blogRouter.get('/post/list', async (req: Request, res: Response): Promise<any> =
     }
 })
 
+blogRouter.get('/post/slider-only/', async (req: Request, res: Response): Promise<any> => {
+    try {
+        const postRepository = AppDataSource.getRepository(Post)
+        const post = await postRepository.find({
+            where: {
+                published: true,
+                includesSlider: true,
+            },
+            order: {
+                created: 'DESC'
+            },
+            take: 6
+        })
+
+        return res.send(post)
+    } catch (error) {
+        console.log(error)
+        res.status(503).send({
+            message: "Ошибка"
+        })
+    }
+})
+
 blogRouter.get('/post/:link', async (req: Request, res: Response): Promise<any> => {
     try {
 

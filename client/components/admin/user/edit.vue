@@ -50,8 +50,8 @@ export default class edit extends Vue {
   dialog: boolean = false;
   dialogName: string = '';
 
-  items: any = []
-  roles: any = []
+  items: Array<any> = []
+  roles: Array<any> = []
   itemEdit: any = {}
 
   async mounted() {

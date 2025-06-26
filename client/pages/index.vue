@@ -1,33 +1,6 @@
 <template>
   <div>
-    <section class="header-carousel">
-      <v-carousel v-model="activeSlide" height="100vh" hide-delimiters>
-        <v-carousel-item v-for="(item,i) in items" :key="i">
-          <v-img :src="item.src" :lazy-src="item.src" contain/>
-        </v-carousel-item>
-      </v-carousel>
-      <div class="header-carousel__content">
-        <div class="header-carousel__content-container">
-          <v-card class="header-carousel__content-card d-flex"
-                  color="mainBlueTransparent"
-                  width="100%" min-height="80%">
-            <div class="header-carousel__content-card-container">
-              <v-card-title class="header-carousel__content-title block-title">Lorem ipsum dolor</v-card-title>
-              <v-card-text class="header-carousel__content-text block-text">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-                sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
-                nisi ut aliquip ex ea commodo consequat.
-              </v-card-text>
-              <v-card-text class="header-carousel__content-text block-text">
-                {{ getCreatedDate(new Date()) }}
-              </v-card-text>
-            </div>
-          </v-card>
-        </div>
-      </div>
-    </section>
-
+    <main-carousel/>
     <div class="flag-bkg mainFlagBlock" :style="'background-image: url('+ bkgFlagImage +');'">
       <section class="aboutUs" id="about-us">
         <div class="aboutUs-container">
@@ -39,7 +12,7 @@
             nisi ut aliquip ex ea commodo consequat.
           </v-card-text>
           <div class="aboutUs-video">
-            <v-img contain src="/aboutUs.png" width="100%" height="590px"></v-img>
+            <v-img class="aboutUs-video__content" src="/aboutUs.png" width="100%" height="590px"/>
           </div>
         </div>
       </section>
@@ -125,7 +98,7 @@
       </div>
     </section>
 
-    <iframe :src="mapping" width="100%" height="540" frameborder="0" />
+    <iframe :src="mapping" width="100%" height="540" frameborder="0"/>
 
   </div>
 </template>
@@ -146,17 +119,7 @@ export default class Pages extends Vue {
   @Inject('infoData') infoData: any
   readonly pleaseDonateText = 'Поддержите нашу деятельность, сканировав QR код, можете\nотправить любую сумму'
   readonly bkgFlagImage: any = bkgFlagImage;
-  posts: any = []
-
-  activeSlide: number = 0;
-  items: any = [
-    {
-      src: '/api/media/24-03-2025-df69489b-fbcd-4a62-88f3-661be8e94a0b.png'
-    },
-    {
-      src: '/api/media/23-03-2025-bac14db0-1cb6-4f12-ab09-2af77e2af72c.jpeg'
-    },
-  ]
+  posts: Array<any> = [];
 
   async mounted() {
     await this.getData();
@@ -178,14 +141,6 @@ export default class Pages extends Vue {
 
   get getLink(): string {
     return '/api/post/list?give=' + 6
-  }
-
-  getCreatedDate(created: Date) {
-    return new Date(created).toLocaleDateString("ru", {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric',
-    })
   }
 }
 </script>
