@@ -4,11 +4,12 @@
                 :show-arrows="false"
                 height="100vh"
                 hide-delimiters>
-      <v-carousel-item v-for="(item, i) in items" :key="i"
-                       class="grey lighten-1">
-        <v-img height="95%"
-               :src="item.src ?? '/imageGroup1.png'"
-               :lazy-src="item.src ?? '/imageGroup1.png'"/>
+      <v-carousel-item class="header-carousel__item grey lighten-3"
+                       v-for="(item, i) in items" :key="i">
+          <v-img class="d-block mx-auto"
+                 height="100%" contain
+                 :src="item.src ?? '/imageGroup1.png'"
+                 :lazy-src="item.src ?? '/imageGroup1.png'"/>
       </v-carousel-item>
     </v-carousel>
     <div class="header-carousel__content">
@@ -16,7 +17,7 @@
         <v-carousel v-model="activeSlide"
                     :cycle="false"
                     :continuous="false"
-                    height="fit-content"
+                    height="100%"
                     hide-delimiters>
           <v-carousel-item v-for="(item, i) in items" :key="i">
             <v-card class="header-carousel__content-card d-flex"
