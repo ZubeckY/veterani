@@ -53,7 +53,7 @@
             </v-chip>
           </div>
           <v-spacer/>
-          <date-normalizer :date="new Date(item.created)"></date-normalizer>
+          <date-normalizer :date="new Date(post.created)"></date-normalizer>
         </v-card-text>
       </div>
     </div>
