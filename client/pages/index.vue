@@ -46,13 +46,7 @@
         <v-card-title class="ourTeam-title block-title">Наша команда</v-card-title>
         <v-card-text class="ourTeam-text block-text">Познакомьтесь с нашей командой</v-card-text>
         <div class="ourTeam-members">
-          <article class="ourTeam-card" v-for="i in 4" :key="i">
-            <div class="ourTeam-card__container">
-              <v-img class="ourTeam-card__image" src="/placeholder_lk.jpg"/>
-              <v-card-text class="ourTeam-card__name">Фамилия Имя Отчество</v-card-text>
-              <v-card-text class="ourTeam-card__memberLabel">Член нашей команды</v-card-text>
-            </div>
-          </article>
+          <org-card v-for="(item, i) in team" :key="i" :item="item"/>
         </div>
       </div>
     </section>
@@ -120,9 +114,21 @@ export default class Pages extends Vue {
   readonly pleaseDonateText = 'Поддержите нашу деятельность, сканировав QR код, можете\nотправить любую сумму'
   readonly bkgFlagImage: any = bkgFlagImage;
   posts: Array<any> = [];
+  team: Array<any> = [];
 
   async mounted() {
     await this.getData();
+    await this.getOrgTeam();
+  }
+
+  async getOrgTeam() {
+    await this.$axios.get('/api/user/our-team/')
+      .then(res => {
+        this.team = res.data
+      })
+      .catch((error) => {
+        console.log(error)
+      })
   }
 
   async getData() {

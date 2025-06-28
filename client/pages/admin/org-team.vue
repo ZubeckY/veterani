@@ -52,7 +52,8 @@
     </header>
 
     <div class="d-flex flex-row flex-wrap">
-      <org-card v-for="(item, i) in data" :key="i" :item="item"/>
+      <org-card v-for="(item, i) in data" :key="i"
+                :item="item" :showButtons="true"/>
     </div>
   </div>
 </template>

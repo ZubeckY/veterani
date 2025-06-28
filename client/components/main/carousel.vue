@@ -6,10 +6,10 @@
                 hide-delimiters>
       <v-carousel-item class="header-carousel__item grey lighten-3"
                        v-for="(item, i) in items" :key="i">
-          <v-img class="d-block mx-auto"
-                 height="100%" contain
-                 :src="item.src ?? '/imageGroup1.png'"
-                 :lazy-src="item.src ?? '/imageGroup1.png'"/>
+        <v-img class="d-block my-2 mx-auto"
+               height="98%" contain
+               :src="item.src ?? '/imageGroup1.png'"
+               :lazy-src="item.src ?? '/imageGroup1.png'"/>
       </v-carousel-item>
     </v-carousel>
     <div class="header-carousel__content">
@@ -24,9 +24,10 @@
                     color="mainBlueTransparent">
               <div class="header-carousel__content-card-container">
                 <v-card-title class="header-carousel__content-title block-title" v-text="item.headLine"/>
-                <v-card-text class="header-carousel__content-text block-text" v-text="item.text"/>
-                <v-card-text class="header-carousel__content-text block-text"
-                             v-text="getCreatedDate(new Date(item.created))"/>
+                <v-card-text class="header-carousel__content-text block-text" v-html="formattedText(item)"/>
+                <v-card-text class="header-carousel__content-text block-text">
+                  <date-normalizer :date="new Date(item.created)"></date-normalizer>
+                </v-card-text>
               </div>
             </v-card>
           </v-carousel-item>
@@ -34,9 +35,7 @@
       </div>
     </div>
   </section>
-
 </template>
-
 <script lang="ts">
 import {Vue, Component, Watch} from 'vue-property-decorator';
 
@@ -55,12 +54,9 @@ export default class Carousel extends Vue {
       })
   }
 
-  getCreatedDate(created: Date) {
-    return new Date(created).toLocaleDateString("ru", {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric',
-    })
+  formattedText(item: any): string {
+    return item.text.length <= 450 ? item.text :
+      `${item.text.slice(0, 450).trim()}... <a href="/blog/${item.link}" class="blue--text text--accent-4">далее</a>`;
   }
 }
 </script>

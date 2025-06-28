@@ -1,9 +1,9 @@
 <template>
-  <article class="ourTeam-card admin-card">
+  <article :class="className">
     <div class="ourTeam-card__container">
       <div class="d-flex justify-end">
         <v-img class="ourTeam-card__image admin-image" width="calc(100% - 10px)" src="/placeholder_lk.jpg"/>
-        <div style="position: absolute; z-index: 1000;">
+        <div style="position: absolute; z-index: 1000;" v-if="showButtons">
           <v-menu offset-y>
             <template v-slot:activator="{ attrs, on }">
               <v-btn v-bind="attrs" v-on="on" icon>
@@ -12,7 +12,7 @@
             </template>
 
             <v-list class="pa-0" dense>
-              <v-list-item v-for="item in items"
+              <v-list-item v-for="item in menu"
                            :class="item.color + ' py-0'"
                            :key="item.text" link>
                 <v-list-item-title v-text="item.text"></v-list-item-title>
@@ -33,7 +33,9 @@ import {Vue, Component, Prop} from 'vue-property-decorator';
 @Component({})
 export default class OrgCard extends Vue {
   @Prop({required: true}) readonly item!: any;
-  items: any = [
+  @Prop({default: false}) showButtons?: boolean;
+
+  menu: Array<any> = [
     {
       text: 'Изменить',
       color: 'primary--text',
@@ -48,5 +50,8 @@ export default class OrgCard extends Vue {
     return item.firstName + ' ' + item.lastName
   }
 
+  get className(): string {
+    return `ourTeam-card ${this.showButtons ? 'main-card' : 'main-card'}`
+  }
 }
 </script>

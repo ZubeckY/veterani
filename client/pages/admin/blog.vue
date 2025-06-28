@@ -37,7 +37,9 @@
 
         <!-- Дата создания -->
         <template v-slot:item.created="{ item }">
-          <td class="text-start"> {{ getCreatedDate(item.created) }}</td>
+          <td class="text-start">
+            <date-normalizer :date="new Date(item.created)"></date-normalizer>
+          </td>
         </template>
 
         <!-- Кнопки -->
@@ -81,7 +83,6 @@ export default class Blog extends Vue {
   async mounted() {
     this.loading = true;
     await this.getPostList()
-
     this.loading = false;
   }
 
@@ -102,17 +103,8 @@ export default class Blog extends Vue {
       })
   }
 
-  getCreatedDate(created: Date) {
-    return new Date(created).toLocaleDateString("ru", {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric',
-    })
-  }
-
   getCurrentColor(value: boolean) {
     return value ? 'green--text' : 'red--text'
   }
-
 }
 </script>

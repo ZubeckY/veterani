@@ -8,6 +8,8 @@ import EmailService from "../../service/emailService";
 import {checkValidAuth} from "../../middleware/auth/checkValidAuth";
 import {Role, roleTypeText} from "../../types/role";
 import * as EmailValidator from 'email-validator';
+import MemberUser from "../../DTOS/member.user";
+import {OrgRole} from "../../types/orgRole";
 
 const emailService = new EmailService();
 const userRouter = Router();
@@ -359,6 +361,35 @@ userRouter.patch("/user/email/accept", checkValidAuth, async (req: Request, res:
         return res.status(500).send({
             message: "ошибка"
         })
+    }
+})
+
+userRouter.get("/user/our-team/", async (req: Request, res: Response): Promise<any> => {
+    try {
+        const userRepository = AppDataSource.getRepository(User);
+        const membersListFromDB = await userRepository.find({
+            where: {
+                memberRole: OrgRole.member
+            }
+        })
+
+        const users = membersListFromDB.map(user => new MemberUser({
+            id: user.id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            memberRole: user.memberRole,
+            memberRoleTitle: user.memberRoleTitle,
+        }));
+
+        return res
+            .status(200)
+            .send(users);
+    } catch (error) {
+        res
+            .status(500)
+            .send({
+                message: 'Ошибка'
+            })
     }
 })
 
