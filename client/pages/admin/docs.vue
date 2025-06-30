@@ -81,6 +81,7 @@ export default class Docs extends Vue {
     this.$axios.get('/api/admin/file/list')
       .then((res) => {
         this.data = res.data.files
+        console.log(res.data)
       })
   }
 

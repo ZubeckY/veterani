@@ -35,36 +35,42 @@ export enum FileType {
     fileXLSX = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
 }
 
-export const fileTypeText: DictionaryValue<FileType> = {
-    [FileType["imageJPEG"]]: 'JPEG изображение',
-    [FileType["imageJPG"]]: 'JPG изображение',
-    [FileType["imagePNG"]]: 'PNG изображение',
-    [FileType["imageAPNG"]]: 'APNG изображение',
-    [FileType["imageGIF"]]: 'GIF изображение',
-    [FileType["imageWEBP"]]: 'WEBP изображение',
-    [FileType["imageAVIF"]]: 'AVIF изображение',
-    [FileType["imageBMP"]]: 'BMP изображение',
-    [FileType["imageSVG"]]: 'SVG изображение',
-    [FileType["imageTIFF"]]: 'TIFF изображение',
+export class FileTypeTranslator {
+    private static readonly translations: DictionaryValue<FileType> = {
+        [FileType.imageJPEG]: 'JPEG изображение',
+        [FileType.imageJPG]: 'JPG изображение',
+        [FileType.imagePNG]: 'PNG изображение',
+        [FileType.imageAPNG]: 'APNG изображение',
+        [FileType.imageGIF]: 'GIF изображение',
+        [FileType.imageWEBP]: 'WEBP изображение',
+        [FileType.imageAVIF]: 'AVIF изображение',
+        [FileType.imageBMP]: 'BMP изображение',
+        [FileType.imageSVG]: 'SVG изображение',
+        [FileType.imageTIFF]: 'TIFF изображение',
 
-    [FileType["fileRAR"]]: 'RAR файл',
-    [FileType["fileXTAR"]]: 'X-tar файл',
-    [FileType["fileZIP"]]: 'Zip файл',
-    [FileType["fileXZIP"]]: 'XZip файл',
-    [FileType["file7ZIP"]]: '7z файл',
+        [FileType.fileRAR]: 'RAR файл',
+        [FileType.fileXTAR]: 'X-tar файл',
+        [FileType.fileZIP]: 'Zip файл',
+        [FileType.fileXZIP]: 'XZip файл',
+        [FileType.file7ZIP]: '7z файл',
 
-    [FileType["fileTXT"]]: 'TXT файл',
-    [FileType['fileDOC']]: 'DOC файл',
-    [FileType['fileDOCX']]: 'DOCX файл',
-    [FileType['fileODP']]: 'ODP презентация',
-    [FileType['fileODS']]: 'ODS таблица',
-    [FileType['fileCSV']]: 'CSV таблица',
-    [FileType['fileODT']]: 'ODT файл',
-    [FileType['filePDF']]: 'PDF файл',
-    [FileType['filePTT']]: 'PPT презентация',
-    [FileType['filePPTX']]: 'PPTX презентация',
-    [FileType['fileXML']]: 'XML файл',
-    [FileType['fileRTF']]: 'RTF файл',
-    [FileType['fileXLS']]: 'XLS таблица',
-    [FileType['fileXLSX']]: 'XLSX таблица',
+        [FileType.fileTXT]: 'TXT файл',
+        [FileType.fileDOC]: 'DOC файл',
+        [FileType.fileDOCX]: 'DOCX файл',
+        [FileType.fileODP]: 'ODP презентация',
+        [FileType.fileODS]: 'ODS таблица',
+        [FileType.fileCSV]: 'CSV таблица',
+        [FileType.fileODT]: 'ODT файл',
+        [FileType.filePDF]: 'PDF файл',
+        [FileType.filePTT]: 'PPT презентация',
+        [FileType.filePPTX]: 'PPTX презентация',
+        [FileType.fileXML]: 'XML файл',
+        [FileType.fileRTF]: 'RTF файл',
+        [FileType.fileXLS]: 'XLS таблица',
+        [FileType.fileXLSX]: 'XLSX таблица',
+    };
+
+    static translate(mimeType: string): string {
+        return this.translations[mimeType as FileType] ?? 'Неизвестный тип файла';
+    }
 }
