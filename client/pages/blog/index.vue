@@ -8,7 +8,7 @@
 
     <section v-else>
       <div class="news-container mainContainer">
-        <div class="news-console">
+        <div class="news-console" v-if="showConsole">
           <div class="news-console__group">
             <v-card-text class="news-console__text">Кем опубликован</v-card-text>
 
@@ -17,10 +17,12 @@
               <v-item v-for="obj in selectParamsPosts"
                       :key="obj.key" :value="obj.key"
                       v-slot="{ active, toggle }">
-                <v-card @click="toggle"
-                        v-text="obj.value"
-                        class="news-console__button"
-                        :color="active ? 'primary white--text' : ''"/>
+                <div @click="getItemsByAuthor" class="ml-2">
+                  <v-card @click="toggle"
+                          v-text="obj.value"
+                          class="news-console__button"
+                          :color="active ? 'primary white--text' : ''"/>
+                </div>
               </v-item>
             </v-item-group>
           </div>
@@ -46,7 +48,7 @@
   </div>
 </template>
 <script lang="ts">
-import {Vue, Component} from 'vue-property-decorator';
+import {Vue, Component, Inject} from 'vue-property-decorator';
 
 @Component({
   head(this: Blog): object {
@@ -56,6 +58,7 @@ import {Vue, Component} from 'vue-property-decorator';
   }
 })
 export default class Blog extends Vue {
+  @Inject('userFromDB') userFromDB: any;
   selectedParam: string = ''
   selectParamsPosts: any = [
     {
@@ -67,10 +70,12 @@ export default class Blog extends Vue {
       value: 'Сообщество'
     },
     {
-      key: 'my',
+      key: 'author',
       value: 'Только мои'
     }
   ]
+
+  showConsole: boolean = true;
   loading: boolean = true;
   data: any = []
   page: number = 1;
@@ -85,6 +90,7 @@ export default class Blog extends Vue {
     this.$axios.get(this.getLink)
       .then(res => {
         this.data = res.data
+        console.log(this.data)
       })
       .catch((error) => {
         console.log(error)
@@ -105,6 +111,16 @@ export default class Blog extends Vue {
       })
   }
 
+  async getItemsByAuthor() {
+    this.$axios.get('/api/post/list?author=' + this.selectedParam)
+      .then(res => {
+        this.data = res.data
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  }
+
   get pagSize(): number {
     return Math.ceil(this.data.length / this.size)
   }
@@ -114,6 +130,3 @@ export default class Blog extends Vue {
   }
 }
 </script>
-<style scoped>
-
-</style>
