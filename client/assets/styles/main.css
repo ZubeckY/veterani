@@ -16,9 +16,14 @@
 }
 
 /*  */
+.v-dialog,
 .v-menu__content {
   border-radius: var(--borRad) !important;
   box-shadow: var(--boxShL) !important;
+}
+
+.v-overlay.v-overlay--active .v-overlay__scrim {
+  opacity: .25 !important;
 }
 
 .loadingBlock {
