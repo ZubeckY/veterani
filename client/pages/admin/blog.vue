@@ -51,8 +51,8 @@
         <!-- Кнопки -->
         <template v-slot:item.actions="{ item }">
           <div class="d-flex">
-            <v-icon color="primary" class="mr-2">mdi-pencil</v-icon>
-            <admin-user-delete :item="item" @deleteUser="deletePost"/>
+            <admin-blog-edit class="mr-2" :item="item" @saveEdit="getPostList"/>
+            <admin-blog-delete :item="item" @deletePost="deletePost"/>
           </div>
         </template>
       </v-data-table>
@@ -84,6 +84,7 @@ export default class Blog extends Vue {
     {text: 'Опубликован', value: 'published'},
     {text: 'Предложенный', value: 'suggested'},
     {text: 'Дата создания', value: 'created'},
+    {text: '', value: 'actions', sortable: false},
   ]
 
   async mounted() {

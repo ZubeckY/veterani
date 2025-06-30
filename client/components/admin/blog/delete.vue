@@ -7,10 +7,10 @@
 
     <v-card class="ma-0 py-2">
       <v-card-text class="mt-2 pa-0 pl-4">
-        Вы действительно хотите удалить документ:
+        Вы действительно хотите удалить публикацию:
       </v-card-text>
       <v-card-text class="pa-0 pl-4">
-        {{ docName }}?
+        {{ postName }}?
       </v-card-text>
 
       <v-card-actions>
@@ -45,12 +45,12 @@ export default class Delete extends Vue {
   @Prop() item: any
   deleteDialog: boolean = false;
 
-  get docName() {
-    return this.item.id + ' ' + this.item.name;
+  get postName(): string {
+    return this.item.id + ' ' + this.item.headLine;
   }
 
   deleteItem() {
-    this.$emit('deleteDoc', this.item.id);
+    this.$emit('deletePost', this.item.id);
     this.deleteDialog = false;
   }
 }

@@ -1,16 +1,12 @@
 import {Request, Response, Router} from "express";
 import {AppDataSource} from "../../../connectDb";
 import {Post} from "../../../entity";
-import blogRouter from "../../blog/controller";
-import {checkValidAuth} from "../../../middleware/auth/checkValidAuth";
-import AuthService from "../../../service/authService";
-import adminRouter from "../user/controller";
-import {FileTypeTranslator} from "../../../types/fileType";
+import {checkRole} from "../../../middleware/auth/checkRole";
 
 
 const adminBlogRouter = Router();
 
-adminBlogRouter.get('/admin/post/list', async (req: Request, res: Response): Promise<any> => {
+adminBlogRouter.get('/admin/post/list', checkRole,async (req: Request, res: Response): Promise<any> => {
     try {
         const skip = (+(req.query?.page ?? 1) - 1) * +(req.query?.size ?? 10)
         const takePage = +(req.query?.page ?? 1) * +(req.query?.size ?? 10)
@@ -33,42 +29,29 @@ adminBlogRouter.get('/admin/post/list', async (req: Request, res: Response): Pro
     }
 })
 
-adminBlogRouter.delete('/admin/post/delete/:link', checkValidAuth, async (req: Request, res: Response): Promise<any> => {
+//todo
+adminBlogRouter.delete('/admin/post/delete/:id', checkRole, async (req: Request, res: Response): Promise<any> => {
     try {
-        const link = req.params.link
+        const {id} = req.params
+        if (!(Number.isInteger(+id))) {
+            return res.status(404).send({
+                message: "Пользователь не выбран"
+            })
+        }
 
         const postRepository = AppDataSource.getRepository(Post)
         const post: any = await postRepository
             .createQueryBuilder('post')
             .leftJoinAndSelect('post.user', 'user')
-            .where("link = :link", {link: link})
+            .where("id = :id", {id: id})
             .getOne()
 
         if (!post) {
-            res.status(503).send({
+            return res.status(503).send({
                 message: "Поста не существует"
             })
         }
-
-        const cookies = req.headers['cookie']
-        const specifiedId = post.user.id
-
-        const correctId = await new AuthService().userRoleIsCorrect(cookies, res)
-        if (!correctId.correct) {
-            return correctId
-        }
-
-        const userId = correctId.userFromDB.id
-        if (userId !== specifiedId) {
-            if (!correctId.roleIncludes) {
-                return res
-                    .status(403)
-                    .send({
-                        message: "роль не совпадает"
-                    })
-            }
-        }
-
+        console.log(post)
         await postRepository.remove(post)
         return res
             .status(200)
@@ -76,6 +59,7 @@ adminBlogRouter.delete('/admin/post/delete/:link', checkValidAuth, async (req: R
                 message: "Ok"
             })
     } catch (error) {
+        console.log(error)
         res.status(503).send({
             message: "Ошибка"
         })
