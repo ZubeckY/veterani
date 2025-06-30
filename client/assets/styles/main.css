@@ -7,16 +7,18 @@
 /* #F1F1F1FF */
 :root {
   --mainBlue: #2B5189;
-  --mainBlueTransparent: rgba(72, 116, 184, 0.44);
+  --mainBlueT: rgba(72, 116, 184, 0.44);
   --grayBox: rgba(149, 157, 165, 0.15);
-  --box-shadow: rgba(149, 157, 165, 0.2) 0 8px 24px;
-  --box-shadow__light: var(--grayBox) 0 8px 24px
+  --lGray: #fdfdfd;
+  --boxSh: rgba(149, 157, 165, 0.2) 0 8px 24px;
+  --boxShL: var(--grayBox) 0 8px 24px;
+  --borRad: 13px;
 }
 
 /*  */
 .v-menu__content {
-  border-radius: 13px !important;
-  box-shadow: var(--box-shadow__light) !important;
+  border-radius: var(--borRad) !important;
+  box-shadow: var(--boxShL) !important;
 }
 
 .loadingBlock {
@@ -33,7 +35,19 @@
 }
 
 .mainBlueTransparent {
-  background-color: var(--mainBlueTransparent) !important;
+  background-color: var(--mainBlueT) !important;
+}
+
+.mainContainer {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.flexCenter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* header */
@@ -46,9 +60,8 @@
 }
 
 .header-container {
-  width: 100%;
-  max-width: 1200px;
-  border-radius: 13px;
+  color: white;
+  border-radius: var(--borRad);
   background-color: var(--mainBlue);
   box-shadow: rgba(43, 81, 137, 0.50) 0 7px 29px 0;
 }
@@ -72,25 +85,19 @@
   width: 100%;
   top: 172px;
   bottom: 30px;
-  align-items: center;
-  justify-content: center;
 }
 
 .header-carousel__content-container {
   display: block;
-  width: 100%;
   height: 100%;
-  max-width: 1200px;
 }
 
 .header-carousel__content-card {
   width: 100%;
   height: 100%;
   min-height: 420px;
-  align-items: center;
-  justify-content: center;
-  border-radius: 13px !important;
-  box-shadow: var(--mainBlueTransparent) 0 7px 29px 0 !important;
+  border-radius: var(--borRad) !important;
+  box-shadow: var(--mainBlueT) 0 7px 29px 0 !important;
 }
 
 .header-carousel__content-card-container {
@@ -133,8 +140,8 @@
 }
 
 .lk-img {
-  border-radius: 13px !important;
-  box-shadow: var(--box-shadow__light) !important;
+  border-radius: var(--borRad) !important;
+  box-shadow: var(--boxShL) !important;
 }
 
 .lk-info__group {
@@ -186,30 +193,22 @@
   top: -200px;
 }
 
-.aboutUs-container {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
 .aboutUs-text {
   max-width: 900px;
 }
 
 .aboutUs-video {
   margin-top: 20px;
-  border-radius: 13px;
+  border-radius: var(--borRad);
 }
 
 .aboutUs-video__content {
-  border-radius: 13px;
+  border-radius: var(--borRad);
 }
 
 /* imageGroup */
 .imageGroup-container {
   display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .imageGroup-card {
@@ -222,7 +221,7 @@
 }
 
 .imageGroup-card__image {
-  border-radius: 13px !important;
+  border-radius: var(--borRad) !important;
 }
 
 .imageGroup-card:last-child {
@@ -239,25 +238,16 @@
   background: #F1F1F130;
 }
 
-.ourTeam-container {
-  width: 100%;
-  margin: 0 auto;
-  max-width: 1200px;
-}
-
 .ourTeam-members {
-  display: flex;
   margin-top: 40px;
-  align-items: center;
-  justify-content: center;
 }
 
 .ourTeam-card {
   width: 300px;
   height: 430px;
   padding: 1px;
-  border-radius: 13px;
-  box-shadow: var(--box-shadow__light);
+  border-radius: var(--borRad);
+  box-shadow: var(--boxShL);
 }
 
 .ourTeam-card.main-card {
@@ -265,7 +255,7 @@
 }
 
 .ourTeam-card.admin-card {
-  background: #fdfdfd;
+  background: var(--lGray);
   margin: 10px !important;
   border: 1px solid var(--grayBox);
   box-shadow: none !important;
@@ -278,12 +268,12 @@
 .ourTeam-card__container {
   width: 100%;
   height: 100%;
-  border-radius: 13px;
+  border-radius: var(--borRad);
 }
 
 .ourTeam-card__image {
   margin: 7px !important;
-  border-radius: 13px !important;
+  border-radius: var(--borRad) !important;
 }
 
 .ourTeam-card__image.admin-image {
@@ -310,12 +300,6 @@
   margin-top: 40px;
 }
 
-.news-container {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
 .news-list {
   display: flex;
   flex-wrap: wrap;
@@ -329,9 +313,9 @@
   padding: 1px;
   margin: 15px 10px;
   cursor: pointer;
-  border-radius: 13px;
-  background: #fdfdfd;
-  box-shadow: var(--box-shadow__light);
+  border-radius: var(--borRad);
+  background: var(--lGray);
+  box-shadow: var(--boxShL);
 }
 
 .news-card__image {
@@ -339,22 +323,22 @@
 }
 
 .news-card__image-carousel {
-  border-radius: 13px !important;
+  border-radius: var(--borRad) !important;
 }
 
 .news-card__image-buttons {
   display: flex;
-  flex-direction: row;
-  position: absolute;
   top: 15px;
   right: 15px;
+  position: absolute;
+  flex-direction: row;
 }
 
 .news-card__image-title {
   padding: 5px 10px !important;
   color: #F1F1F1FF !important;
   font-size: 20px !important;
-  border-radius: 13px !important;
+  border-radius: var(--borRad) !important;
   backdrop-filter: blur(40px) !important;
   background: rgba(241, 241, 241, 0.5) !important;
 }
@@ -370,7 +354,7 @@
 }
 
 .news-card__button {
-  border-radius: 13px !important;
+  border-radius: var(--borRad) !important;
 }
 
 .news-console {
@@ -389,7 +373,7 @@
 
 .news-console__button {
   padding: 5px 10px !important;
-  color: #000000 !important;
+  color: black !important;
   font-size: 13px !important;
   border-radius: 7px !important;
   background: rgba(241, 241, 241, 0.5) !important;
@@ -399,16 +383,41 @@
   margin-left: 10px;
 }
 
+.newsItem-card {
+  display: flex;
+  margin-top: 14px;
+  min-height: 250px;
+  border-radius: var(--borRad);
+  flex-direction: column;
+  box-shadow: var(--boxShL);
+}
+
+.newsItem-title {
+  margin-top: 10px;
+  font-size: 30px !important;
+  letter-spacing: normal !important;
+}
+
+.newsItem-text {
+  font-size: 18px !important;
+  font-weight: 300 !important;
+  line-height: 1.25 !important;
+  letter-spacing: normal !important;
+  white-space: pre-wrap;
+  margin: 8px auto 0;
+}
+
+.newsItem-chip {
+  width: fit-content;
+  border-radius: var(--borRad);
+  background: var(--lGray);
+  box-shadow: var(--boxShL);
+}
+
 .pleaseDonate {
   margin-top: 80px;
   padding: 40px 0 80px;
   background: #F1F1F130;
-}
-
-.pleaseDonate-container {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
 }
 
 .pleaseDonate-text {

@@ -4,6 +4,7 @@
     <v-form ref="form" @submit.prevent>
       <v-file-input @change="onFileChange"
                     v-model="file"
+                    :disabled="uploading"
                     label="Выберите файл"/>
       <v-card max-width="450" elevation="0">
         <v-img max-width="450"
@@ -44,6 +45,7 @@ export default class test extends Vue {
   error: string | null = null;
 
   uploadProgressValue: number = 0;
+  uploading: boolean = false;
   overlay: boolean = false;
   imageValue: any = ""
 
@@ -62,6 +64,7 @@ export default class test extends Vue {
     }
 
     reader.readAsDataURL(this.file);
+    this.uploading = true;
     this.overlay = true;
 
     const formData = new FormData();
@@ -85,12 +88,9 @@ export default class test extends Vue {
         this.success = null;
       })
       .finally(() => {
+        this.uploading = false;
         this.overlay = false;
       })
   }
 }
 </script>
-
-<style scoped>
-
-</style>

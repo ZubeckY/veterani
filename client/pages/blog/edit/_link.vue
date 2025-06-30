@@ -21,6 +21,7 @@
                   outlined dense/>
 
       <v-btn @click="edit" text
+             color="primary"
              class="ma-0 pa-0"
              height="fit-content"
              width="fit-content">

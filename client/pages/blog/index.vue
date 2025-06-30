@@ -7,7 +7,7 @@
     </div>
 
     <section v-else>
-      <div class="news-container">
+      <div class="news-container mainContainer">
         <v-card-text class="news-text block-text">Смотри наши новости</v-card-text>
 
         <div class="news-console">

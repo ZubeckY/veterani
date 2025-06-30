@@ -13,14 +13,14 @@
       </v-carousel-item>
     </v-carousel>
     <div class="header-carousel__content">
-      <div class="header-carousel__content-container">
+      <div class="header-carousel__content-container mainContainer">
         <v-carousel v-model="activeSlide"
                     :cycle="false"
                     :continuous="false"
                     height="100%"
                     hide-delimiters>
           <v-carousel-item v-for="(item, i) in items" :key="i">
-            <v-card class="header-carousel__content-card d-flex"
+            <v-card class="header-carousel__content-card flexCenter d-flex"
                     color="mainBlueTransparent">
               <div class="header-carousel__content-card-container">
                 <v-card-title class="header-carousel__content-title block-title" v-text="item.headLine"/>

@@ -1,6 +1,6 @@
 <template>
   <header class="header">
-    <div class="header-container d-flex align-center white--text mx-auto px-4 py-2 ma-0">
+    <div class="header-container flexCenter mainContainer mx-auto px-4 py-2 ma-0">
       <div class="header-logo cursor-pointer" @click="$router.push('/')">
         <v-img class="d-block"
                lazy-src="/logo.png"

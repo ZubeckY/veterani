@@ -3,7 +3,7 @@
     <main-carousel/>
     <div class="flag-bkg mainFlagBlock" :style="'background-image: url('+ bkgFlagImage +');'">
       <section class="aboutUs" id="about-us">
-        <div class="aboutUs-container">
+        <div class="aboutUs-container mainContainer">
           <v-card-title class="aboutUs-title block-title">О нас</v-card-title>
           <v-card-text class="aboutUs-text block-text">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit,
@@ -18,7 +18,7 @@
       </section>
 
       <section class="imageGroup">
-        <div class="imageGroup-container">
+        <div class="imageGroup-container flexCenter">
           <article class="imageGroup-card">
             <v-img class="imageGroup-card__image"
                    width="610px" height="420px"
@@ -42,17 +42,17 @@
     </div>
 
     <section class="ourTeam">
-      <div class="ourTeam-container">
+      <div class="ourTeam-container mainContainer">
         <v-card-title class="ourTeam-title block-title">Наша команда</v-card-title>
         <v-card-text class="ourTeam-text block-text">Познакомьтесь с нашей командой</v-card-text>
-        <div class="ourTeam-members">
+        <div class="ourTeam-members flexCenter">
           <org-card v-for="(item, i) in team" :key="i" :item="item"/>
         </div>
       </div>
     </section>
 
     <section class="news">
-      <div class="news-container">
+      <div class="news-container mainContainer">
         <v-card-title class="news-title block-title">Новости</v-card-title>
         <v-card-text class="news-text block-text">Смотри наши новости</v-card-text>
         <div class="news-wrapper">
@@ -72,7 +72,7 @@
     </section>
 
     <section class="pleaseDonate">
-      <div class="pleaseDonate-container">
+      <div class="pleaseDonate-container mainContainer">
         <v-card-title class="pleaseDonate-title block-title">Поддержите нас</v-card-title>
         <v-card-text class="pleaseDonate-text block-text" v-text="pleaseDonateText"></v-card-text>
         <div class="d-flex justify-center align-center">
