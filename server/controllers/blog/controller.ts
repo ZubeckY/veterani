@@ -199,17 +199,6 @@ blogRouter.delete('/post/delete/:link', checkValidAuth, async (req: Request, res
             return correctId
         }
 
-        const userId = correctId.userFromDB.id
-        if (userId !== specifiedId) {
-            if (!correctId.roleIncludes) {
-                return res
-                    .status(403)
-                    .send({
-                        message: "роль не совпадает"
-                    })
-            }
-        }
-
         await postRepository.remove(post)
         return res
             .status(200)

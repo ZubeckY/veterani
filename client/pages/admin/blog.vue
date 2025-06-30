@@ -13,6 +13,12 @@
                       itemsPerPageText: 'Показывать элементов в списке:',
                       itemsPerPageOptions: [10, 15, 20, -1]
                     }">
+        <!-- Создатель -->
+        <template v-slot:item.user.id="{ item }">
+          <td :class="'text-start '">
+            {{ `${item.user.firstName} ${item.user.lastName} (${item.user.id})` }}
+          </td>
+        </template>
 
         <!-- Опубликовано -->
         <template v-slot:item.published="{ item }">
@@ -73,7 +79,7 @@ export default class Blog extends Vue {
   headers: any = [
     {text: 'ID', value: 'id'},
     {text: 'Заголовок', value: 'headLine'},
-    {text: 'ID создателя', value: 'user.id'},
+    {text: 'Создатель (ID)', value: 'user.id'},
     {text: 'Входит в слайдер', value: 'includeSlider'},
     {text: 'Опубликован', value: 'published'},
     {text: 'Предложенный', value: 'suggested'},
@@ -87,14 +93,14 @@ export default class Blog extends Vue {
   }
 
   async getPostList() {
-    await this.$axios.get('/api/post/list')
+    await this.$axios.get('/api/admin/post/list')
       .then((response) => {
         this.data = response.data;
       })
   }
 
   async deletePost(id: any) {
-    await this.$axios.delete('/api/post/delete/' + id)
+    await this.$axios.delete('/api/admin/post/delete/' + id)
       .then((response) => {
         this.getPostList()
       })

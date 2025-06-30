@@ -6,6 +6,7 @@ import mainRouter from "./admin/main/controller";
 import adminRouter from "./admin/user/controller";
 import memberOrgController from "./admin/memberOrg/controller";
 import contactInfoRouter from "./admin/contactInfo/controller";
+import adminBlogRouter from "./admin/blog/controller";
 
 const controller: any = [
     userRouter,
@@ -17,6 +18,7 @@ const controller: any = [
     adminRouter,
     memberOrgController,
     contactInfoRouter,
+    adminBlogRouter,
 ];
 
 export default controller;
