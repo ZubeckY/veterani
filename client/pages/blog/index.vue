@@ -8,8 +8,6 @@
 
     <section v-else>
       <div class="news-container mainContainer">
-        <v-card-text class="news-text block-text">Смотри наши новости</v-card-text>
-
         <div class="news-console">
           <div class="news-console__group">
             <v-card-text class="news-console__text">Кем опубликован</v-card-text>
