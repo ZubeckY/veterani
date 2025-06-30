@@ -16,11 +16,11 @@
         <v-card-text class="d-flex align-center justify-center">
           <v-checkbox class="mr-3" v-model="itemEdit.published" label="Опубликовать"/>
           <v-text-field v-model="itemEdit.name"
-                          :items="roles"
-                          placeholder="Название"
-                          hide-details
-                          outlined
-                          dense/>
+                        :items="roles"
+                        placeholder="Название"
+                        hide-details
+                        outlined
+                        dense/>
         </v-card-text>
 
         <v-card-actions>
@@ -43,7 +43,7 @@ import {Vue, Component, Prop, Watch} from 'vue-property-decorator';
 
 @Component({})
 export default class edit extends Vue {
-  @Prop() item: any
+  @Prop() item?: any
 
   dialog: boolean = false;
   dialogName: string = '';
@@ -51,7 +51,7 @@ export default class edit extends Vue {
   items: Array<any> = []
   roles: Array<any> = []
   itemEdit: any = {}
-  expansion:string = ""
+  expansion: string = ""
 
   async mounted() {
   }
@@ -61,7 +61,7 @@ export default class edit extends Vue {
     if (!this.dialog) return
     this.itemEdit = JSON.parse(JSON.stringify(this.item))
     const index = this.itemEdit.name.lastIndexOf('.');
-    this.expansion = this.itemEdit.name.substring(index, this.itemEdit.name.length-1);
+    this.expansion = this.itemEdit.name.substring(index, this.itemEdit.name.length);
     this.itemEdit.name = this.itemEdit.name.substring(0, index);
     this.dialogName = `Редактирование документа:\n${this.item.name}`
   }

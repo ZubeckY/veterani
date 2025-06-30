@@ -111,19 +111,21 @@ fileRouter.patch("/admin/file/edit/:id", onlyAdmin, async (req: Request, res: Re
             })
         }
 
-        const body = req.body;
+        const {name, published} = req.body;
 
         const fileRepository = AppDataSource.getRepository(File);
         const files = await fileRepository.findOneBy({id: +id});
+
         console.log(files)
+
         if (!files) {
             return res.status(404).send({
                 message: "Файл с таким id не найден"
             })
         }
 
-        files.name = body.name;
-        files.published = body.published;
+        files.name = name;
+        files.published = published;
 
         await fileRepository.save(files)
         return res.status(200).send({message: "Файл успешно обновлен"});
