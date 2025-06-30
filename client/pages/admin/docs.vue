@@ -38,8 +38,8 @@
         <!-- Кнопки -->
         <template v-slot:item.actions="{ item }">
           <div class="d-flex">
-            <v-icon color="primary" class="mr-2">mdi-pencil</v-icon>
-            <admin-user-delete :item="item" @deleteUser="deleteUser"/>
+            <admin-docx-edit class="mr-2" :item="item" @saveEdit="getFileList"/>
+            <admin-docx-delete :item="item" @deleteDoc="deleteDoc"/>
           </div>
         </template>
 
@@ -50,8 +50,10 @@
 
 <script lang="ts">
 import {Vue, Component} from 'vue-property-decorator';
+import Admin from "~/layouts/admin.vue";
 
 @Component({
+  components: {Admin},
   layout: 'admin',
   head(this: Docs): object {
     return {
@@ -87,6 +89,16 @@ export default class Docs extends Vue {
 
   getCurrentColor(value: boolean) {
     return value ? 'green--text' : 'red--text'
+  }
+
+  async deleteDoc(id: any) {
+    await this.$axios.delete('/api/admin/file/delete/' + id)
+      .then((response) => {
+        this.getFileList()
+      })
+      .catch((error) => {
+        console.log(error);
+      })
   }
 }
 </script>

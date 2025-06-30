@@ -16,7 +16,6 @@ fileRouter.get("/admin/file/list", onlyAdmin, async (req: Request, res: Response
 
         const transformedFiles = files.map(file => {
             const { typeFile, ...rest } = file;
-            console.log(FileTypeTranslator.translate(typeFile))
             return {
                 ...rest,
                 typeFile: FileTypeTranslator.translate(typeFile),
@@ -73,5 +72,68 @@ fileRouter.post("/file/upload", checkValidAuth, uploadService.upload("file"), as
         })
     }
 })
+
+fileRouter.delete("/admin/file/delete/:id", onlyAdmin, async (req: Request, res: Response): Promise<any> => {
+    try {
+        const {id} = req.params
+        if (!(Number.isInteger(+id))) {
+            return res.status(404).send({
+                message: "Пользователь не выбран"
+            })
+        }
+
+        const fileRepository = AppDataSource.getRepository(File);
+        const files = await fileRepository.findOneBy({id: +id});
+        console.log(files)
+        if (!files) {
+            return res.status(404).send({
+                message: "Файл с таким id не найден"
+            })
+        }
+
+        await fileRepository.delete({id: +id})
+        return res.status(200).send({message: "Файл успешно удалён"});
+
+    } catch (error) {
+        console.error(error);
+        return res.status(503).send({
+            message: error instanceof Error ? error.message : 'Internal server error',
+        });
+    }
+});
+
+fileRouter.patch("/admin/file/edit/:id", onlyAdmin, async (req: Request, res: Response): Promise<any> => {
+    try {
+        const {id} = req.params
+        if (!(Number.isInteger(+id))) {
+            return res.status(404).send({
+                message: "Пользователь не выбран"
+            })
+        }
+
+        const body = req.body;
+
+        const fileRepository = AppDataSource.getRepository(File);
+        const files = await fileRepository.findOneBy({id: +id});
+        console.log(files)
+        if (!files) {
+            return res.status(404).send({
+                message: "Файл с таким id не найден"
+            })
+        }
+
+        files.name = body.name;
+        files.published = body.published;
+
+        await fileRepository.save(files)
+        return res.status(200).send({message: "Файл успешно обновлен"});
+
+    } catch (error) {
+        console.error(error);
+        return res.status(503).send({
+            message: error instanceof Error ? error.message : 'Internal server error',
+        });
+    }
+});
 
 export default fileRouter;
