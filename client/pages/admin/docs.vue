@@ -2,7 +2,7 @@
   <div>
     <v-skeleton-loader v-if="loading" type="table"/>
 
-    <div class="d-flex flex-column" style="width: 100%; height: calc(100vh - 30px)" v-else>
+    <div class="d-flex flex-column overflow-y-auto" style="width: 100%; height: calc(100vh - 30px)" v-else>
       <v-data-table :items="data"
                     :headers="headers"
                     :sort-desc="true"

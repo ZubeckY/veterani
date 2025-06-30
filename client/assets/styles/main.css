@@ -26,6 +26,12 @@
   opacity: .25 !important;
 }
 
+.v-data-footer {
+  position: sticky;
+  bottom: 0;
+  background-color: #fff;
+}
+
 .loadingBlock {
   height: calc(100vh - 140px)
 }
