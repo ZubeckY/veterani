@@ -10,9 +10,6 @@
                     v-model="model.headLine"
                     outlined dense/>
 
-      <v-checkbox label="Используется в слайдере"
-                  v-model="model.includesSlider"/>
-
       <v-checkbox label="Опубликованный пост"
                   v-model="model.published"/>
 
@@ -20,24 +17,21 @@
                   v-model="model.text"
                   outlined dense/>
 
-      <v-btn @click="edit" text
-             color="primary"
-             class="ma-0 pa-0"
-             height="fit-content"
-             width="fit-content">
-        Изменить
+      <v-btn @click="edit"
+             color="primary" icon>
+        <v-icon>mdi-pen</v-icon>
       </v-btn>
 
-      <v-btn @click="$router.push('/blog')" text
-             class="ma-0 pa-0"
-             height="content"
-             color="error"
-             width="fit-content">
+      <blog-delete @deleteItem="deleteItem"/>
+
+      <v-btn @click="$router.push('/blog')"
+             color="error" text
+             width="fit-content"
+             class="pa-1">
         Отмена
       </v-btn>
 
     </v-card>
-
   </div>
 </template>
 
@@ -50,7 +44,6 @@ export default class _link extends Vue {
     id: 0,
     headLine: '',
     text: '',
-    includesSlider: false,
     link: '',
     published: false,
     created: ''
@@ -71,6 +64,18 @@ export default class _link extends Vue {
   async edit() {
     const link = this.$router.currentRoute.params.link;
     await this.$axios.patch('/api/post/update/' + link, {model: this.model})
+      .then((response) => {
+        console.log(response);
+        this.$router.push('/blog');
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+  }
+
+  async deleteItem() {
+    const link = this.$router.currentRoute.params.link;
+    await this.$axios.delete('/api/post/delete/' + link)
       .then((response) => {
         console.log(response);
         this.$router.push('/blog');

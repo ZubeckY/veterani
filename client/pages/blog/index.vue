@@ -12,8 +12,9 @@
           <div class="news-console__group">
             <v-card-text class="news-console__text">Кем опубликован</v-card-text>
 
-            <v-item-group class="d-flex flex-row" mandatory
-                          v-model="selectedParam">
+            <v-item-group class="d-flex flex-row"
+                          v-model="selectedParam"
+                          mandatory>
               <v-item v-for="obj in selectParamsPosts"
                       :key="obj.key" :value="obj.key"
                       v-slot="{ active, toggle }">
@@ -59,7 +60,7 @@ import {Vue, Component, Inject} from 'vue-property-decorator';
 })
 export default class Blog extends Vue {
   @Inject('userFromDB') userFromDB: any;
-  selectedParam: string = ''
+  selectedParam: string = 'all'
   selectParamsPosts: any = [
     {
       key: 'all',
@@ -126,7 +127,9 @@ export default class Blog extends Vue {
   }
 
   get getLink(): string {
-    return '/api/post/list?page=' + this.page + '&size=' + this.size;
+    return '/api/post/list?page=' + this.page
+      + '&size=' + this.size
+      + '&author=' + this.selectedParam;
   }
 }
 </script>

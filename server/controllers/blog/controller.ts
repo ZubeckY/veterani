@@ -94,7 +94,6 @@ blogRouter.get('/post/:link', async (req: Request, res: Response): Promise<any> 
         }
 
         delete post.includesSlider
-        delete post.published
         delete post.suggested
 
         delete post.user.middleName
@@ -176,7 +175,7 @@ blogRouter.post('/post/create', checkValidAuth, async (req: Request, res: Respon
 
 blogRouter.delete('/post/delete/:link', checkValidAuth, async (req: Request, res: Response): Promise<any> => {
     try {
-        const link = req.params.link
+        const {link} = req.params
 
         const postRepository = AppDataSource.getRepository(Post)
         const post: any = await postRepository
@@ -206,6 +205,7 @@ blogRouter.delete('/post/delete/:link', checkValidAuth, async (req: Request, res
                 message: "Ok"
             })
     } catch (error) {
+        console.log(error)
         res.status(503).send({
             message: "Ошибка"
         })
