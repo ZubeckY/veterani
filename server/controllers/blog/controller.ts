@@ -1,31 +1,50 @@
 //@ts-ignore
 import translitRusEng from 'translit-rus-eng'
 import {Router, Request, Response} from "express";
-import {Post} from "../../entity";
+import {Post, User} from "../../entity";
 import {AppDataSource} from "../../connectDb";
 import {checkValidAuth} from "../../middleware/auth/checkValidAuth";
 import AuthService from "../../service/authService";
 import {Role} from "../../types/role";
+import {Not} from "typeorm";
 
 const blogRouter = Router();
 
 blogRouter.get('/post/list', async (req: Request, res: Response): Promise<any> => {
     try {
+        const userFromDB: any = await new AuthService().getUserFromCookies(req.headers['cookie'], res)
+
         const skip = (+(req.query?.page ?? 1) - 1) * +(req.query?.size ?? 10)
         const takePage = +(req.query?.page ?? 1) * +(req.query?.size ?? 10)
         const give = +(req.query?.give ?? 10)
         const take = takePage ?? give
 
+        const author = (req.query.author ?? 'all')
+
         const postRepository = AppDataSource.getRepository(Post)
-        const post = await postRepository
-            .createQueryBuilder('post')
+        const qb = postRepository.createQueryBuilder('post')
+
+        qb.where("published = :published", {published: true})
             .leftJoinAndSelect('post.user', 'user')
+
+        if (author == 'author') {
+            qb.andWhere("post.user.id = :user_id", {
+                user_id: userFromDB.id
+            });
+        }
+
+        if (author == 'community') {
+            qb.andWhere("post.user.id NOT IN (" + userFromDB.id + ")")
+        }
+
+        const post = await qb
             .skip(skip)
             .take(take)
-            .where("published = :published", {published: true})
             .getMany()
+
         return res.send(post)
     } catch (error) {
+        console.log(error)
         res.status(503).send({
             message: "Ошибка"
         })
