@@ -36,7 +36,9 @@
         </div>
 
         <div class="news-list">
-          <blog-card v-for="(post, i) in data" :post="post" :key="i"/>
+          <blog-card v-for="(post, i) in data"
+                     :post="post" :key="i"
+                     @updateList="getData"/>
 
           <div class="d-flex justify-center my-6" style="width: 100%;">
             <v-pagination v-model="pagPage"

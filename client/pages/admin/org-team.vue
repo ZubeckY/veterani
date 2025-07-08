@@ -73,9 +73,9 @@ export default class OrgTeam extends Vue {
   addDialog: boolean = false;
   memberRole: string = ''
   selectedUser: object | number = {}
-  users: any = []
+  users: Array<any> = []
 
-  data: any = []
+  data: Array<any> = []
 
 
   async mounted() {

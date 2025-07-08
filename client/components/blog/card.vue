@@ -20,22 +20,13 @@
                   v-text="post.headLine"
                   class="news-card__image-title"
                   @click="$router.push(`/blog/${post.link}`)"/>
-          <v-menu v-if="isCurrentUser" offset-y>
-            <template v-slot:activator="{ attrs, on }">
-              <v-card class="news-card__image-title ml-3"
-                      v-bind="attrs" v-on="on"
-                      elevation="0">
-                <v-icon dark>mdi-dots-horizontal</v-icon>
-              </v-card>
-            </template>
-            <v-list class="pa-0" dense>
-              <v-list-item v-for="item in menu"
-                           :class="item.color + ' py-0'"
-                           :key="item.text" link>
-                <v-list-item-title v-text="item.text"></v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu>
+          <button-menu v-if="isCurrentUser" :menu="menu"
+                       @editItem="$router.push(`/blog/edit/${post.link}`)"
+                       @deleteDialog="deleteDialog = true"/>
+
+          <blog-delete :showButton="false"
+                       :modelDialog="deleteDialog"
+                       @deleteItem="deletePost"/>
         </div>
 
       </div>
@@ -68,8 +59,10 @@ export default class Card extends Vue {
   @Inject('userFromDB') userFromDB: any;
   @Prop({required: true}) post!: any
 
-  roles: any = []
-  colors: string[] = [
+  deleteDialog: boolean = false;
+
+  roles: Array<any> = []
+  colors: Array<string> = [
     'red', 'green', 'yellow', 'blue',
   ]
 
@@ -77,10 +70,12 @@ export default class Card extends Vue {
     {
       text: 'Изменить',
       color: 'primary--text',
+      event: 'editItem'
     },
     {
       text: 'Удалить',
       color: 'red--text',
+      event: 'deleteDialog'
     },
   ]
 
@@ -92,6 +87,16 @@ export default class Card extends Vue {
     await this.$axios.post('/api/admin/user/role-list/')
       .then((response) => {
         this.roles = response.data.roles;
+      })
+  }
+
+  async deletePost() {
+    await this.$axios.delete('/api/post/delete/' + this.post.link)
+      .then((response) => {
+        this.$emit('updateList')
+      })
+      .catch((error) => {
+        console.log(error);
       })
   }
 

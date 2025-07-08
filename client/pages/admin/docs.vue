@@ -16,16 +16,12 @@
 
         <!-- Файл выложен -->
         <template v-slot:item.published="{ item }">
-          <td :class="'text-start ' + getCurrentColor(item.published)">
-            {{ item.published ? 'Да' : 'Нет' }}
-          </td>
+          <admin-yes-no-value :value="item.published"/>
         </template>
 
         <!-- Файл используется -->
         <template v-slot:item.used="{ item }">
-          <td :class="'text-start ' + getCurrentColor(item.used)">
-            {{ item.published ? 'Да' : 'Нет' }}
-          </td>
+          <admin-yes-no-value :value="item.used"/>
         </template>
 
         <!-- Дата создания -->
@@ -63,9 +59,9 @@ import Admin from "~/layouts/admin.vue";
 })
 export default class Docs extends Vue {
   loading: boolean = false;
-  data: any = []
+  data: Array<any> = []
 
-  headers: any = [
+  headers: Array<any> = [
     {text: 'ID', value: 'id'},
     {text: 'Название файла', value: 'name'},
     {text: 'Тип файла', value: 'typeFile'},
@@ -84,10 +80,6 @@ export default class Docs extends Vue {
       .then((res) => {
         this.data = res.data.files
       })
-  }
-
-  getCurrentColor(value: boolean) {
-    return value ? 'green--text' : 'red--text'
   }
 
   async deleteDoc(id: any) {

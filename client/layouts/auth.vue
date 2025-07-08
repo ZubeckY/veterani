@@ -18,3 +18,4 @@ export default class Auth extends Vue {
   bkgFlagImage: any = bkgFlagImage;
 }
 </script>
+<style> @import "@/assets/styles/auth.css"; </style>

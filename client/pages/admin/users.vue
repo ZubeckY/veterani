@@ -24,16 +24,12 @@
 
         <!-- Активирован -->
         <template v-slot:item.activated="{ item }">
-          <td :class="'text-start ' + getCurrentColor(item.activated)">
-            {{ item.activated ? 'Да' : 'Нет' }}
-          </td>
+          <admin-yes-no-value :value="item.activated"/>
         </template>
 
         <!-- Заблокирован -->
         <template v-slot:item.block="{ item }">
-          <td :class="'text-start ' + getCurrentColor(item.block)">
-            {{ item.block ? 'Да' : 'Нет' }}
-          </td>
+          <admin-yes-no-value :value="item.block"/>
         </template>
 
         <!-- Дата создания -->
@@ -68,16 +64,19 @@ import {Vue, Component} from 'vue-property-decorator';
   }
 })
 export default class Users extends Vue {
-  loading: boolean = false;
   dialog: boolean = false;
+  loadingProcess: any = {
+    roles: true,
+    users: true,
+  }
 
-  data: any = []
-  roles: any = []
-  colors: string[] = [
+  data: Array<any> = []
+  roles: Array<any> = []
+  colors: Array<string> = [
     'red', 'green', 'yellow', 'blue',
   ]
 
-  headers: any = [
+  headers: Array<any> = [
     {text: 'ID', value: 'id'},
     {text: 'Имя', value: 'firstName'},
     {text: 'Фамилия', value: 'lastName'},
@@ -90,23 +89,35 @@ export default class Users extends Vue {
   ]
 
   async mounted() {
-    this.loading = true;
     await this.getRoleList()
     await this.getUserList()
-    this.loading = false;
   }
 
   async getRoleList() {
+    this.loadingProcess.roles = true
     await this.$axios.post('/api/admin/user/role-list/')
       .then((response) => {
         this.roles = response.data.roles;
       })
+      .catch((error) => {
+        console.log(error)
+      })
+      .finally(() => {
+        this.loadingProcess.roles = false;
+      })
   }
 
   async getUserList() {
+    this.loadingProcess.users = true;
     await this.$axios.get('/api/admin/user/list/')
       .then((response) => {
         this.data = response.data.users;
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+      .finally(() => {
+        this.loadingProcess.users = false
       })
   }
 
@@ -150,8 +161,9 @@ export default class Users extends Vue {
     }
   }
 
-  getCurrentColor(value: boolean) {
-    return value ? 'green--text' : 'red--text'
+  get loading(): boolean {
+    return this.loadingProcess.roles
+      && this.loadingProcess.users;
   }
 }
 </script>

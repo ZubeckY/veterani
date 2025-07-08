@@ -2,7 +2,8 @@
   <v-dialog v-model="deleteDialog"
             max-width="360">
     <template v-slot:activator="{ on, attrs }">
-      <v-btn v-bind="attrs" v-on="on"
+      <v-btn v-if="showButton"
+             v-bind="attrs" v-on="on"
              color="error darken-1" icon>
         <v-icon>mdi-delete</v-icon>
       </v-btn>
@@ -18,8 +19,7 @@
                height="fit-content"
                color="error"
                small text
-               @click="deleteDialog = false"
-        >
+               @click="deleteDialog = false">
           Отмена
         </v-btn>
 
@@ -28,8 +28,7 @@
                height="fit-content"
                color="primary"
                small text
-               @click="deleteItem"
-        >
+               @click="deleteItem">
           Подтвердить
         </v-btn>
       </v-card-actions>
@@ -38,11 +37,24 @@
 </template>
 
 <script lang="ts">
-import {Vue, Component} from 'vue-property-decorator';
+import {Vue, Component, Prop, Watch} from 'vue-property-decorator';
 
 @Component({})
 export default class Delete extends Vue {
+  @Prop() readonly modelDialog?: boolean
+  @Prop({default: true}) readonly showButton?: boolean
   deleteDialog: boolean = false;
+
+  mounted() {
+    this.changeModelDialog()
+  }
+
+  @Watch('modelDialog')
+  changeModelDialog() {
+    if (!!this.modelDialog) {
+      return this.deleteDialog = this.modelDialog;
+    }
+  }
 
   deleteItem() {
     this.deleteDialog = false;
@@ -50,7 +62,3 @@ export default class Delete extends Vue {
   }
 }
 </script>
-
-<style scoped>
-
-</style>

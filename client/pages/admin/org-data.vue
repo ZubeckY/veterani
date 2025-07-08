@@ -43,7 +43,8 @@
         <v-btn class="authCard__button px-9"
                width="fit-content"
                @click.prevent="save"
-               outlined>Сохранить
+               outlined>
+          Сохранить
         </v-btn>
       </div>
     </v-form>

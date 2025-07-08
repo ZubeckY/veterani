@@ -136,6 +136,3 @@ export default class reg extends Vue {
   }
 }
 </script>
-<style scoped>
-@import "@/assets/styles/auth.css";
-</style>

@@ -83,7 +83,3 @@ export default class Login extends Vue {
   }
 }
 </script>
-
-<style>
-@import "@/assets/styles/auth.css";
-</style>

@@ -4,6 +4,7 @@ import {
     CreateDateColumn,
     Entity,
     JoinColumn,
+    JoinTable,
     ManyToOne,
     PrimaryGeneratedColumn,
     ManyToMany
@@ -46,7 +47,7 @@ export class Post {
         cascade: false,
         nullable: true,
     })
-    @JoinColumn()
+    @JoinTable()
     file!: Relation<File>[];
 
     @Column({

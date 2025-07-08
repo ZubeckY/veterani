@@ -91,7 +91,7 @@ export default class Admin extends Vue {
     email: '',
     password: '',
   }
-  menuItems: any = []
+  menuItems: Array<any> = []
   currentUser: any = {}
   selectedMenuItem: number = 0;
 
@@ -155,6 +155,5 @@ export default class Admin extends Vue {
         console.log(error)
       })
   }
-
 }
 </script>

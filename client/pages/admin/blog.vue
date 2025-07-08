@@ -22,23 +22,17 @@
 
         <!-- Опубликовано -->
         <template v-slot:item.published="{ item }">
-          <td :class="'text-start ' + getCurrentColor(item.published)">
-            {{ item.published ? 'Да' : 'Нет' }}
-          </td>
+          <admin-yes-no-value :value="item.published"/>
         </template>
 
         <!-- Включен в слайдер -->
         <template v-slot:item.includeSlider="{ item }">
-          <td :class="'text-start ' + getCurrentColor(item.includesSlider)">
-            {{ item.includeSlider ? 'Да' : 'Нет' }}
-          </td>
+          <admin-yes-no-value :value="item.includeSlider"/>
         </template>
 
         <!-- Предложенный -->
         <template v-slot:item.suggested="{ item }">
-          <td :class="'text-start ' + getCurrentColor(item.suggested)">
-            {{ item.suggested ? 'Да' : 'Нет' }}
-          </td>
+          <admin-yes-no-value :value="item.suggested"/>
         </template>
 
         <!-- Дата создания -->
@@ -75,8 +69,8 @@ import {Vue, Component} from 'vue-property-decorator';
 export default class Blog extends Vue {
   loading: boolean = false;
 
-  data: any = []
-  headers: any = [
+  data: Array<any> = []
+  headers: Array<any> = [
     {text: 'ID', value: 'id'},
     {text: 'Заголовок', value: 'headLine'},
     {text: 'Создатель (ID)', value: 'user.id'},
@@ -88,9 +82,7 @@ export default class Blog extends Vue {
   ]
 
   async mounted() {
-    this.loading = true;
     await this.getPostList()
-    this.loading = false;
   }
 
   async getPostList() {
@@ -101,6 +93,7 @@ export default class Blog extends Vue {
   }
 
   async deletePost(id: any) {
+    this.loading = true;
     await this.$axios.delete('/api/admin/post/delete/' + id)
       .then((response) => {
         this.getPostList()
@@ -108,10 +101,9 @@ export default class Blog extends Vue {
       .catch((error) => {
         console.log(error);
       })
-  }
-
-  getCurrentColor(value: boolean) {
-    return value ? 'green--text' : 'red--text'
+      .finally(() => {
+        this.loading = false;
+      })
   }
 }
 </script>

@@ -57,7 +57,9 @@
         <v-card-text class="news-text block-text">Смотри наши новости</v-card-text>
         <div class="news-wrapper">
           <div class="news-list">
-            <blog-card v-for="(post, i) in posts" :post="post" :key="i"/>
+            <blog-card v-for="(post, i) in posts"
+                       :post="post" :key="i"
+                       @updateList="getData"/>
           </div>
 
           <div class="mx-auto" style="width: fit-content">

@@ -178,11 +178,11 @@ blogRouter.delete('/post/delete/:link', checkValidAuth, async (req: Request, res
         const {link} = req.params
 
         const postRepository = AppDataSource.getRepository(Post)
-        const post: any = await postRepository
-            .createQueryBuilder('post')
-            .leftJoinAndSelect('post.user', 'user')
-            .where("link = :link", {link: link})
-            .getOne()
+        const post = await postRepository.findOneOrFail({
+            where: {
+                link
+            }
+        })
 
         if (!post) {
             res.status(503).send({
@@ -191,14 +191,14 @@ blogRouter.delete('/post/delete/:link', checkValidAuth, async (req: Request, res
         }
 
         const cookies = req.headers['cookie']
-        const specifiedId = post.user.id
 
         const correctId = await new AuthService().userRoleIsCorrect(cookies, res)
         if (!correctId.correct) {
             return correctId
         }
 
-        await postRepository.remove(post)
+         await postRepository.remove(post)
+
         return res
             .status(200)
             .send({

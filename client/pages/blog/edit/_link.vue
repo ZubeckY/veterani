@@ -86,6 +86,3 @@ export default class _link extends Vue {
   }
 }
 </script>
-
-<style scoped>
-</style>
