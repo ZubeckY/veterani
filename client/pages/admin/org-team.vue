@@ -33,7 +33,7 @@
           </v-btn>
           <v-spacer></v-spacer>
 
-          <v-btn @click="closeAndUpdate"
+          <v-btn @click="closeAndUpdate(editMode)"
                  class="ma-0 pa-0"
                  width="fit-content"
                  height="fit-content"
@@ -132,7 +132,7 @@ export default class OrgTeam extends Vue {
       memberRole: this.memberRole,
     })
       .then((res) => {
-        this.closeAndUpdate()
+        this.closeAndUpdate(true)
       })
       .catch((err) => {
         console.log(err)
@@ -145,7 +145,7 @@ export default class OrgTeam extends Vue {
       memberRole: this.memberRole,
     })
       .then((res) => {
-        this.closeAndUpdate()
+        this.closeAndUpdate(true)
       })
       .catch((err) => {
         console.log(err)
@@ -157,7 +157,7 @@ export default class OrgTeam extends Vue {
       id: this.selectedUserTech.id,
     })
       .then((res) => {
-        this.closeAndUpdate()
+        this.closeAndUpdate(true)
       })
       .catch((err) => {
         console.log(err)
@@ -179,9 +179,9 @@ export default class OrgTeam extends Vue {
     this.memberRole = ''
   }
 
-  closeAndUpdate() {
+  closeAndUpdate(needUpdate: boolean = false) {
     this.closeDialog()
-    this.updateData()
+    needUpdate && this.updateData()
   }
 
   get emptyValue() {
