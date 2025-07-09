@@ -35,7 +35,51 @@ fileRouter.get("/admin/file/list", onlyAdmin, async (req: Request, res: Response
     }
 });
 
-fileRouter.post("/file/upload", checkValidAuth, uploadService.upload("file"), async (req: Request, res: Response): Promise<any> => {
+fileRouter.post("/file/upload/multiple/", checkValidAuth, uploadService.uploadMultiple("files"), async (req: Request, res: Response): Promise<any> => {
+    try {
+        const files = req.files as Express.Multer.File[];
+        if (!files) {
+            return res.status(400).send('Не загружено ни одного файла.');
+        }
+
+        const fileRepository = AppDataSource.getRepository(File)
+        const savedFiles = []
+
+        for (let i = 0; i < files.length; i++) {
+            const FILE = files[i];
+
+            const fileType = FILE.mimetype
+            const path: any = FILE.path
+
+            if (fileType.split("/")[0] === 'image') {
+                await uploadService.sharpImage(path)
+            }
+
+            const file = new File()
+
+            file.name = FILE.filename
+            file.typeFile = fileType
+            file.path = path
+            file.published = false
+            file.used = false
+
+            const savedFile = await fileRepository.save(file)
+            savedFiles.push(savedFile)
+        }
+
+        return res
+            .status(200)
+            .send({
+                files: savedFiles,
+                message: "Файл успешно сохранён"
+            })
+
+    } catch (error) {
+        console.error(error);
+    }
+})
+
+fileRouter.post("/file/upload/single/", checkValidAuth, uploadService.uploadSingle("file"), async (req: Request, res: Response): Promise<any> => {
     try {
         if (!req.file) {
             console.log('нет файла')

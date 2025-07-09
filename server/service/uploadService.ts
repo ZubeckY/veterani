@@ -70,7 +70,15 @@ export default class UploadService {
                     cb(new Error('Файл не поддерживается!'), false);
                 }
             }
-        }).single(fieldName);
+        })
+    }
+
+    uploadSingle(fieldName: string) {
+        return this.upload(fieldName).single(fieldName)
+    }
+
+    uploadMultiple(fieldName: string) {
+        return this.upload(fieldName).array(fieldName)
     }
 
     async sharpImage(path: any) {
