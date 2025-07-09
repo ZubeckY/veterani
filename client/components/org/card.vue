@@ -4,25 +4,17 @@
       <div class="d-flex justify-end">
         <v-img class="ourTeam-card__image admin-image" width="calc(100% - 10px)" src="/placeholder_lk.jpg"/>
         <div style="position: absolute; z-index: 1000;" v-if="showButtons">
-          <v-menu offset-y>
-            <template v-slot:activator="{ attrs, on }">
-              <v-btn v-bind="attrs" v-on="on" icon>
-                <v-icon>mdi-dots-vertical-circle-outline</v-icon>
-              </v-btn>
-            </template>
-
-            <v-list class="pa-0" dense>
-              <v-list-item v-for="item in menu"
-                           :class="item.color + ' py-0'"
-                           :key="item.text" link>
-                <v-list-item-title v-text="item.text"></v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu>
+          <menu-button :menu="menu"
+                       :dark="false"
+                       @editItem="createEvent('editItem')"
+                       @deleteItem="createEvent('deleteItem')"
+          />
         </div>
       </div>
-      <v-card-text class="ourTeam-card__name" v-text="fullName(item)"></v-card-text>
-      <v-card-text class="ourTeam-card__memberLabel" v-text="item.memberRoleTitle"></v-card-text>
+      <v-card-text class="ourTeam-card__name"
+                   v-text="fullName(item)"/>
+      <v-card-text class="ourTeam-card__memberLabel"
+                   v-text="item.memberRoleTitle"/>
     </div>
   </article>
 </template>
@@ -39,12 +31,18 @@ export default class OrgCard extends Vue {
     {
       text: 'Изменить',
       color: 'primary--text',
+      event: 'editItem'
     },
     {
       text: 'Удалить',
       color: 'red--text',
+      event: 'deleteItem'
     },
   ]
+
+  createEvent(event: string) {
+    return this.$emit(event, this.item);
+  }
 
   fullName(item: any) {
     return item.firstName + ' ' + item.lastName

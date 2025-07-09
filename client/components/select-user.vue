@@ -1,5 +1,6 @@
 <template>
   <v-autocomplete v-model="selected"
+                  :disabled="disabled"
                   :multiple="multiple"
                   class="mx-3"
                   label="Выберите пользователя"
@@ -8,12 +9,11 @@
                   outlined dense chips
                   :items="users">
     <template v-slot:selection="data">
-      <v-chip
-        v-bind="data.attrs"
-        :input-value="data.selected"
-        @click:close="remove(data.item)"
-        @click="data.select"
-        close small
+      <v-chip v-bind="data.attrs"
+              :input-value="data.selected"
+              @click:close="remove(data.item)"
+              @click="data.select"
+              :close="!disabled" small
       >
         <v-avatar left>
           <v-img v-if="data.item.avatar" :src="data.item.avatar"></v-img>
@@ -47,6 +47,7 @@ import {Vue, Component, Prop, VModel} from 'vue-property-decorator';
 export default class selectUser extends Vue {
   @VModel({default: []}) selected!: any
   @Prop({default: false}) multiple?: boolean;
+  @Prop({default: false}) disabled?: boolean;
   @Prop() users: any;
 
   userFullName(user: any): string {

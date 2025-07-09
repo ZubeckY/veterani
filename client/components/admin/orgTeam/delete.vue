@@ -1,16 +1,12 @@
 <template>
   <v-dialog v-model="deleteDialog"
             max-width="360">
-    <template v-slot:activator="{ on, attrs }">
-      <v-icon color="red" v-bind="attrs" v-on="on">mdi-delete</v-icon>
-    </template>
-
     <v-card class="ma-0 py-2">
       <v-card-text class="mt-2 pa-0 pl-4">
-        Вы действительно хотите удалить документ:
+        Вы действительно хотите удалить члена организации:
       </v-card-text>
       <v-card-text class="pa-0 pl-4">
-        {{ docName }}?
+        {{ userName }}?
       </v-card-text>
 
       <v-card-actions>
@@ -35,19 +31,31 @@
 </template>
 
 <script lang="ts">
-import {Vue, Component, Prop} from 'vue-property-decorator';
+import {Vue, Component, Prop, Watch} from 'vue-property-decorator';
 
 @Component({})
 export default class Delete extends Vue {
-  @Prop() item: any
+  @Prop() readonly item: any
+  @Prop({ default: false }) dialog?: boolean
   deleteDialog: boolean = false;
 
-  get docName() {
-    return this.item.id + ' ' + this.item.name;
+  mounted() {
+    this.changeDialog()
+  }
+
+  @Watch('dialog')
+  changeDialog() {
+    if (this.dialog) {
+      this.deleteDialog = this.dialog
+    }
+  }
+
+  get userName() {
+    return this.item.id + ' ' + this.item.firstName + ' ' + this.item.lastName;
   }
 
   deleteItem() {
-    this.$emit('deleteDoc', this.item.id);
+    this.$emit('deleteItem', this.item.id);
     this.deleteDialog = false;
   }
 }

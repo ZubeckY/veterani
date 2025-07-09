@@ -20,7 +20,7 @@
                   v-text="post.headLine"
                   class="news-card__image-title"
                   @click="$router.push(`/blog/${post.link}`)"/>
-          <button-menu v-if="isCurrentUser" :menu="menu"
+          <menu-button v-if="isCurrentUser" :menu="menu"
                        @editItem="$router.push(`/blog/edit/${post.link}`)"
                        @deleteDialog="deleteDialog = true"/>
 
@@ -63,7 +63,7 @@ export default class Card extends Vue {
 
   roles: Array<any> = []
   colors: Array<string> = [
-    'red', 'green', 'yellow', 'blue',
+    'red darken-1', 'green darken-1', 'yellow darken-1', 'blue darken-1',
   ]
 
   menu: Array<any> = [

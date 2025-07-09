@@ -36,9 +36,9 @@ export default class _link extends Vue {
     text: '',
   };
 
-  roles: any = []
-  colors: string[] = [
-    'red', 'green', 'yellow', 'blue',
+  roles: Array<any> = []
+  colors: Array<string> = [
+    'red darken-1', 'green darken-1', 'yellow darken-1', 'blue darken-1',
   ]
 
   async mounted() {

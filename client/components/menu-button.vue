@@ -1,9 +1,9 @@
 <template>
   <v-menu offset-y>
     <template v-slot:activator="{ attrs, on }">
-      <v-card class="news-card__image-title ml-3"
+      <v-card class="menu-button ml-3"
               elevation="0" v-bind="attrs" v-on="on">
-        <v-icon dark>mdi-dots-horizontal</v-icon>
+        <v-icon :dark="dark">mdi-dots-horizontal</v-icon>
       </v-card>
     </template>
     <v-list class="pa-0" dense>
@@ -20,7 +20,8 @@
 import {Vue, Component, Prop} from 'vue-property-decorator';
 
 @Component({})
-export default class buttonMenu extends Vue {
+export default class MenuButton extends Vue {
+  @Prop({default: true}) readonly dark?: boolean
   @Prop() readonly menu?: Array<any>
 
   createEmit(emit: string) {

@@ -73,7 +73,7 @@ export default class Users extends Vue {
   data: Array<any> = []
   roles: Array<any> = []
   colors: Array<string> = [
-    'red', 'green', 'yellow', 'blue',
+    'red darken-1', 'green darken-1', 'yellow darken-1', 'blue darken-1',
   ]
 
   headers: Array<any> = [

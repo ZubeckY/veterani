@@ -1,6 +1,6 @@
 <template>
   <v-form>
-    <v-dialog v-model="dialog" max-width="600px">
+    <v-dialog v-model="dialog" max-width="450px">
       <template v-slot:activator="{ on, attrs }">
         <v-icon v-bind="attrs"
                 v-on="on"
@@ -13,25 +13,44 @@
           <span class="text-h5 text-pre-wrap">{{ dialogName }}</span>
         </v-card-title>
 
-        <v-card-text class="d-flex align-center justify-center">
-          <v-checkbox class="mr-3" v-model="itemEdit.activated" label="Активация"/>
-          <v-checkbox class="mr-3" v-model="itemEdit.blocked" label="Заблокирован"/>
-          <v-autocomplete v-model="itemEdit.role"
+        <v-card-text>
+          <v-autocomplete label="Роль пользователя"
+                          placeholder="Пользователь"
+                          v-model="itemEdit.role"
                           item-text="value"
                           item-value="key"
+                          class="mt-2"
                           :items="roles"
                           hide-details
                           outlined
                           dense/>
+
+          <v-checkbox v-model="itemEdit.activated"
+                      label="Активация"
+                      hide-details/>
+          <v-checkbox v-model="itemEdit.blocked"
+                      label="Заблокирован"
+                      hide-details/>
         </v-card-text>
 
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="closeDialog">
-            Отменить
-          </v-btn>
-          <v-btn color="blue darken-1" text @click="saveEdit">
+        <v-card-actions class="pb-3">
+          <v-btn @click="saveEdit"
+                 class="ma-0 pa-0"
+                 width="fit-content"
+                 height="fit-content"
+                 color="primary darken-1"
+                 text>
             Сохранить
+          </v-btn>
+          <v-spacer></v-spacer>
+
+          <v-btn @click="closeDialog"
+                 class="ma-0 pa-0"
+                 width="fit-content"
+                 height="fit-content"
+                 color="red darken-1"
+                 text>
+            Отмена
           </v-btn>
         </v-card-actions>
       </v-card>

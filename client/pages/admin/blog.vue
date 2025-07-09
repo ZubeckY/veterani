@@ -26,8 +26,8 @@
         </template>
 
         <!-- Включен в слайдер -->
-        <template v-slot:item.includeSlider="{ item }">
-          <admin-yes-no-value :value="item.includeSlider"/>
+        <template v-slot:item.includesSlider="{ item }">
+          <admin-yes-no-value :value="item.includesSlider"/>
         </template>
 
         <!-- Предложенный -->
@@ -45,7 +45,9 @@
         <!-- Кнопки -->
         <template v-slot:item.actions="{ item }">
           <div class="d-flex">
-            <admin-blog-edit class="mr-2" :item="item" @saveEdit="getPostList"/>
+            <admin-blog-edit class="mr-2"
+                             :item="item"
+                             @saveEdit="getPostList"/>
             <admin-blog-delete :item="item" @deletePost="deletePost"/>
           </div>
         </template>
@@ -74,7 +76,7 @@ export default class Blog extends Vue {
     {text: 'ID', value: 'id'},
     {text: 'Заголовок', value: 'headLine'},
     {text: 'Создатель (ID)', value: 'user.id'},
-    {text: 'Входит в слайдер', value: 'includeSlider'},
+    {text: 'Входит в слайдер', value: 'includesSlider'},
     {text: 'Опубликован', value: 'published'},
     {text: 'Предложенный', value: 'suggested'},
     {text: 'Дата создания', value: 'created'},

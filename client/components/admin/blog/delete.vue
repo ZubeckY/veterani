@@ -16,21 +16,18 @@
       <v-card-actions>
         <v-btn class="ma-0 pa-0"
                height="fit-content"
-               color="error"
+               color="primary"
                small text
-               @click="deleteDialog = false"
-        >
-          Отмена
+               @click="deleteItem">
+          Подтвердить
         </v-btn>
-
         <v-spacer></v-spacer>
         <v-btn class="ma-0 pa-0"
                height="fit-content"
-               color="primary"
+               color="error"
                small text
-               @click="deleteItem"
-        >
-          Подтвердить
+               @click="deleteDialog = false">
+          Отмена
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -55,7 +52,3 @@ export default class Delete extends Vue {
   }
 }
 </script>
-
-<style scoped>
-
-</style>

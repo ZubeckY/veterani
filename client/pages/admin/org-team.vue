@@ -1,59 +1,63 @@
 <template>
   <div>
-    <header class="d-flex align-center flex-row ma-2">
-      <div style="width: 350px;">
-        <v-text-field append-icon="mdi-magnify"
-                      label="Поиск"
-                      dense outlined
+    <v-dialog v-model="addDialog"
+              max-width="450px">
+      <template v-slot:activator="{ on, attrs }">
+        <v-btn v-bind="attrs" v-on="on"
+               class="ma-2" color="green" outlined>
+          Добавить
+        </v-btn>
+      </template>
+
+      <v-card>
+        <v-card-title>
+          <span class="text-h5 text-pre-wrap">{{ editMode ? 'Изменить' : 'Добавить' }} члена организации</span>
+        </v-card-title>
+        <select-user :disabled="editMode" v-model="selectedUser" :users="users"/>
+        <v-text-field label="Занимаемое положение в организации"
+                      placeholder="Председатель, член организации..."
+                      :disabled="emptyValue"
+                      v-model="memberRole"
+                      class="mx-3"
+                      outlined dense
                       hide-details/>
-      </div>
-      <v-dialog v-model="addDialog"
-                max-width="360">
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn v-bind="attrs" v-on="on"
-                 class="ml-3" color="green" outlined>
-            Добавить
+        <v-card-actions class="mt-4 pb-3">
+          <v-btn :disabled="memberRoleEmpty"
+                 @click="saveManager"
+                 class="ma-0 pa-0"
+                 width="fit-content"
+                 height="fit-content"
+                 color="primary darken-1"
+                 text>
+            {{ editMode ? 'Изменить' : 'Добавить' }}
           </v-btn>
-        </template>
+          <v-spacer></v-spacer>
 
-        <v-card>
-          <v-card-title>Добавить члена организации</v-card-title>
-          <select-user v-model="selectedUser" :users="users"/>
-          <v-text-field label="Занимаемое положение в организации"
-                        placeholder="Председатель, член организации..."
-                        :disabled="emptyValue"
-                        v-model="memberRole"
-                        class="mx-3"
-                        outlined dense
-                        hide-details/>
-          <div class="d-flex px-3 mt-2 py-2" style="width: 100%">
-            <v-btn class="ma-0 pa-0"
-                   small text
-                   color="red"
-                   width="fit-content"
-                   height="fit-content"
-                   @click="addDialog = false">
-              Отмена
-            </v-btn>
+          <v-btn @click="closeAndUpdate"
+                 class="ma-0 pa-0"
+                 width="fit-content"
+                 height="fit-content"
+                 color="red darken-1"
+                 text>
+            Отмена
+          </v-btn>
+        </v-card-actions>
 
-            <v-spacer/>
-
-            <v-btn :disabled="memberRoleEmpty"
-                   class="ma-0 pa-0"
-                   small text
-                   color="primary"
-                   width="fit-content"
-                   height="fit-content"
-            >Добавить
-            </v-btn>
-          </div>
-        </v-card>
-      </v-dialog>
-    </header>
+      </v-card>
+    </v-dialog>
 
     <div class="d-flex flex-row flex-wrap">
-      <org-card v-for="(item, i) in data" :key="i"
-                :item="item" :showButtons="true"/>
+      <org-card v-for="(item, i) in data"
+                :key="i"
+                :item="item"
+                :showButtons="true"
+                @editItem="showEditDialog"
+                @deleteItem="showDeleteDialog"/>
+
+      <admin-org-team-delete :dialog="deleteDialog"
+                             :item="selectedUserTech"
+                             @deleteItem="deleteMember"
+      />
     </div>
   </div>
 </template>
@@ -70,23 +74,30 @@ import {Vue, Component} from 'vue-property-decorator';
   }
 })
 export default class OrgTeam extends Vue {
+  editMode: boolean = false;
   addDialog: boolean = false;
   memberRole: string = ''
   selectedUser: object | number = {}
-  users: Array<any> = []
 
+  deleteDialog: boolean = false;
+  selectedUserTech: any = {};
+
+  users: Array<any> = []
   data: Array<any> = []
 
-
   async mounted() {
+    await this.updateData()
+  }
+
+  async updateData() {
     await this.getMembersList()
     await this.getUsersList()
   }
 
   async getUsersList() {
-    this.$axios.get('/api/admin/user/list')
+    this.$axios.get('/api/admin/members/users')
       .then((res) => {
-        this.users = res.data.users
+        this.users = res.data
       })
   }
 
@@ -95,6 +106,82 @@ export default class OrgTeam extends Vue {
       .then((res) => {
         this.data = res.data
       })
+  }
+
+  showEditDialog(item: any) {
+    this.addDialog = true
+    this.editMode = true
+    this.users = [item]
+    this.selectedUser = item.id
+    this.memberRole = item.memberRoleTitle ?? ''
+
+  }
+
+  showDeleteDialog(item: any) {
+    this.selectedUserTech = item
+    this.deleteDialog = true
+  }
+
+  async saveManager() {
+    this.editMode ? await this.editMember() : await this.createMember()
+  }
+
+  async createMember() {
+    !this.editMode && await this.$axios.post('/api/admin/members/create', {
+      id: this.selectedUser,
+      memberRole: this.memberRole,
+    })
+      .then((res) => {
+        this.closeAndUpdate()
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }
+
+  async editMember() {
+    this.editMode && await this.$axios.post('/api/admin/members/edit', {
+      id: this.selectedUser,
+      memberRole: this.memberRole,
+    })
+      .then((res) => {
+        this.closeAndUpdate()
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }
+
+  async deleteMember() {
+    await this.$axios.post('/api/admin/members/delete', {
+      id: this.selectedUserTech.id,
+    })
+      .then((res) => {
+        this.closeAndUpdate()
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+      .finally(() => {
+        this.closeDeleteDialog()
+      })
+  }
+
+  closeDeleteDialog() {
+    this.deleteDialog = false
+    this.selectedUserTech = {}
+  }
+
+  closeDialog() {
+    this.editMode = false
+    this.addDialog = false
+    this.selectedUser = {}
+    this.memberRole = ''
+  }
+
+  closeAndUpdate() {
+    this.closeDialog()
+    this.updateData()
   }
 
   get emptyValue() {

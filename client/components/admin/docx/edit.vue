@@ -1,6 +1,6 @@
 <template>
   <v-form>
-    <v-dialog v-model="dialog" max-width="600px">
+    <v-dialog v-model="dialog" max-width="450px">
       <template v-slot:activator="{ on, attrs }">
         <v-icon v-bind="attrs"
                 v-on="on"
@@ -13,25 +13,40 @@
           <span class="text-h5 text-pre-wrap">{{ dialogName }}</span>
         </v-card-title>
 
-        <v-card-text class="d-flex align-center justify-center">
-          <v-checkbox class="mr-3" v-model="itemEdit.published" label="Опубликовать"/>
+        <v-card-text>
           <v-text-field v-model="itemEdit.name"
-                        :items="roles"
+                        class="mt-2"
                         placeholder="Название"
                         hide-details
                         outlined
                         dense/>
+
+          <v-checkbox v-model="itemEdit.published"
+                      label="Опубликовать"
+                      hide-details/>
         </v-card-text>
 
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="closeDialog">
-            Отменить
-          </v-btn>
-          <v-btn color="blue darken-1" text @click="saveEdit">
+        <v-card-actions class="pb-3">
+          <v-btn @click="saveEdit"
+                 class="ma-0 pa-0"
+                 width="fit-content"
+                 height="fit-content"
+                 color="primary darken-1"
+                 text>
             Сохранить
           </v-btn>
+          <v-spacer></v-spacer>
+
+          <v-btn @click="closeDialog"
+                 class="ma-0 pa-0"
+                 width="fit-content"
+                 height="fit-content"
+                 color="red darken-1"
+                 text>
+            Отмена
+          </v-btn>
         </v-card-actions>
+
       </v-card>
     </v-dialog>
 
@@ -48,8 +63,6 @@ export default class edit extends Vue {
   dialog: boolean = false;
   dialogName: string = '';
 
-  items: Array<any> = []
-  roles: Array<any> = []
   itemEdit: any = {}
   expansion: string = ""
 
@@ -58,17 +71,25 @@ export default class edit extends Vue {
 
   @Watch("dialog")
   DialogLoad() {
-    if (!this.dialog) return
-    this.itemEdit = JSON.parse(JSON.stringify(this.item))
-    const index = this.itemEdit.name.lastIndexOf('.');
-    this.expansion = this.itemEdit.name.substring(index, this.itemEdit.name.length);
-    this.itemEdit.name = this.itemEdit.name.substring(0, index);
+    if (!this.dialog) {
+      this.itemEdit = {}
+      this.dialogName = ''
+      return
+    }
+
     this.dialogName = `Редактирование документа:\n${this.item.name}`
+    this.itemEdit = JSON.parse(JSON.stringify(this.item))
+
+    // todo ловит баг!
+    // const index = this.itemEdit.name.lastIndexOf('.');
+    // this.itemEdit.name = this.itemEdit.name.substring(0, index);
+    // this.expansion = this.itemEdit.name.substring(index, this.itemEdit.name.length);
   }
 
   async saveEdit() {
     const link = '/api/admin/file/edit/' + this.itemEdit.id;
-    this.itemEdit.name = this.itemEdit.name + this.expansion;
+    // this.itemEdit.name = this.itemEdit.name + this.expansion;
+
     await this.$axios.patch(link, this.itemEdit)
       .then((response) => {
         this.$emit('saveEdit');
@@ -86,7 +107,3 @@ export default class edit extends Vue {
   }
 }
 </script>
-
-<style scoped>
-
-</style>
