@@ -70,6 +70,26 @@
   justify-content: center;
 }
 
+.uploader-card {
+  display: flex;
+  width: 150px;
+  height: 150px;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--boxShL);
+  border-radius: var(--borRad) !important;
+}
+
+.uploader-card + .uploader-card {
+  margin-left: 12px;
+}
+
+.uploader-card__img {
+  max-width: 150px !important;
+  max-height: 150px !important;
+  border-radius: var(--borRad) !important;
+}
+
 /* header */
 .header {
   position: absolute;

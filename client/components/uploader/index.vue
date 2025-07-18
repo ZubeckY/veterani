@@ -2,83 +2,66 @@
   <div>
     <v-form ref="form" @submit.prevent>
       <v-file-input @change="onFileChange"
+                    label="Выберите файл"
                     v-model="file"
+                    :disabled="uploading"
                     :multiple="multiple"
                     :chips="multiple"
-                    :disabled="uploading"
                     :error-messages="error"
-                    label="Выберите файл"/>
+                    outlined dense
+                    prepend-icon=""
+                    prepend-inner-icon="mdi-file-upload"/>
 
-      <v-card v-if="!multiple && file" max-width="450" elevation="0">
-        <v-img v-if="!multiple && fileType(file)"
-               max-width="450"
-               :src="imageValue"
-               :lazy-src="imageValue">
-          <template v-slot:placeholder>
-            <v-row class="fill-height ma-0"
-                   align="center"
-                   justify="center">
-              <v-progress-circular indeterminate color="primary"/>
-            </v-row>
-
-          </template>
-        </v-img>
-        <v-card v-else-if="!multiple && !file"
-                max-width="450"
-                elevation="0">
-          <v-icon size="400">mdi-file</v-icon>
-        </v-card>
-
+      <v-card v-if="!multiple && file" width="fit-content" elevation="0">
+        <uploader-card :file="file"
+                       :src="imageValue"
+                       :multiple="multiple"/>
         <v-overlay opacity=".2" absolute :value="overlay">
           <v-progress-circular size="60" color="primary"
                                :value="uploadProgressValue"/>
         </v-overlay>
       </v-card>
 
-      <v-card v-else class="d-flex flex-row flex-wrap" elevation="0">
-        <div v-for="(imVal, i) in imageValues" :key="i">
-          <v-img v-if="multiple && fileType(imVal)"
-                 max-width="350"
-                 :src="imVal"
-                 :lazy-src="imVal">
-            <template v-slot:placeholder>
-              <v-row class="fill-height ma-0"
-                     align="center"
-                     justify="center">
-                <v-progress-circular indeterminate color="primary"/>
-              </v-row>
-            </template>
-          </v-img>
-          <v-card v-else-if="multiple && !fileType(imVal)"
-                  max-width="350"
-                  elevation="0">
-            <v-icon size="300">mdi-file</v-icon>
-          </v-card>
-        </div>
-
+      <v-card v-else class="d-flex flex-row flex-wrap" width="fit-content" elevation="0">
+        <uploader-card v-for="(imVal, i) in imageValues"
+                       :key="i"
+                       :file="imVal"
+                       :src="imVal"
+                       :multiple="multiple"/>
         <v-overlay opacity=".2" absolute :value="overlay">
           <v-progress-circular size="60" color="primary"
                                :value="uploadProgressValue"/>
         </v-overlay>
       </v-card>
-
     </v-form>
 
-    <v-alert v-if="success" type="success" dismissible>{{ success }}</v-alert>
+    <v-alert v-model="alert"
+             class="mt-5 mb-3 align-center"
+             type="success"
+             dense outlined>
+      <div class="d-flex align-center">
+        <span>{{ success }}</span>
+        <v-spacer/>
+        <v-btn color="success" @click="closeAlert" icon>
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+      </div>
+    </v-alert>
 
   </div>
 </template>
 
 <script lang="ts">
-import {Vue, Component, Watch} from 'vue-property-decorator';
+import {Vue, Component, Watch, VModel, Prop} from 'vue-property-decorator';
 
 @Component({})
-export default class test extends Vue {
-  file: any = null;
+export default class Uploader extends Vue {
+  @VModel() file: any = null;
+  @Prop({default: false}) readonly multiple?: boolean
+
+  alert: boolean = false;
   success: string | null = null;
   error: string | null = null;
-
-  multiple: boolean = true;
 
   uploadProgressValue: number = 0;
   uploading: boolean = false;
@@ -122,12 +105,13 @@ export default class test extends Vue {
       }
     })
       .then((response: any) => {
-        this.success = 'Файл успешно загружен: ' + response.data.message;
+        this.alert = true;
+        this.success = 'Файл успешно загружен';
         this.error = null;
       })
       .catch((error: any) => {
         this.error = 'Произошла ошибка при загрузке файла: ' + error.message;
-        this.success = null;
+        this.closeAlert();
       })
       .finally(() => {
         this.uploading = false;
@@ -153,7 +137,6 @@ export default class test extends Vue {
       reader.readAsDataURL(file);
     })
 
-
     this.uploading = true;
     this.overlay = true;
 
@@ -172,12 +155,13 @@ export default class test extends Vue {
       }
     })
       .then((response: any) => {
-        this.success = 'Файл успешно загружен: ' + response.data.message;
+        this.alert = true;
+        this.success = 'Файлы успешно загружены';
         this.error = null;
       })
       .catch((error: any) => {
         this.error = 'Произошла ошибка при загрузке файла: ' + error.message;
-        this.success = null;
+        this.closeAlert();
       })
       .finally(() => {
         this.uploading = false;
@@ -185,16 +169,9 @@ export default class test extends Vue {
       })
   }
 
-  fileType(file: any) {
-    if (file?.type && !this.multiple) {
-      return file.type.includes('image')
-    }
-
-    if (this.multiple) {
-      const data = file.split(';')[0]
-      const type = data.split('data:')[1]
-      return type.includes('image')
-    }
+  closeAlert() {
+    this.success = null;
+    this.alert = false;
   }
 }
 </script>

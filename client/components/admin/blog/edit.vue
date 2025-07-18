@@ -39,7 +39,13 @@
                       outlined
                       dense/>
 
+          <uploader v-model="itemEdit.file"
+                    class="mt-5"
+                    :multiple="true"
+                    accept="image/*"/>
+
           <v-checkbox v-model="itemEdit.includesSlider"
+                      class="mt-0 pt-0"
                       label="Включать в слайдер"
                       hide-details/>
           <v-checkbox v-model="itemEdit.published"

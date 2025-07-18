@@ -13,6 +13,11 @@
       <v-textarea label="Текст"
                   v-model="model.text"
                   outlined dense/>
+
+      <uploader v-model="model.file"
+                :multiple="true"
+                accept="image/*"/>
+
       <v-btn @click="create" text
              color="primary"
              class="ma-0 pa-0"
@@ -39,6 +44,7 @@ export default class Create extends Vue {
     headLine: '',
     text: '',
     includesSlider: false,
+    file: [],
   }
 
   async create() {

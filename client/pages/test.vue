@@ -185,16 +185,5 @@ export default class test extends Vue {
       })
   }
 
-  fileType(file: any) {
-    if (file?.type && !this.multiple) {
-      return file.type.includes('image')
-    }
-
-    if (this.multiple) {
-      const data = file.split(';')[0]
-      const type = data.split('data:')[1]
-      return type.includes('image')
-    }
-  }
 }
 </script>
