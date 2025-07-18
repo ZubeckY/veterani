@@ -18,20 +18,22 @@
                 :multiple="true"
                 accept="image/*"/>
 
-      <v-btn @click="create" text
-             color="primary"
-             class="ma-0 pa-0"
-             height="fit-content"
-             width="fit-content">
-        Создать
-      </v-btn>
-      <v-btn @click="$router.push('/blog')" text
-             class="ma-0 pa-0"
-             height="content"
-             color="error"
-             width="fit-content">
-        Отмена
-      </v-btn>
+      <div class="mt-6 mb-10">
+        <v-btn @click="create" text
+               color="primary"
+               class="ma-0 pa-0"
+               height="fit-content"
+               width="fit-content">
+          Создать
+        </v-btn>
+        <v-btn @click="$router.push('/blog')" text
+               class="ma-0 pa-0"
+               height="content"
+               color="error"
+               width="fit-content">
+          Отмена
+        </v-btn>
+      </div>
     </v-card>
   </div>
 </template>

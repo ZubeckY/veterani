@@ -77,23 +77,12 @@ export default class Uploader extends Vue {
   uploadSingle() {
     if (!this.file && !this.multiple) {
       this.error = 'Пожалуйста, выберите файл';
-      this.imageValue = ''
+      this.imageValue = '';
+      this.closeAlert();
       return
     }
 
-    const that = this
-    const reader = new FileReader()
-
-    reader.onload = function (e: any) {
-      that.imageValue = e.target.result;
-    }
-
-    reader.readAsDataURL(this.file);
-    this.uploading = true;
-    this.overlay = true;
-
-    const formData = new FormData();
-    formData.append('file', this.file);
+    const formData = this.fileReader();
 
     this.$axios.post('/api/file/upload/single', formData, {
       headers: {
@@ -122,28 +111,12 @@ export default class Uploader extends Vue {
   uploadMultiple() {
     if (this.file.length <= 0 && this.multiple) {
       this.error = 'Пожалуйста, выберите файл';
-      this.imageValues = []
+      this.imageValues = [];
+      this.closeAlert();
       return
     }
 
-    const that = this
-    this.imageValues = []
-
-    this.file.forEach((file: any) => {
-      const reader = new FileReader()
-      reader.onload = function (e: any) {
-        that.imageValues.push(e.target.result)
-      }
-      reader.readAsDataURL(file);
-    })
-
-    this.uploading = true;
-    this.overlay = true;
-
-    const formData = new FormData();
-    for (const file of this.file) {
-      formData.append('files', file);
-    }
+    const formData = this.fileReader();
 
     this.$axios.post('/api/file/upload/multiple', formData, {
       headers: {
@@ -167,6 +140,44 @@ export default class Uploader extends Vue {
         this.uploading = false;
         this.overlay = false;
       })
+  }
+
+  fileReader() {
+    const that = this
+    const formData = new FormData();
+
+    if (this.multiple) {
+      this.imageValues = []
+
+      this.file.forEach((file: any) => {
+        const reader = new FileReader()
+        reader.onload = function (e: any) {
+          that.imageValues.push(e.target.result)
+        }
+        reader.readAsDataURL(file);
+      })
+
+      this.uploading = true;
+      this.overlay = true;
+
+      for (const file of this.file) {
+        formData.append('files', file);
+      }
+    } else {
+      const reader = new FileReader()
+
+      reader.onload = function (e: any) {
+        that.imageValue = e.target.result;
+      }
+
+      reader.readAsDataURL(this.file);
+      this.uploading = true;
+      this.overlay = true;
+
+      formData.append('file', this.file);
+    }
+
+    return formData;
   }
 
   closeAlert() {

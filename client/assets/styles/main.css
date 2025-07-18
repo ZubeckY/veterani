@@ -90,12 +90,27 @@
   border-radius: var(--borRad) !important;
 }
 
+.uploader-card__big-img {
+  border-radius: var(--borRad) !important;
+}
+
+.uploader-card__info {
+  position: relative;
+}
+
+.uploader-card__close-dialog {
+  position: absolute;
+  right: 7px;
+  top: 7px;
+  z-index: 1000;
+}
+
 /* header */
 .header {
   position: absolute;
   width: 100%;
   top: 20px;
-  z-index: 1000;
+  z-index: 100;
   margin-bottom: 20px;
 }
 
