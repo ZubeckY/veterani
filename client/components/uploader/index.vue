@@ -1,44 +1,55 @@
 <template>
   <div>
     <v-form ref="form" @submit.prevent>
-      <v-file-input @change="onFileChange"
+      <v-file-input @change="uploader"
                     label="Выберите файл"
                     v-model="file"
-                    :disabled="uploading"
-                    :multiple="multiple"
+                    :accept="accept"
                     :chips="multiple"
+                    :multiple="multiple"
+                    :disabled="uploading"
                     :error-messages="error"
-                    outlined dense
+                    prepend-inner-icon="mdi-file-upload"
                     prepend-icon=""
-                    prepend-inner-icon="mdi-file-upload"/>
+                    outlined dense/>
 
-      <v-card v-if="!multiple && file" width="fit-content" elevation="0">
-        <uploader-card :file="file"
-                       :src="imageValue"
-                       :multiple="multiple"/>
-        <v-overlay opacity=".2" absolute :value="overlay">
-          <v-progress-circular size="60" color="primary"
-                               :value="uploadProgressValue"/>
-        </v-overlay>
-      </v-card>
-
-      <v-card v-else class="d-flex flex-row flex-wrap" width="fit-content" elevation="0">
-        <uploader-card v-for="(imVal, i) in imageValues"
+      <div class="d-flex flex-wrap flex-row ">
+        <uploader-card v-for="(file, i) in uploadFiles"
+                       v-if="uploadFiles.length"
                        :key="i"
-                       :file="imVal"
-                       :src="imVal"
+                       :file="file"
+                       :src="'/api/' + file.path"
                        :multiple="multiple"/>
-        <v-overlay opacity=".2" absolute :value="overlay">
-          <v-progress-circular size="60" color="primary"
-                               :value="uploadProgressValue"/>
-        </v-overlay>
-      </v-card>
+
+        <v-card v-if="!multiple && file" class="ml-3" width="fit-content" elevation="0">
+          <uploader-card :file="file"
+                         :src="imageValue"
+                         :multiple="multiple"/>
+          <v-overlay opacity=".2" absolute :value="overlay">
+            <v-progress-circular size="60" color="primary"
+                                 :value="uploadProgressValue"/>
+          </v-overlay>
+        </v-card>
+
+        <v-card v-else class="d-flex flex-row flex-wrap ml-3"
+                width="fit-content" elevation="0">
+          <uploader-card v-for="(imVal, i) in imageValues"
+                         :key="i"
+                         :file="imVal"
+                         :src="imVal"
+                         :multiple="multiple"/>
+          <v-overlay opacity=".2" absolute :value="overlay">
+            <v-progress-circular size="60" color="primary"
+                                 :value="uploadProgressValue"/>
+          </v-overlay>
+        </v-card>
+      </div>
     </v-form>
 
-    <v-alert v-model="alert"
-             class="mt-5 mb-3 align-center"
+    <v-alert class="mt-5 mb-3 align-center"
+             v-model="alert"
              type="success"
-             dense outlined>
+             outlined dense>
       <div class="d-flex align-center">
         <span>{{ success }}</span>
         <v-spacer/>
@@ -57,6 +68,8 @@ import {Vue, Component, Watch, VModel, Prop} from 'vue-property-decorator';
 @Component({})
 export default class Uploader extends Vue {
   @VModel() file: any = null;
+  @Prop() uploadFiles?: any
+  @Prop({default: ''}) readonly accept?: string
   @Prop({default: false}) readonly multiple?: boolean
 
   alert: boolean = false;
@@ -70,12 +83,13 @@ export default class Uploader extends Vue {
   imageValue: any = ""
   imageValues: Array<string> = [];
 
-  onFileChange() {
-    return this.multiple ? this.uploadMultiple() : this.uploadSingle()
-  }
-
-  uploadSingle() {
-    if (!this.file && !this.multiple) {
+  uploader() {
+    if (this.file.length <= 0 && this.multiple) {
+      this.error = 'Пожалуйста, выберите файл';
+      this.imageValues = [];
+      this.closeAlert();
+      return
+    } else if (!this.file && !this.multiple) {
       this.error = 'Пожалуйста, выберите файл';
       this.imageValue = '';
       this.closeAlert();
@@ -83,8 +97,9 @@ export default class Uploader extends Vue {
     }
 
     const formData = this.fileReader();
+    const mode = this.multiple ? 'multiple' : 'single';
 
-    this.$axios.post('/api/file/upload/single', formData, {
+    this.$axios.post('/api/file/upload/' + mode, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -94,43 +109,16 @@ export default class Uploader extends Vue {
       }
     })
       .then((response: any) => {
-        this.alert = true;
-        this.success = 'Файл успешно загружен';
-        this.error = null;
-      })
-      .catch((error: any) => {
-        this.error = 'Произошла ошибка при загрузке файла: ' + error.message;
-        this.closeAlert();
-      })
-      .finally(() => {
-        this.uploading = false;
-        this.overlay = false;
-      })
-  }
+        const {file, files} = response.data;
+        const resFile = this.multiple ? files : file;
 
-  uploadMultiple() {
-    if (this.file.length <= 0 && this.multiple) {
-      this.error = 'Пожалуйста, выберите файл';
-      this.imageValues = [];
-      this.closeAlert();
-      return
-    }
+        this.$emit('successUpload', resFile);
 
-    const formData = this.fileReader();
-
-    this.$axios.post('/api/file/upload/multiple', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-      onUploadProgress: progressEvent => {
-        let {loaded, total} = progressEvent;
-        this.uploadProgressValue = (loaded / total) * 100
-      }
-    })
-      .then((response: any) => {
         this.alert = true;
         this.success = 'Файлы успешно загружены';
         this.error = null;
+
+        this.file = this.multiple ? [] : null;
       })
       .catch((error: any) => {
         this.error = 'Произошла ошибка при загрузке файла: ' + error.message;
@@ -165,19 +153,28 @@ export default class Uploader extends Vue {
       }
     } else {
       const reader = new FileReader()
-
       reader.onload = function (e: any) {
         that.imageValue = e.target.result;
       }
-
       reader.readAsDataURL(this.file);
       this.uploading = true;
       this.overlay = true;
 
       formData.append('file', this.file);
     }
-
     return formData;
+  }
+
+  @Watch('file')
+  clearList() {
+    if (this.file.length <= 0 && this.multiple) {
+      this.imageValues = []
+    }
+  }
+
+  closeAll() {
+    this.closeAlert();
+    this.error = '';
   }
 
   closeAlert() {

@@ -176,48 +176,44 @@ export default class AuthService {
         }
     }
 
-    async getUserFromCookies(cookie: any, res: Response) {
+    async getUserFromCookies(cookie: any) {
         try {
             if (!cookie) {
-                return res
-                    .status(403)
-                    .send({
-                        message: 'Нет куков'
-                    })
+                return {
+                    message: 'Нет авторизации. Код ошибки - 1020',
+                    error: true,
+                }
             }
 
             const refreshToken = await new AuthService().getTokenFromCookie(cookie);
             if (!refreshToken) {
-                return res
-                    .status(401)
-                    .send({
-                        message: 'Токен не найден. Код ошибки - 1020',
-                    })
+                return {
+                    message: 'Токен не найден. Код ошибки - 1021',
+                    error: true,
+                }
             }
 
             const userFromDB: any = await new AuthService().getUserByToken(refreshToken)
             if (!userFromDB) {
-                return res
-                    .status(401)
-                    .send({
-                        message: 'Пользователь указан неверно. Код ошибки - 1045'
-                    })
+                return {
+                    message: 'Пользователь указан неверно. Код ошибки - 1045',
+                    error: true,
+                }
             }
 
             return userFromDB
 
         } catch (error) {
-            return res
-                .status(500)
-                .send({
-                    message: 'Ошибка сервера'
-                })
+            return {
+                message: 'Ошибка сервера',
+                error: true
+            }
         }
     }
 
     async userRoleIsCorrect(cookie: any, res: Response) {
         try {
-            const userFromDB: any = await this.getUserFromCookies(cookie, res)
+            const userFromDB: any = await this.getUserFromCookies(cookie)
             if (!userFromDB.id) {
                 return userFromDB
             }

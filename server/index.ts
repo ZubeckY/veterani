@@ -18,7 +18,7 @@ app.use(express.urlencoded({extended: true,}))
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true,}))
 
-app.use('/api/media/', express.static('uploads'));
+app.use('/api/uploads/', express.static('uploads'));
 app.use('/api/', controller)
 
 app.listen(port, () => {

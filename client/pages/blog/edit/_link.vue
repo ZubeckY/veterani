@@ -5,6 +5,8 @@
             elevation="0">
       <div class="text-center font-weight-bold">Редактирование поста</div>
 
+      <pre v-text="model"></pre>
+
       <div class="mb-2">Пост №{{ model.id }}</div>
       <v-text-field label="Название"
                     v-model="model.headLine"
@@ -17,19 +19,27 @@
                   v-model="model.text"
                   outlined dense/>
 
-      <v-btn @click="edit"
-             color="primary" icon>
-        <v-icon>mdi-pen</v-icon>
-      </v-btn>
+      <uploader v-model="localFile"
+                :uploadFiles="model.files"
+                @successUpload="getFilesModel"
+                :multiple="true"
+                accept="image/*"/>
 
-      <blog-delete @deleteItem="deleteItem"/>
+      <div class="mt-6 mb-10">
+        <v-btn @click="edit"
+               color="primary" icon>
+          <v-icon>mdi-pen</v-icon>
+        </v-btn>
 
-      <v-btn @click="$router.push('/blog')"
-             color="error" text
-             width="fit-content"
-             class="pa-1">
-        Отмена
-      </v-btn>
+        <blog-delete @deleteItem="deleteItem"/>
+
+        <v-btn @click="$router.push('/blog')"
+               color="error" text
+               width="fit-content"
+               class="pa-1">
+          Отмена
+        </v-btn>
+      </div>
 
     </v-card>
   </div>
@@ -40,12 +50,14 @@ import {Vue, Component} from 'vue-property-decorator';
 
 @Component({})
 export default class _link extends Vue {
+  localFile: any = []
   model: any = {
     id: 0,
     headLine: '',
     text: '',
     link: '',
     published: false,
+    files: [],
     created: ''
   }
 
@@ -83,6 +95,10 @@ export default class _link extends Vue {
       .catch((error) => {
         console.log(error);
       })
+  }
+
+  getFilesModel(file: any) {
+    this.model.files.push(...file);
   }
 }
 </script>

@@ -48,7 +48,7 @@ export class Post {
         nullable: true,
     })
     @JoinTable()
-    file!: Relation<File>[];
+    files!: Relation<File>[];
 
     @Column({
         comment: "Ссылка на пост",

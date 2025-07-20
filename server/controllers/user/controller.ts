@@ -141,9 +141,14 @@ userRouter.post("/auth/refresh/", checkValidAuth, async (req: Request, res: Resp
 
 userRouter.get('/auth/lk', async (req: Request, res: Response): Promise<any> => {
     try {
-        const userFromDB: any = await new AuthService().getUserFromCookies(req.headers['cookie'], res)
-        if (!userFromDB.id) {
-            return userFromDB
+        const cookies = req.headers['cookie']
+        const userFromDB: any = await new AuthService().getUserFromCookies(cookies)
+        if (userFromDB.error) {
+            return res
+                .status(401)
+                .send({
+                    message: userFromDB.message
+                })
         }
 
         delete userFromDB.activatedCode
@@ -214,9 +219,14 @@ userRouter.get("/auth/user/:id/", async (req: Request, res: Response): Promise<a
 
 userRouter.patch("/auth/user/activate-account", checkValidAuth, async (req: Request, res: Response): Promise<any> => {
     try {
-        const userFromDB: any = await new AuthService().getUserFromCookies(req.headers['cookie'], res)
-        if (!userFromDB.id) {
-            return userFromDB
+        const cookies = req.headers['cookie']
+        const userFromDB: any = await new AuthService().getUserFromCookies(cookies)
+        if (userFromDB.error) {
+            return res
+                .status(401)
+                .send({
+                    message: userFromDB.message
+                })
         }
 
         const {model} = req.body
@@ -248,9 +258,14 @@ userRouter.patch("/auth/user/activate-account", checkValidAuth, async (req: Requ
 
 userRouter.patch("/auth/user/refresh-code", checkValidAuth, async (req: Request, res: Response): Promise<any> => {
     try {
-        const userFromDB: any = await new AuthService().getUserFromCookies(req.headers['cookie'], res)
-        if (!userFromDB.id) {
-            return userFromDB
+        const cookies = req.headers['cookie']
+        const userFromDB: any = await new AuthService().getUserFromCookies(cookies)
+        if (userFromDB.error) {
+            return res
+                .status(401)
+                .send({
+                    message: userFromDB.message
+                })
         }
 
         userFromDB.activatedCode = emailService.generateOTPCode()
@@ -272,9 +287,14 @@ userRouter.patch("/auth/user/refresh-code", checkValidAuth, async (req: Request,
 
 userRouter.delete("/user/delete", checkValidAuth, async (req: Request, res: Response): Promise<any> => {
     try {
-        const userFromDB: any = await new AuthService().getUserFromCookies(req.headers['cookie'], res)
-        if (!userFromDB.id) {
-            return userFromDB
+        const cookies = req.headers['cookie']
+        const userFromDB: any = await new AuthService().getUserFromCookies(cookies)
+        if (userFromDB.error) {
+            return res
+                .status(401)
+                .send({
+                    message: userFromDB.message
+                })
         }
 
         const userRepository = AppDataSource.getRepository(User)
@@ -295,9 +315,14 @@ userRouter.delete("/user/delete", checkValidAuth, async (req: Request, res: Resp
 
 userRouter.post("/user/email/change", checkValidAuth, async (req: Request, res: Response): Promise<any> => {
     try {
-        const userFromDB: any = await new AuthService().getUserFromCookies(req.headers['cookie'], res)
-        if (!userFromDB.id) {
-            return userFromDB
+        const cookies = req.headers['cookie']
+        const userFromDB: any = await new AuthService().getUserFromCookies(cookies)
+        if (userFromDB.error) {
+            return res
+                .status(401)
+                .send({
+                    message: userFromDB.message
+                })
         }
 
         const body: any = req.body
@@ -334,9 +359,14 @@ userRouter.post("/user/email/change", checkValidAuth, async (req: Request, res: 
 
 userRouter.patch("/user/email/accept", checkValidAuth, async (req: Request, res: Response): Promise<any> => {
     try {
-        const userFromDB: any = await new AuthService().getUserFromCookies(req.headers['cookie'], res)
-        if (!userFromDB.id) {
-            return userFromDB
+        const cookies = req.headers['cookie']
+        const userFromDB: any = await new AuthService().getUserFromCookies(cookies)
+        if (userFromDB.error) {
+            return res
+                .status(401)
+                .send({
+                    message: userFromDB.message
+                })
         }
 
         const body: any = req.body

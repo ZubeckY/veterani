@@ -17,7 +17,9 @@ import {Vue, Component, Provide} from 'vue-property-decorator';
 @Component({})
 export default class Default extends Vue {
   @Provide() userFromDB: any = reactive({
-    value: {}
+    value: {
+      id: null
+    }
   });
 
   @Provide() infoData: any = reactive({

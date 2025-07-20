@@ -9,32 +9,6 @@ import {FileTypeTranslator} from "../../types/fileType";
 const fileRouter = Router();
 const uploadService = new UploadService();
 
-fileRouter.get("/admin/file/list", onlyAdmin, async (req: Request, res: Response): Promise<any> => {
-    try {
-        const fileRepository = AppDataSource.getRepository(File);
-        const files = await fileRepository.find();
-
-        const transformedFiles = files.map(file => {
-            const { typeFile, ...rest } = file;
-            return {
-                ...rest,
-                typeFile: FileTypeTranslator.translate(typeFile),
-
-            };
-        });
-
-        return res.status(200).send({
-            files: transformedFiles,
-        });
-
-    } catch (error) {
-        console.error(error);
-        return res.status(503).send({
-            message: error instanceof Error ? error.message : 'Internal server error',
-        });
-    }
-});
-
 fileRouter.post("/file/upload/multiple/", checkValidAuth, uploadService.uploadMultiple("files"), async (req: Request, res: Response): Promise<any> => {
     try {
         const files = req.files as Express.Multer.File[];
@@ -116,6 +90,33 @@ fileRouter.post("/file/upload/single/", checkValidAuth, uploadService.uploadSing
         })
     }
 })
+
+// admin controller
+fileRouter.get("/admin/file/list", onlyAdmin, async (req: Request, res: Response): Promise<any> => {
+    try {
+        const fileRepository = AppDataSource.getRepository(File);
+        const files = await fileRepository.find();
+
+        const transformedFiles = files.map(file => {
+            const { typeFile, ...rest } = file;
+            return {
+                ...rest,
+                typeFile: FileTypeTranslator.translate(typeFile),
+
+            };
+        });
+
+        return res.status(200).send({
+            files: transformedFiles,
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(503).send({
+            message: error instanceof Error ? error.message : 'Internal server error',
+        });
+    }
+});
 
 fileRouter.delete("/admin/file/delete/:id", onlyAdmin, async (req: Request, res: Response): Promise<any> => {
     try {

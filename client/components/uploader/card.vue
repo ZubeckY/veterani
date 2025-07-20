@@ -1,7 +1,12 @@
 <template>
   <article class="uploader-card">
-    <v-dialog v-model="dialog"
-              v-if="fileType(file)"
+    <div class="uploader-card__deleteItem">
+      <v-btn depressed plain small icon color="red">
+        <v-icon>mdi-delete</v-icon>
+      </v-btn>
+    </div>
+    <v-dialog v-if="getFileType(file)"
+              v-model="dialog"
               width="fit-content"
               max-width="60%">
       <template v-slot:activator="{ on, attrs }">
@@ -48,11 +53,16 @@ import {Vue, Component, Prop} from 'vue-property-decorator';
 export default class Card extends Vue {
   @Prop({}) readonly file!: any;
   @Prop({}) readonly src?: any;
+  @Prop({default: false}) readonly uploaded?: boolean;
   @Prop({default: false}) readonly multiple?: boolean;
 
   dialog: boolean = false;
 
-  fileType(file: any) {
+  getFileType(file: any) {
+    if (file.id) {
+      return file.typeFile.includes('image')
+    }
+
     if (file?.type && !this.multiple) {
       return file.type.includes('image')
     }

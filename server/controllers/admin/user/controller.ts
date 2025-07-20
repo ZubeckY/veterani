@@ -145,7 +145,7 @@ adminRouter.get('/admin/user/:id', checkRole, async (req: Request, res: Response
 
 adminRouter.delete('/admin/user/delete/:id', checkRole, async (req: Request, res: Response): Promise<any> => {
     try {
-        const currentUser: any = await new AuthService().getUserFromCookies(req.headers['cookie'], res)
+        const currentUser: any = await new AuthService().getUserFromCookies(req.headers['cookie'])
         if (!currentUser.id) {
             return currentUser
         }

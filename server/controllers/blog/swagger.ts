@@ -152,7 +152,7 @@
  *                   text:
  *                     type: string
  *                     example: "Текст поста"
- *                   includeSlider:
+ *                   includesSlider:
  *                     type: boolean
  *                     example: true
  *     responses:
@@ -313,7 +313,7 @@
  *                   text:
  *                     type: string
  *                     example: "Обновленный текст поста"
- *                   includeSlider:
+ *                   includesSlider:
  *                     type: boolean
  *                     example: false
  *     responses:

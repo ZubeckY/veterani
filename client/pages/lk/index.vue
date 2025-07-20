@@ -166,17 +166,14 @@ export default class Lk extends Vue {
     if (process.client) {
 
       // Если не получилось взять пользователя с Default'а, пытаемся сделать запрос на БД еще раз
-      if (!this.userFromDB.value.id) {
-
+      if (this.userFromDB.value.id == null) {
         return await this.$axios.get('/api/auth/lk/')
           .then((res) => {
             this.user = res.data.user
             this.linkTitle = 'Личный кабинет - ' + res.data.user.firstName + ' ' + res.data.user.lastName
           })
           .catch((error: any) => {
-            if (error.response.status === 401 || error.response.status === 403) {
-              this.logoutFunction()
-            }
+            this.logoutFunction()
           })
           .finally(() => {
             this.loading = false

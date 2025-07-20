@@ -13,6 +13,7 @@
   --boxSh: rgba(149, 157, 165, 0.2) 0 8px 24px;
   --boxShL: var(--grayBox) 0 8px 24px;
   --borRad: 13px;
+  --borRadS: 9px;
 }
 
 /*  */
@@ -71,6 +72,7 @@
 }
 
 .uploader-card {
+  position: relative;
   display: flex;
   width: 150px;
   height: 150px;
@@ -82,6 +84,13 @@
 
 .uploader-card + .uploader-card {
   margin-left: 12px;
+}
+
+.uploader-card__deleteItem {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 100;
 }
 
 .uploader-card__img {

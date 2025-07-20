@@ -4,6 +4,9 @@
             max-width="800"
             elevation="0">
       <div class="text-center font-weight-bold">Создание поста</div>
+
+      <pre v-text="model"/>
+
       <div class="mb-2">Пост №{{ model.id }}</div>
       <v-text-field label="Название"
                     v-model="model.headLine"
@@ -14,9 +17,10 @@
                   v-model="model.text"
                   outlined dense/>
 
-      <uploader v-model="model.file"
+      <uploader v-model="localFile"
                 :multiple="true"
-                accept="image/*"/>
+                accept="image/*"
+                @successUpload="getFilesModel"/>
 
       <div class="mt-6 mb-10">
         <v-btn @click="create" text
@@ -42,14 +46,17 @@ import {Vue, Component} from 'vue-property-decorator';
 
 @Component({})
 export default class Create extends Vue {
+  localFile: any = []
+
   model: any = {
     headLine: '',
     text: '',
     includesSlider: false,
-    file: [],
+    files: []
   }
 
   async create() {
+    delete this.model.localFile
     await this.$axios.post('/api/post/create', {model: this.model})
       .then((response) => {
         console.log(response);
@@ -58,6 +65,10 @@ export default class Create extends Vue {
       .catch((error) => {
         console.log(error);
       })
+  }
+
+  getFilesModel(files: any) {
+    this.model.files = files;
   }
 }
 </script>
