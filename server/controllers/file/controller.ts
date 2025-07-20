@@ -5,6 +5,7 @@ import {AppDataSource} from "../../connectDb";
 import {File} from "../../entity"
 import {onlyAdmin} from "../../middleware/auth/onlyAdmin";
 import {FileTypeTranslator} from "../../types/fileType";
+import * as fs from "node:fs";
 
 const fileRouter = Router();
 const uploadService = new UploadService();
@@ -83,6 +84,71 @@ fileRouter.post("/file/upload/single/", checkValidAuth, uploadService.uploadSing
                 file: savedFile,
                 message: "Файл успешно сохранён"
             })
+    } catch (error) {
+        console.log(error)
+        return res.status(503).send({
+            message: error
+        })
+    }
+})
+
+fileRouter.delete("/file/delete/:id", checkValidAuth, async (req: Request, res: Response): Promise<any> => {
+    try {
+        const {id} = req.params
+        if (!(Number.isInteger(+id))) {
+            return res.status(404).send({
+                message: "ID не указан"
+            })
+        }
+
+        const fileRepository = AppDataSource.getRepository(File)
+        const fileFromDB = await fileRepository.findOne({
+            where: {
+                id: +id
+            }
+        })
+
+        if (!fileFromDB) {
+            return res
+                .status(404)
+                .send({
+                    message: 'Файл не найден в БД'
+                })
+        }
+
+
+        fs.stat(fileFromDB.path, function (error, stats) {
+            if (error) {
+                console.error(error);
+
+                return res
+                    .status(404)
+                    .send({
+                        message: 'Ошибка при чтении файла',
+                        error,
+                    })
+            }
+
+            fs.unlink(fileFromDB.path, function(error){
+                if(error) {
+                    console.log(error);
+                    return res
+                        .status(404)
+                        .send({
+                            message: 'Ошибка при удалении файла файла',
+                            error,
+                        })
+                }
+                console.log('file deleted successfully');
+            });
+        });
+
+        return res
+            .status(200)
+            .send({
+                message: 'Файл удален успешно'
+            })
+
     } catch (error) {
         console.log(error)
         return res.status(503).send({

@@ -15,6 +15,7 @@
 
       <div class="d-flex flex-wrap flex-row ">
         <uploader-card v-for="(file, i) in uploadFiles"
+                       @deleteFile="deleteFile"
                        v-if="uploadFiles.length"
                        :key="i"
                        :file="file"
@@ -169,12 +170,23 @@ export default class Uploader extends Vue {
   clearList() {
     if (this.file.length <= 0 && this.multiple) {
       this.imageValues = []
+    } else if (!this.multiple && !this.file) {
+      this.imageValue = '';
     }
   }
 
-  closeAll() {
-    this.closeAlert();
-    this.error = '';
+  deleteFile(file: any) {
+    const index = this.uploadFiles.findIndex((f: any) => f.id === file.id);
+    if (index > -1) {
+      this.$axios.delete('/api/file/delete/' + file.id)
+        .then((res) => {
+          console.log(res.data);
+          this.uploadFiles.splice(index, 1);
+        })
+        .catch((error: any) => {
+          console.log(error);
+        })
+    }
   }
 
   closeAlert() {

@@ -1,7 +1,7 @@
 <template>
   <article class="uploader-card">
     <div class="uploader-card__deleteItem">
-      <v-btn depressed plain small icon color="red">
+      <v-btn @click="deleteFile" depressed plain small icon color="red">
         <v-icon>mdi-delete</v-icon>
       </v-btn>
     </div>
@@ -72,6 +72,10 @@ export default class Card extends Vue {
       const type = data.split('data:')[1]
       return type.includes('image')
     }
+  }
+
+  deleteFile() {
+    this.$emit('deleteFile', this.file);
   }
 }
 </script>
