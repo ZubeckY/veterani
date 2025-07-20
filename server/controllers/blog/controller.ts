@@ -177,13 +177,13 @@ blogRouter.post('/post/create', checkValidAuth, async (req: Request, res: Respon
             }
         })
 
-        if (!filesFromDB.length) {
-            return res
-                .status(404)
-                .send({
-                    message: 'Файлы не найдены!'
-                })
-        }
+        // if (!filesFromDB.length) {
+        //     return res
+        //         .status(404)
+        //         .send({
+        //             message: 'Файлы не найдены!'
+        //         })
+        // }
 
         filesFromDB.forEach((file: any) => {
             file.used = true
@@ -266,13 +266,13 @@ blogRouter.patch('/post/update/:link', checkValidAuth, async (req: Request, res:
             }
         })
 
-        if (!filesFromDB.length) {
-            return res
-                .status(404)
-                .send({
-                    message: 'Файлы не найдены!'
-                })
-        }
+        // if (!filesFromDB.length) {
+        //     return res
+        //         .status(404)
+        //         .send({
+        //             message: 'Файлы не найдены!'
+        //         })
+        // }
 
         filesFromDB.forEach((file: any) => {
             file.used = true
