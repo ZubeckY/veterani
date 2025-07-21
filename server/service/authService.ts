@@ -163,9 +163,12 @@ export default class AuthService {
             }
 
             const userRepository = AppDataSource.getRepository(User)
-            const userFromDB: User | null = await userRepository.findOneBy({
-                id: decoded.id,
-                email: decoded?.email,
+            const userFromDB: User | null = await userRepository.findOneOrFail({
+                where: {
+                    id: decoded.id,
+                    email: decoded?.email,
+                },
+                relations: ['file'],
             })
 
             return userFromDB ?? null

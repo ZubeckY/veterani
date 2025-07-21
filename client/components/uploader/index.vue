@@ -13,16 +13,30 @@
                     prepend-icon=""
                     outlined dense/>
 
-      <div class="d-flex flex-wrap flex-row ">
-        <uploader-card v-for="(file, i) in uploadFiles"
+      <div class="d-flex flex-wrap flex-row">
+
+        <!-- отображение загруженных файлов  -->
+        <uploader-card v-if="multiple && uploadFiles.length > 0"
+                       v-for="(file, i) in uploadFiles"
                        @deleteFile="deleteFile"
-                       v-if="uploadFiles.length"
                        :key="i"
                        :file="file"
                        :src="'/api/' + file.path"
                        :multiple="multiple"/>
 
-        <v-card v-if="!multiple && file" class="ml-3" width="fit-content" elevation="0">
+
+        <!-- отображение загруженного файла  -->
+        <uploader-card v-if="!multiple && uploadFiles"
+                       @deleteFile="deleteFile"
+                       :file="uploadFiles"
+                       :src="'/api/' + uploadFiles.path"/>
+
+
+        <!-- загрузка одного файла -->
+        <v-card v-if="!multiple && imageValue"
+                class="ml-3"
+                elevation="0"
+                width="fit-content">
           <uploader-card :file="file"
                          :src="imageValue"
                          :multiple="multiple"/>
@@ -32,8 +46,12 @@
           </v-overlay>
         </v-card>
 
-        <v-card v-else class="d-flex flex-row flex-wrap ml-3"
-                width="fit-content" elevation="0">
+
+        <!-- загрузка нескольких файлов -->
+        <v-card v-if="multiple && imageValues.length > 0"
+                elevation="0"
+                width="fit-content"
+                class="d-flex flex-row flex-wrap ml-3">
           <uploader-card v-for="(imVal, i) in imageValues"
                          :key="i"
                          :file="imVal"
@@ -44,6 +62,7 @@
                                  :value="uploadProgressValue"/>
           </v-overlay>
         </v-card>
+
       </div>
     </v-form>
 
@@ -85,14 +104,14 @@ export default class Uploader extends Vue {
   imageValues: Array<string> = [];
 
   uploader() {
-    if (this.file.length <= 0 && this.multiple) {
+    if (this.multiple && this.file.length <= 0) {
       this.error = 'Пожалуйста, выберите файл';
       this.imageValues = [];
       this.closeAlert();
       return
-    } else if (!this.file && !this.multiple) {
+    } else if (this.multiple && !this.file) {
       this.error = 'Пожалуйста, выберите файл';
-      this.imageValue = '';
+      this.imageValue = null;
       this.closeAlert();
       return
     }
@@ -168,20 +187,29 @@ export default class Uploader extends Vue {
 
   @Watch('file')
   clearList() {
-    if (this.file.length <= 0 && this.multiple) {
+    if (this.multiple && this.file.length <= 0 ) {
       this.imageValues = []
     } else if (!this.multiple && !this.file) {
-      this.imageValue = '';
+      this.imageValue = null;
     }
   }
 
   deleteFile(file: any) {
-    const index = this.uploadFiles.findIndex((f: any) => f.id === file.id);
+    let index = -1
+    if (this.multiple) {
+      index = this.uploadFiles.findIndex((f: any) => f.id === file.id);
+    } else {
+      index = file.id
+    }
+
     if (index > -1) {
       this.$axios.delete('/api/file/delete/' + file.id)
         .then((res) => {
-          console.log(res.data);
-          this.uploadFiles.splice(index, 1);
+          if (this.multiple) {
+            this.uploadFiles.splice(index, 1);
+          } else {
+            this.$emit('successDelete')
+          }
         })
         .catch((error: any) => {
           console.log(error);

@@ -4,9 +4,9 @@ import {
     CreateDateColumn,
     Entity,
     JoinColumn,
-    ManyToMany,
     PrimaryGeneratedColumn,
-    UpdateDateColumn, JoinTable
+    UpdateDateColumn,
+    ManyToOne
 } from "typeorm";
 import {Role} from "../types/role";
 import {File} from "./file";
@@ -71,7 +71,7 @@ export class User {
     memberRoleTitle?: string;
 
     /** Файл */
-    @ManyToMany(() => File, (file) => file.id, {
+    @ManyToOne(() => File, (file) => file.id, {
         cascade: false,
         nullable: true,
     })

@@ -19,11 +19,12 @@
                   v-model="model.text"
                   outlined dense/>
 
-      <uploader v-model="localFile"
+      <uploader v-if="model.files.length > 0"
+                v-model="localFile"
                 :uploadFiles="model.files"
-                @successUpload="getFilesModel"
                 :multiple="true"
-                accept="image/*"/>
+                accept="image/*"
+                @successUpload="getFilesModel"/>
 
       <div class="mt-6 mb-10">
         <v-btn @click="edit"
@@ -51,6 +52,7 @@ import {Vue, Component} from 'vue-property-decorator';
 @Component({})
 export default class _link extends Vue {
   localFile: any = []
+
   model: any = {
     id: 0,
     headLine: '',

@@ -1,7 +1,6 @@
 <template>
   <div class="lk">
     <div class="lk-container">
-
       <div class="lk-content">
         <v-text-field label="Имя"
                       v-model="user.firstName"
@@ -17,12 +16,18 @@
 
         <lk-edit-mail :mail="user.email"/>
 
-        <div class="mt-3">
-          <lk-edit-pass :passwordVal="passwordVal"
-                        @cleanPassValues="cleanPassValues"/>
-        </div>
+        <lk-edit-pass class="mt-3"
+                      :passwordVal="passwordVal"
+                      @cleanPassValues="cleanPassValues"/>
 
-        <div class="d-flex mt-5">
+        <uploader v-model="localFile"
+                  :uploadFiles="user.file"
+                  class="mt-3"
+                  accept="image/*"
+                  @successDelete="deleteFileFromModel"
+                  @successUpload="getFilesModel"/>
+
+        <div class="d-flex my-7">
           <v-btn width="fit-content"
                  height="fit-content"
                  class="ma-0 pa-0 mr-4"
@@ -45,6 +50,7 @@
 </template>
 <script lang="ts">
 import {Vue, Component, Inject} from 'vue-property-decorator';
+
 @Component({
   head(this: Edit): object {
     return {
@@ -55,6 +61,7 @@ import {Vue, Component, Inject} from 'vue-property-decorator';
 export default class Edit extends Vue {
   @Inject('userFromDB') userFromDB: any;
   user: any = {};
+  localFile: any = null;
   linkTitle: string = 'Личный кабинет пользователя';
   passwordVal: any = {
     oldValue: '',
@@ -88,6 +95,14 @@ export default class Edit extends Vue {
 
   setUserValue(value: any) {
     this.user = {...value}
+  }
+
+  getFilesModel(file: any) {
+    this.user.file = file
+  }
+
+  deleteFileFromModel() {
+    this.user.file = null
   }
 
   cleanPassValues() {

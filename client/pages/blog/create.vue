@@ -18,6 +18,7 @@
                   outlined dense/>
 
       <uploader v-model="localFile"
+                :uploadFiles="model.files"
                 :multiple="true"
                 accept="image/*"
                 @successUpload="getFilesModel"/>
@@ -47,7 +48,6 @@ import {Vue, Component} from 'vue-property-decorator';
 @Component({})
 export default class Create extends Vue {
   localFile: any = []
-
   model: any = {
     headLine: '',
     text: '',
