@@ -13,21 +13,19 @@ const blogRouter = Router();
 blogRouter.get('/post/list', async (req: Request, res: Response): Promise<any> => {
     try {
         const cookies = req.headers['cookie']
+        let userID: null | number
         const userFromDB: any = await new AuthService().getUserFromCookies(cookies)
         if (userFromDB.error) {
-            return res
-                .status(401)
-                .send({
-                    message: userFromDB.message
-                })
+            userID = null
+        } else {
+            userID = userFromDB.id
         }
 
-        const skip = (+(req.query?.page ?? 1) - 1) * +(req.query?.size ?? 10)
-        const takePage = +(req.query?.page ?? 1) * +(req.query?.size ?? 10)
-        const give = +(req.query?.give ?? 10)
-        const take = takePage ?? give
+        const take: any = req.query.take || 10
+        const page: any = req.query.page || 1;
+        const skip: number = (page - 1) * take;
 
-        const author = (req.query.author ?? 'all')
+        const author: any = (req.query.author ?? 'all')
 
         const postRepository = AppDataSource.getRepository(Post)
         const qb = postRepository.createQueryBuilder('post')
@@ -35,23 +33,25 @@ blogRouter.get('/post/list', async (req: Request, res: Response): Promise<any> =
         qb.where("published = :published", {published: true})
             .leftJoinAndSelect('post.user', 'user')
 
-
-        if (author == 'author') {
+        if (author == 'author' && userID != null) {
             qb.andWhere("post.user.id = :user_id", {
-                user_id: userFromDB.id
+                user_id: userID
             });
         }
 
-        if (author == 'community') {
-            qb.andWhere("post.user.id NOT IN (" + userFromDB.id + ")")
+        if (author == 'community' && userID != null) {
+            qb.andWhere("post.user.id NOT IN (" + userID + ")")
         }
 
-        const post = await qb
-            .skip(skip)
-            .take(take)
-            .getMany()
+        const [result, count] = await qb
+            .skip(+skip)
+            .take(+take)
+            .getManyAndCount()
 
-        return res.send(post)
+        return res.send({
+            result,
+            count
+        })
     } catch (error) {
         console.log(error)
         res.status(503).send({
@@ -177,14 +177,6 @@ blogRouter.post('/post/create', checkValidAuth, async (req: Request, res: Respon
             }
         })
 
-        // if (!filesFromDB.length) {
-        //     return res
-        //         .status(404)
-        //         .send({
-        //             message: 'Файлы не найдены!'
-        //         })
-        // }
-
         filesFromDB.forEach((file: any) => {
             file.used = true
         })
@@ -265,14 +257,6 @@ blogRouter.patch('/post/update/:link', checkValidAuth, async (req: Request, res:
                 id: In(filesId)
             }
         })
-
-        // if (!filesFromDB.length) {
-        //     return res
-        //         .status(404)
-        //         .send({
-        //             message: 'Файлы не найдены!'
-        //         })
-        // }
 
         filesFromDB.forEach((file: any) => {
             file.used = true

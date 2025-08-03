@@ -136,7 +136,7 @@ export default class Pages extends Vue {
   async getData() {
     this.$axios.get(this.getLink)
       .then(res => {
-        this.posts = res.data
+        this.posts = res.data.result
       })
       .catch((error) => {
         console.log(error)
@@ -148,7 +148,7 @@ export default class Pages extends Vue {
   }
 
   get getLink(): string {
-    return '/api/post/list?give=' + 6
+    return '/api/post/list?take=' + 6
   }
 }
 </script>
