@@ -128,7 +128,7 @@
   display: inline-block;
   width: auto;
   height: 100%;
-  padding: 10px;
+  padding: 5px;
 }
 
 .adaptiveImage-item__dialog {
@@ -136,7 +136,6 @@
   display: flex;
   width: auto;
   height: 90vh;
-  padding: 10px;
   align-items: center;
   justify-content: center;
 }

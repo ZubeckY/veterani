@@ -11,8 +11,10 @@
         </template>
         <div class="adaptiveImage-item__dialog">
           <div class="adaptiveImage-item__dialogClose">
-            <v-btn @click="dialog = false" color="red" icon>
-              <v-icon>mdi-close</v-icon>
+            <v-btn @click="dialog = false"
+                   color="red lighten-1"
+                   fab small dark>
+              <v-icon size="28">mdi-close</v-icon>
             </v-btn>
           </div>
           <img class="adaptiveImage-item__image"

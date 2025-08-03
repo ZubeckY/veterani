@@ -5,13 +5,12 @@
         <v-carousel class="news-card__image-carousel"
                     height="280px"
                     show-arrows-on-hover
+                    :cycle="false"
+                    :continuous="false"
                     delimiter-icon="mdi-minus-thick"
                     hide-delimiter-background>
           <v-carousel-item v-for="i in 3" :key="i">
-            <v-img src="/imageGroup1.png"
-                   height="100%"
-                   contain
-                   class="grey lighten-1"/>
+            <adaptive-image-item path="/imageGroup1.png"/>
           </v-carousel-item>
         </v-carousel>
 
