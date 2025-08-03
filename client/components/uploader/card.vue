@@ -26,7 +26,7 @@
       </template>
 
       <div class="uploader-card__info">
-        <div class="uploader-card__close-dialog">
+        <div class="uploader-card__dialogClose">
           <v-btn @click="dialog = false" color="red" icon>
             <v-icon>mdi-close</v-icon>
           </v-btn>

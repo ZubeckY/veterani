@@ -52,11 +52,6 @@ mainRouter.post("/admin/init-user/", checkRole, async (req: Request, res: Respon
                         text: "Публикации",
                         link: '/admin/blog'
                     },
-                    // {
-                    //     icon: "mdi-poll",
-                    //     text: "Журнал событий",
-                    //     link: '/admin/journal'
-                    // },
                     {
                         icon: "mdi-text-box-outline",
                         text: "Данные организации",
@@ -72,11 +67,6 @@ mainRouter.post("/admin/init-user/", checkRole, async (req: Request, res: Respon
             case Role.manager:
                 menu = [
                     {
-                        icon: "mdi-home-outline",
-                        text: "Главная",
-                        link: '/admin'
-                    },
-                    {
                         icon: "mdi-account-group-outline",
                         text: "Пользователи",
                         link: '/admin/users'
@@ -85,11 +75,6 @@ mainRouter.post("/admin/init-user/", checkRole, async (req: Request, res: Respon
                         icon: "mdi-post-outline",
                         text: "Публикации",
                         link: '/admin/blog'
-                    },
-                    {
-                        icon: "mdi-file-document-multiple-outline",
-                        text: "Документы",
-                        link: '/admin/docs'
                     },
                     {
                         icon: "mdi-text-box-outline",

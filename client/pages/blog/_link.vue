@@ -2,6 +2,15 @@
   <div class="newsItem">
     <div class="newsItem-container mainContainer">
       <article class="newsItem-card pb-2">
+        <v-carousel class="newsItem-card__carousel"
+                    v-if="model.files.length > 0"
+                    :cycle="false"
+                    :continuous="false"
+                    hide-delimiters>
+          <v-carousel-item v-for="(item, index) in model.files" :key="index">
+            <adaptive-image-item :path="'/api/' + item.path"/>
+          </v-carousel-item>
+        </v-carousel>
         <v-card-title class="newsItem-title" v-text="model.headLine"></v-card-title>
         <v-card-text class="newsItem-text pb-1" v-text="model.text"></v-card-text>
         <vertical-spacer/>
@@ -34,6 +43,7 @@ export default class _link extends Vue {
   model: any = {
     headLine: '',
     text: '',
+    files: []
   };
 
   roles: Array<any> = []
