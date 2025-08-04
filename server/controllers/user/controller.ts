@@ -1,5 +1,5 @@
 import {Router, Request, Response, NextFunction} from "express";
-import {User} from "../../entity";
+import {User, File} from "../../entity";
 import * as bcrypt from 'bcrypt'
 import {AppDataSource} from "../../connectDb";
 import AuthDto from "../../DTOS/auth.dto";
@@ -313,6 +313,68 @@ userRouter.delete("/user/delete", checkValidAuth, async (req: Request, res: Resp
     }
 })
 
+
+userRouter.post("/user/email/check-mail-and-change", checkValidAuth, async (req: Request, res: Response): Promise<any> => {
+    try {
+        const cookies = req.headers['cookie']
+        const {oldMail, newMail} = req.body
+        if (oldMail == newMail) {
+            return res
+                .status(400)
+                .send({
+                    message: 'Указанные Email не должны совпадать'
+                })
+        }
+
+        const userFromDB: any = await new AuthService().getUserFromCookies(cookies)
+        if (userFromDB.error) {
+            return res
+                .status(401)
+                .send({
+                    message: userFromDB.message
+                })
+        }
+
+        if (oldMail != userFromDB.email) {
+            return res
+                .status(400)
+                .send({
+                    message: 'Ваш email не совпадает с указанным'
+                })
+        }
+
+        const userRepository = AppDataSource.getRepository(User)
+        const findMail = await userRepository.findOneBy({
+            email: newMail
+        })
+
+        if (findMail) {
+            return res
+                .status(400)
+                .send({
+                    message: 'Указанный email уже используется другим пользователем'
+                })
+        }
+
+        userFromDB.activatedCode = emailService.generateOTPCode()
+        await userRepository.save(userFromDB)
+
+        await emailService.tryingToChangeEmail(userFromDB.email, newMail)
+        await emailService.sendAcceptCode(newMail, userFromDB.activatedCode)
+
+        return res
+            .status(200)
+            .send({
+                message: 'Успешно'
+            })
+
+    } catch (error) {
+        return res.status(500).send({
+            message: "Ошибка кода"
+        })
+    }
+})
+
 userRouter.post("/user/email/change", checkValidAuth, async (req: Request, res: Response): Promise<any> => {
     try {
         const cookies = req.headers['cookie']
@@ -325,32 +387,179 @@ userRouter.post("/user/email/change", checkValidAuth, async (req: Request, res: 
                 })
         }
 
-        const body: any = req.body
+        const {oldMail, newMail, activatedCode} = req.body
 
-        if (body.currentEmail != userFromDB.email) {
+        if (oldMail != userFromDB.email) {
+            console.log('Неправильная подключенная почта')
             return res.status(400).send({
                 message: "Неправильная подключенная почта"
             })
         }
 
-        if (!EmailValidator.validate(body.newEmail)) {
+        if (!EmailValidator.validate(newMail)) {
+            console.log('Неправильный формат почты')
             return res.status(400).send({
                 message: "Неправильный формат почты"
             })
         }
 
-        userFromDB.activatedCode = emailService.generateOTPCode()
+        if (userFromDB.activatedCode != activatedCode) {
+            console.log('Неправильный код')
+            return res.status(400).send({
+                message: "Неправильный код"
+            })
+        }
+
+        const userRepository = AppDataSource.getRepository(User)
+        userFromDB.email = newMail
+        userFromDB.activated = true
+
+        await userRepository.save(userFromDB)
+        await emailService.sendSuccessChangeEmail(userFromDB.email, oldMail)
+
+        const DTO = {
+            id: userFromDB.id,
+            email: userFromDB.email,
+        }
+
+        const userDto = new AuthDto(DTO)
+        const tokens: any = new AuthService().generateTokens({...userDto})
+
+        const {accessToken} = tokens
+        if (!accessToken) {
+            return res.status(501).send({
+                message: "ошибка создания токена"
+            })
+        }
+
+        res
+            .status(200)
+            .send({
+                tokens,
+                message: "Почта успешно изменена"
+            })
+    } catch (error) {
+        return res.status(500).send({
+            message: "ошибка"
+        })
+    }
+})
+
+userRouter.post("/user/password/change", checkValidAuth, async (req: Request, res: Response): Promise<any> => {
+    try {
+        const cookies = req.headers['cookie']
+        const userFromDB: any = await new AuthService().getUserFromCookies(cookies)
+        if (userFromDB.error) {
+            return res
+                .status(401)
+                .send({
+                    message: userFromDB.message
+                })
+        }
+
+        const {oldValue, newValue} = req.body
+
+        const isCodeEquals = await bcrypt.compare(oldValue, userFromDB.password)
+        if (!isCodeEquals) {
+            return res.status(400).send({
+                message: 'Неверный пароль',
+            })
+        }
+
+        userFromDB.password = await bcrypt.hash(newValue, 3)
 
         const userRepository = AppDataSource.getRepository(User)
         await userRepository.save(userFromDB)
 
-        await emailService.sendAcceptCode(userFromDB.email, userFromDB.activatedCode)
+        const DTO = {
+            id: userFromDB.id,
+            email: userFromDB.email,
+        }
 
-        res.status(200).send({
-            email: body.email,
-            message: "Письмо отправлено"
-        })
+        const userDto = new AuthDto(DTO)
+        const tokens: any = new AuthService().generateTokens({...userDto})
+
+        const {accessToken} = tokens
+        if (!accessToken) {
+            return res.status(501).send({
+                message: "ошибка создания токена"
+            })
+        }
+
+        res
+            .status(200)
+            .send({
+                tokens,
+                message: "Почта успешно изменена"
+            })
     } catch (error) {
+        return res.status(500).send({
+            message: "ошибка"
+        })
+    }
+})
+
+userRouter.post("/user/data/change", checkValidAuth, async (req: Request, res: Response): Promise<any> => {
+    try {
+        const cookies = req.headers['cookie']
+        const userFromDB: any = await new AuthService().getUserFromCookies(cookies)
+        if (userFromDB.error) {
+            return res
+                .status(401)
+                .send({
+                    message: userFromDB.message
+                })
+        }
+
+        const {firstName, lastName, middleName, file} = req.body
+        const userRepository = AppDataSource.getRepository(User)
+        const fileRepository = AppDataSource.getRepository(File)
+
+        userFromDB.firstName = firstName
+        userFromDB.lastName = lastName
+        userFromDB.middleName = middleName
+
+        if (!file) {
+            userFromDB.file = null
+        } else {
+            const fileFromDB = await fileRepository.findOneBy({
+                id: file.id
+            })
+
+            if (fileFromDB) {
+                fileFromDB.used = true
+                await fileRepository.save(fileFromDB)
+            }
+
+            userFromDB.file = fileFromDB
+        }
+
+        await userRepository.save(userFromDB)
+
+        const DTO = {
+            id: userFromDB.id,
+            email: userFromDB.email,
+        }
+
+        const userDto = new AuthDto(DTO)
+        const tokens: any = new AuthService().generateTokens({...userDto})
+
+        const {accessToken} = tokens
+        if (!accessToken) {
+            return res.status(501).send({
+                message: "ошибка создания токена"
+            })
+        }
+
+        res
+            .status(200)
+            .send({
+                tokens,
+                message: "Почта успешно изменена"
+            })
+    } catch (error) {
+
+        console.log(error)
         return res.status(500).send({
             message: "ошибка"
         })

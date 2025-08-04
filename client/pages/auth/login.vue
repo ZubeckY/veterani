@@ -10,6 +10,7 @@
         <div class="authCard__body">
           <v-text-field class="authCard__input"
                         v-model="model.email"
+                        :rules="[rules.email, rules.required]"
                         label="Email"
                         type="email"
                         outlined
@@ -18,6 +19,7 @@
           <v-text-field label="Пароль"
                         class="authCard__input"
                         v-model="model.password"
+                        :rules="[rules.required]"
                         :append-icon="showPass ? 'mdi-eye' : 'mdi-eye-off'"
                         :type="showPass ? 'text' : 'password'"
                         @click:append="showPass = !showPass"
@@ -66,6 +68,12 @@ export default class Login extends Vue {
   }
 
   showPass: boolean = false;
+
+  rules: any = {
+    email: (v: any) => /.+@.+\..+/.test(v) ||
+      'Введите действительный адрес электронной почты',
+    required: (v: any) => !!v || "Это поле обязательно к заполнению",
+  }
 
   async login() {
     await this.$axios.post('/api/auth/login/', {model: this.model})

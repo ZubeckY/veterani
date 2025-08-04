@@ -5,8 +5,6 @@
             elevation="0">
       <div class="text-center font-weight-bold">Редактирование поста</div>
 
-      <pre v-text="model"></pre>
-
       <div class="mb-2">Пост №{{ model.id }}</div>
       <v-text-field label="Название"
                     v-model="model.headLine"

@@ -8,7 +8,7 @@
           <v-card width="300"
                   height="300"
                   class="lk-img"
-                  img="/placeholder_lk.jpg"/>
+                  :img="userImage"/>
 
           <div class="d-flex flex-column ml-9">
             <lk-info-group :group="{ label: 'Имя Фамилия', value: getUserName }"/>
@@ -302,6 +302,11 @@ export default class Lk extends Vue {
   /* Имя пользователя (имя + фамилия) */
   get getUserName() {
     return this.user.firstName + ' ' + this.user.lastName
+  }
+
+  get userImage() {
+    const image = this.user.file?.path
+    return image ? '/api/' + image : '/placeholder_lk.jpg'
   }
 }
 </script>

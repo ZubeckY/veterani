@@ -18,7 +18,10 @@ import {Vue, Component, Provide} from 'vue-property-decorator';
 export default class Default extends Vue {
   @Provide() userFromDB: any = reactive({
     value: {
-      id: null
+      id: null,
+      firstName: '',
+      lastName: '',
+      file: null,
     }
   });
 

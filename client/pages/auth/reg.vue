@@ -36,7 +36,7 @@
                         v-model="model.email"
                         label="Email"
                         type="email"
-                        :rules="[rules.required]"
+                        :rules="[rules.email, rules.required]"
                         outlined
                         dense/>
 
@@ -112,7 +112,9 @@ export default class reg extends Vue {
   }
 
   rules: any = {
-    required: (v: any) => !!v || "Это поле обязательно к заполнению"
+    email: (v: any) => /.+@.+\..+/.test(v) ||
+      'Введите действительный адрес электронной почты',
+    required: (v: any) => !!v || "Это поле обязательно к заполнению",
   }
 
   async register(): Promise<void> {

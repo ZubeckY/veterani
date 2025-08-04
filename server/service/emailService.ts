@@ -73,6 +73,53 @@ export default class EmailService {
         }
     }
 
+    async sendSuccessChangeEmail(to: string, oldMail: string) {
+        try {
+            const message = `
+                <div>
+                  <h1>Вы успешно изменили Email</h1>
+                  <br />
+                  <p>Вами указана новая почта ${to} привязана к Вашему аккаунту.
+                   Не стоить переживать по старой почте ${oldMail}. 
+                   Она послужила Вам верой и правдой на Этом сайте, и Мы её отпускаем из системы.
+                  </p>
+                </div>
+              `
+
+            await this.transporter.sendMail({
+                from: config.SMTP_USER,
+                to,
+                subject: 'Код потверждения смены почты',
+                text: '',
+                html: message,
+            })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async tryingToChangeEmail(to: string, newMail: string) {
+        try {
+            const message = `
+                <div>
+                  <h1>Попытка изменить email адрес</h1>
+                  <br />
+                  <p>Вами указана новая почта: ${newMail}, если это делали не Вы, обратитесь в поддержку</p>
+                </div>
+              `
+
+            await this.transporter.sendMail({
+                from: config.SMTP_USER,
+                to,
+                subject: 'Код потверждения смены почты',
+                text: '',
+                html: message,
+            })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     async sendMessageYouActivated(to: string) {
         try {
             const message = `
@@ -115,8 +162,7 @@ export default class EmailService {
                 text: '',
                 html: message,
             })
-        }
-        catch (error) {
+        } catch (error) {
             console.log(error)
         }
     }
@@ -139,8 +185,7 @@ export default class EmailService {
                 text: '',
                 html: message,
             })
-        }
-        catch (error) {
+        } catch (error) {
             console.log(error)
         }
     }
