@@ -1,5 +1,12 @@
 import colors from 'vuetify/es5/util/colors'
+const is_prod = false
+
+const port = 3000
+const host = is_prod ? '31.129.98.120' : '0.0.0.0'
+const link = is_prod ? 'http://31.129.98.120' : 'http://localhost'
+
 const server_port = 4000
+const server_link = link + ':' + server_port + '/api/'
 
 export default {
   head: {
@@ -17,6 +24,12 @@ export default {
       {rel: 'icon', type: 'image/x-icon', href: '/favicon.ico'}
     ]
   },
+
+  server: {
+    host: host,
+    port: port
+  },
+
   components: true,
 
   css: [
@@ -42,7 +55,7 @@ export default {
   },
 
   proxy: {
-    '/api/': {target: `http://localhost:${server_port}/api/`, pathRewrite: {'^/api/': ''}},
+    '/api/': {target: server_link, pathRewrite: {'^/api/': ''}},
   },
 
   vuetify: {

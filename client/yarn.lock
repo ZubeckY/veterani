@@ -6050,6 +6050,26 @@ nth-check@^2.0.1:
   dependencies:
     boolbase "^1.0.0"
 
+nuxt-start@^2.18.1:
+  version "2.18.1"
+  resolved "https://registry.yarnpkg.com/nuxt-start/-/nuxt-start-2.18.1.tgz#b288c0069bc61d9c54041a6e38e16feef5db0827"
+  integrity sha512-Zje5xy9zxgIsfYB/tE6X+HthC3UFOkABCTdRCcdOyW8/9697CBHCiRrAqxUZTxXD8iaxWl7NWlmgv4q89J4omw==
+  dependencies:
+    "@nuxt/cli" "2.18.1"
+    "@nuxt/config" "2.18.1"
+    "@nuxt/core" "2.18.1"
+    "@nuxt/server" "2.18.1"
+    "@nuxt/telemetry" "^1.5.0"
+    "@nuxt/utils" "2.18.1"
+    "@nuxt/vue-renderer" "2.18.1"
+    node-fetch-native "^1.6.4"
+    vue "^2.7.16"
+    vue-client-only "^2.1.0"
+    vue-meta "^2.4.0"
+    vue-no-ssr "^1.1.1"
+    vue-router "^3.6.5"
+    vuex "^3.6.2"
+
 nuxt@^2.15.8:
   version "2.18.1"
   resolved "https://registry.yarnpkg.com/nuxt/-/nuxt-2.18.1.tgz#4e9148c728f6adbbb42c6b6e88a848a09071ecee"
