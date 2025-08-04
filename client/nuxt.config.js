@@ -1,4 +1,5 @@
 import colors from 'vuetify/es5/util/colors'
+const server_port = 4000
 
 export default {
   head: {
@@ -41,7 +42,7 @@ export default {
   },
 
   proxy: {
-    '/api/': {target: 'http://localhost:4000/api/', pathRewrite: {'^/api/': ''}},
+    '/api/': {target: `http://localhost:${server_port}/api/`, pathRewrite: {'^/api/': ''}},
   },
 
   vuetify: {
