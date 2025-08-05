@@ -530,3 +530,12 @@
 .pleaseDonate-text {
   white-space: pre-wrap;
 }
+
+/* footer */
+
+.footer-bottom {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 0;
+}
