@@ -45,10 +45,11 @@
 </template>
 
 <script lang="ts">
-import {Vue, Component} from 'vue-property-decorator';
+import {Vue, Component, Watch, InjectReactive} from 'vue-property-decorator';
 
 @Component({})
 export default class _link extends Vue {
+  @InjectReactive('userFromDB') userFromDB: any;
   localFile: any = []
 
   model: any = {
@@ -61,11 +62,21 @@ export default class _link extends Vue {
     created: ''
   }
 
+  created() {
+    this.loginUserDB()
+  }
+
+  @Watch('userFromDB.value')
+  loginUserDB() {
+    if (!this.userFromDB.value.needLoading) {
+      !this.userFromDB.value.id && this.$router.push('/')
+    }
+  }
+
   async mounted() {
     const link = this.$router.currentRoute.params.link;
     this.$axios.get('/api/post/' + link)
       .then((response) => {
-        console.log(response.data);
         this.model = response.data;
       })
       .catch((error) => {
@@ -77,7 +88,6 @@ export default class _link extends Vue {
     const link = this.$router.currentRoute.params.link;
     await this.$axios.patch('/api/post/update/' + link, {model: this.model})
       .then((response) => {
-        console.log(response);
         this.$router.push('/blog');
       })
       .catch((error) => {
@@ -89,7 +99,6 @@ export default class _link extends Vue {
     const link = this.$router.currentRoute.params.link;
     await this.$axios.delete('/api/post/delete/' + link)
       .then((response) => {
-        console.log(response);
         this.$router.push('/blog');
       })
       .catch((error) => {

@@ -1,9 +1,6 @@
 <template>
   <div class="lk">
     <div class="lk-container">
-
-      <pre v-text="user"></pre>
-
       <div class="lk-content">
         <v-text-field label="Имя"
                       v-model="user.firstName"
@@ -49,7 +46,7 @@
   </div>
 </template>
 <script lang="ts">
-import {Vue, Component, Inject} from 'vue-property-decorator';
+import {Vue, Component, InjectReactive} from 'vue-property-decorator';
 import Cookie from "cookie-universal";
 
 @Component({
@@ -60,7 +57,7 @@ import Cookie from "cookie-universal";
   }
 })
 export default class Edit extends Vue {
-  @Inject('userFromDB') userFromDB: any;
+  @InjectReactive('userFromDB') userFromDB: any;
   user: any = {
     firstName: '',
     lastName: '',

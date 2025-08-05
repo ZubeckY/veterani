@@ -99,7 +99,7 @@ export default class Admin extends Vue {
     const cookies = Cookie()
     const token = cookies.get('refreshToken')
     if (!token) {
-      throw new Error('Request token not set')
+      return this.$router.push('/404')
     }
     await this.initUser()
   }
@@ -127,7 +127,7 @@ export default class Admin extends Vue {
           this.loading = false
         })
         .catch(error => {
-          console.log(error)
+          return this.$router.push('/404')
         })
     }
   }

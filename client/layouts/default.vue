@@ -12,16 +12,17 @@
 
 <script lang="ts">
 import {reactive} from "vue";
-import {Vue, Component, Provide} from 'vue-property-decorator';
+import {Vue, Component, Provide, ProvideReactive} from 'vue-property-decorator';
 
 @Component({})
 export default class Default extends Vue {
-  @Provide() userFromDB: any = reactive({
+  @ProvideReactive() userFromDB: any = reactive({
     value: {
       id: null,
       firstName: '',
       lastName: '',
       file: null,
+      needLoading: true,
     }
   });
 
@@ -29,7 +30,7 @@ export default class Default extends Vue {
     value: {}
   });
 
-  async mounted() {
+  async created() {
     await this.getUserInfo()
     await this.getInfoData()
   }
@@ -53,6 +54,13 @@ export default class Default extends Vue {
       .catch((error: any) => {
         if (error.response.status === 401 || error.response.status === 403) {
           console.log('Пользователь не авторизирован')
+          this.userFromDB.value = {
+            id: null,
+            firstName: '',
+            lastName: '',
+            file: null,
+            needLoading: false,
+          }
         }
       })
   }

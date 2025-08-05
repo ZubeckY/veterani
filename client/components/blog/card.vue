@@ -51,11 +51,11 @@
 </template>
 
 <script lang="ts">
-import {Vue, Component, Prop, Inject} from 'vue-property-decorator';
+import {Vue, Component, Prop, InjectReactive} from 'vue-property-decorator';
 
 @Component({})
 export default class Card extends Vue {
-  @Inject('userFromDB') userFromDB: any;
+  @InjectReactive('userFromDB') userFromDB: any;
   @Prop({required: true}) post!: any
 
   deleteDialog: boolean = false;

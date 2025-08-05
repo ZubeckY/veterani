@@ -51,7 +51,7 @@
   </div>
 </template>
 <script lang="ts">
-import {Vue, Component, Inject, Watch} from 'vue-property-decorator';
+import {Vue, Component, Watch, InjectReactive} from 'vue-property-decorator';
 
 @Component({
   head(this: Blog): object {
@@ -61,7 +61,7 @@ import {Vue, Component, Inject, Watch} from 'vue-property-decorator';
   }
 })
 export default class Blog extends Vue {
-  @Inject('userFromDB') userFromDB: any;
+  @InjectReactive('userFromDB') userFromDB: any;
   data: any = []                  // все посты с бд
   count: number = 1;              // количество постов (всего)
   take: number = 10;              // кол-во постов на странице

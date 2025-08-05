@@ -41,10 +41,11 @@
   </div>
 </template>
 <script lang="ts">
-import {Vue, Component} from 'vue-property-decorator';
+import {Vue, Component, Watch, InjectReactive} from 'vue-property-decorator';
 
 @Component({})
 export default class Create extends Vue {
+  @InjectReactive('userFromDB') userFromDB: any;
   localFile: any = []
   model: any = {
     headLine: '',
@@ -53,11 +54,21 @@ export default class Create extends Vue {
     files: []
   }
 
+  created() {
+    this.loginUserDB()
+  }
+
+  @Watch('userFromDB.value')
+  loginUserDB() {
+    if (!this.userFromDB.value.needLoading) {
+      !this.userFromDB.value.id && this.$router.push('/auth/login')
+    }
+  }
+
   async create() {
     delete this.model.localFile
     await this.$axios.post('/api/post/create', {model: this.model})
       .then((response) => {
-        console.log(response);
         this.$router.push('/blog');
       })
       .catch((error) => {

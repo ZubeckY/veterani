@@ -131,7 +131,7 @@
 
 <script lang="ts">
 import Cookie from 'cookie-universal'
-import {Vue, Component, Watch, Inject} from 'vue-property-decorator';
+import {Vue, Component, Watch, InjectReactive} from 'vue-property-decorator';
 
 @Component({
   head(this: Lk): object {
@@ -141,7 +141,7 @@ import {Vue, Component, Watch, Inject} from 'vue-property-decorator';
   }
 })
 export default class Lk extends Vue {
-  @Inject('userFromDB') userFromDB: any;
+  @InjectReactive('userFromDB') userFromDB: any;
   user: any = {};
   loading: boolean = true;
   linkTitle: string = 'Личный кабинет пользователя';
@@ -164,9 +164,8 @@ export default class Lk extends Vue {
   /* Получаем пользователя, если он есть */
   async getUserInfo() {
     if (process.client) {
-
       // Если не получилось взять пользователя с Default'а, пытаемся сделать запрос на БД еще раз
-      if (this.userFromDB.value.id == null) {
+      if (!this.userFromDB.value.id) {
         return await this.$axios.get('/api/auth/lk/')
           .then((res) => {
             this.user = res.data.user

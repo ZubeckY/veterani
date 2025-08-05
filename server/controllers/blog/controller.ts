@@ -124,7 +124,6 @@ blogRouter.get('/post/:link', async (req: Request, res: Response): Promise<any> 
 blogRouter.post('/post/create', checkValidAuth, async (req: Request, res: Response): Promise<any> => {
     try {
         const {model} = req.body
-        console.log('model', model)
 
         const {headLine, text, includesSlider} = model
         const values = Object.values(model)

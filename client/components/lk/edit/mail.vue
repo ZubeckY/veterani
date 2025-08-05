@@ -105,7 +105,6 @@ export default class Mail extends Vue {
     this.loading = true;
     this.$axios.post('/api/user/email/check-mail-and-change/', this.modelMail)
       .then(res => {
-        console.log(res.data);
         this.mailStepper++
       })
       .catch(error => {
