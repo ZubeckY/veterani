@@ -29,6 +29,12 @@ import {Vue, Component, Prop} from 'vue-property-decorator'
 export default class Error extends Vue {
   @Prop() error: any
 
+  created() {
+    if (this.error.statusCode === 404) {
+      this.$router.push('/404')
+    }
+  }
+
   pageNotFound: any = {
     title: 'Упс! Страница не найдена!',
     text: 'Запрашиваемой страницы не существует!'
