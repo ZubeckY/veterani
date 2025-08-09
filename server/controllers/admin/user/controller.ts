@@ -24,32 +24,37 @@ adminRouter.post("/admin/user/edit/:id", onlyAdmin, async (req: Request, res: Re
 
         const body = req.body;
 
+        const cookies = req.headers['cookie']
+        const currentUser: any = await new AuthService().getUserFromCookies(cookies)
+
         const userRepository = AppDataSource.getRepository(User)
         const userFromDB = await userRepository.findOneBy({id: +id})
         if (!userFromDB) {
             return res.status(404).send({
-                error: "Пользователь найден"
+                error: "Пользователь не найден"
             })
         }
 
-        let sendEmail = false
-
-        if (userFromDB.activated != body.activated) {
-            userFromDB.activated = body.activated
-        }
-        if (userFromDB.role != body.role) {
-            userFromDB.role = body.role
-        }
-        if (userFromDB.block != body.block) {
-            userFromDB.block = body.block
-            sendEmail = true
+        if (userFromDB.id != currentUser.id) {
+            if (userFromDB.activated != body.activated) {
+                userFromDB.activated = body.activated
+            }
+            if (userFromDB.role != body.role) {
+                userFromDB.role = body.role
+            }
+            if (userFromDB.block != body.block) {
+                userFromDB.block = body.block
+                await emailService.sendEmailNotificationBlock(userFromDB.email, userFromDB.block ?? false)
+            }
+        } else {
+            return res
+                .status(200)
+                .send({
+                    message: 'Нельзя изменить параметры самому себе!'
+                })
         }
 
         await userRepository.save(userFromDB);
-
-        if (sendEmail) {
-            await emailService.sendEmailNotificationBlock(userFromDB.email, userFromDB.block ?? false)
-        }
 
         return res
             .status(200)
@@ -89,8 +94,6 @@ adminRouter.get("/admin/user/list", checkRole, async (req: Request, res: Respons
         }));
 
         return res.status(200).json({users});
-
-
     } catch (error) {
         console.log(error)
         return res
