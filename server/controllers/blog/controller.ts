@@ -30,8 +30,9 @@ blogRouter.get('/post/list', async (req: Request, res: Response): Promise<any> =
         const postRepository = AppDataSource.getRepository(Post)
         const qb = postRepository.createQueryBuilder('post')
 
-        qb.where("published = :published", {published: true})
+        qb.where("post.published = :published", { published: true })
             .leftJoinAndSelect('post.user', 'user')
+            .leftJoinAndSelect('post.files', 'files')
 
         if (author == 'author' && userID != null) {
             qb.andWhere("post.user.id = :user_id", {
@@ -40,12 +41,13 @@ blogRouter.get('/post/list', async (req: Request, res: Response): Promise<any> =
         }
 
         if (author == 'community' && userID != null) {
-            qb.andWhere("post.user.id NOT IN (" + userID + ")")
+            qb.andWhere("post.user.id NOT IN (:...ids)", { ids: [userID] })
         }
 
         const [result, count] = await qb
             .skip(+skip)
             .take(+take)
+            .distinct(true)
             .getManyAndCount()
 
         return res.send({
@@ -71,6 +73,7 @@ blogRouter.get('/post/slider-only/', async (req: Request, res: Response): Promis
             order: {
                 created: 'DESC'
             },
+            relations: ['files'],
             take: 6
         })
 

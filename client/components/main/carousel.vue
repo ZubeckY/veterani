@@ -8,8 +8,8 @@
                        v-for="(item, i) in items" :key="i">
         <v-img class="d-block my-2 mx-auto"
                height="98%" contain
-               :src="item.src ?? '/imageGroup1.png'"
-               :lazy-src="item.src ?? '/imageGroup1.png'"/>
+               :src="formattedPhoto(item)"
+               :lazy-src="formattedPhoto(item)"/>
       </v-carousel-item>
     </v-carousel>
     <div class="header-carousel__content">
@@ -41,10 +41,14 @@ import {Vue, Component, Watch} from 'vue-property-decorator';
 
 @Component({})
 export default class Carousel extends Vue {
-  activeSlide: number = 0;
   items: Array<any> = [];
+  activeSlide: number = 0;
 
   async mounted() {
+    await this.getSliderOnlyPosts()
+  }
+
+  async getSliderOnlyPosts() {
     await this.$axios.get('/api/post/slider-only/')
       .then((response) => {
         this.items = response.data
@@ -57,6 +61,10 @@ export default class Carousel extends Vue {
   formattedText(item: any): string {
     return item.text.length <= 450 ? item.text :
       `${item.text.slice(0, 450).trim()}... <a href="/blog/${item.link}" class="blue--text text--accent-4">далее</a>`;
+  }
+
+  formattedPhoto(item: any): string {
+    return item.files.length ? '/api/' + item.files[0].path : '/imageGroup1.png';
   }
 }
 </script>

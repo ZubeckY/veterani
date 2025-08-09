@@ -9,8 +9,8 @@
                     :continuous="false"
                     delimiter-icon="mdi-minus-thick"
                     hide-delimiter-background>
-          <v-carousel-item v-for="i in 3" :key="i">
-            <adaptive-image-item path="/imageGroup1.png"/>
+          <v-carousel-item v-for="(file, j) in formattedPhotoArray(post)" :key="'postImage-'+j">
+            <adaptive-image-item :path="formattedPhotoPath(file.path)"/>
           </v-carousel-item>
         </v-carousel>
 
@@ -127,6 +127,14 @@ export default class Card extends Vue {
       default:
         return 'danger'
     }
+  }
+
+  formattedPhotoArray(item: any) {
+    return !item.files.length ? [{path: '/imageGroup1.png'}] : item.files
+  }
+
+  formattedPhotoPath(file: string): string {
+    return file == '/imageGroup1.png' ? file : '/api/' + file
   }
 
   get userInfo() {
