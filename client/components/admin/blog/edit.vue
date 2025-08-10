@@ -1,14 +1,15 @@
 <template>
-  <v-form>
-    <v-dialog v-model="dialog" max-width="500px">
-      <template v-slot:activator="{ on, attrs }">
-        <v-icon v-bind="attrs"
-                v-on="on"
-                color="primary">
-          mdi-pencil
-        </v-icon>
-      </template>
-      <v-card v-if="dialog">
+  <v-dialog v-model="dialog" max-width="500px">
+    <template v-slot:activator="{ on, attrs }">
+      <v-icon v-bind="attrs"
+              v-on="on"
+              color="primary"
+              class="mx-2">
+        mdi-pencil
+      </v-icon>
+    </template>
+    <v-card v-if="dialog">
+      <v-form>
         <v-card-title>
           <span class="text-h5 text-pre-wrap">{{ dialogName }}</span>
         </v-card-title>
@@ -53,7 +54,7 @@
                       hide-details/>
         </v-card-text>
 
-        <v-card-actions class="pb-3">
+        <v-card-actions class="pb-3 mx-2">
           <v-btn class="ma-0 pa-0"
                  width="fit-content"
                  height="fit-content"
@@ -72,10 +73,9 @@
             Отмена
           </v-btn>
         </v-card-actions>
-      </v-card>
-    </v-dialog>
-
-  </v-form>
+      </v-form>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script lang="ts">

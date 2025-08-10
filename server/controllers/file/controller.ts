@@ -129,8 +129,8 @@ fileRouter.delete("/file/delete/:id", checkValidAuth, async (req: Request, res: 
                     })
             }
 
-            fs.unlink(fileFromDB.path, function(error){
-                if(error) {
+            fs.unlink(fileFromDB.path, function (error) {
+                if (error) {
                     console.log(error);
                     return res
                         .status(404)
@@ -164,7 +164,7 @@ fileRouter.get("/admin/file/list", onlyAdmin, async (req: Request, res: Response
         const files = await fileRepository.find();
 
         const transformedFiles = files.map(file => {
-            const { typeFile, ...rest } = file;
+            const {typeFile, ...rest} = file;
             return {
                 ...rest,
                 typeFile: FileTypeTranslator.translate(typeFile),
@@ -226,8 +226,6 @@ fileRouter.patch("/admin/file/edit/:id", onlyAdmin, async (req: Request, res: Re
 
         const fileRepository = AppDataSource.getRepository(File);
         const files = await fileRepository.findOneBy({id: +id});
-
-        console.log(files)
 
         if (!files) {
             return res.status(404).send({

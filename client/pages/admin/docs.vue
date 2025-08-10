@@ -3,6 +3,11 @@
     <v-skeleton-loader v-if="loading" type="table"/>
 
     <div class="d-flex flex-column overflow-y-auto" style="width: 100%; height: calc(100vh - 30px)" v-else>
+      <div class="d-flex">
+        <admin-docx-create @success="getFileList"/>
+        <!-- <admin-docx-filter /> -->
+      </div>
+
       <v-data-table :items="data"
                     :headers="headers"
                     :sort-desc="true"
@@ -65,7 +70,7 @@ export default class Docs extends Vue {
     {text: 'ID', value: 'id'},
     {text: 'Название файла', value: 'name'},
     {text: 'Тип файла', value: 'typeFile'},
-    {text: 'Файл выложен', value: 'published'},
+    {text: 'Файл опубликован', value: 'published'},
     {text: 'Файл используется', value: 'used'},
     {text: 'Дата создания', value: 'created'},
     {text: '', value: 'actions', sortable: false},
