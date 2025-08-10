@@ -19,7 +19,9 @@
                   v-text="post.headLine"
                   class="news-card__image-title"
                   @click="$router.push(`/blog/${post.link}`)"/>
-          <menu-button v-if="isCurrentUser" :menu="menu"
+          <menu-button v-if="isCurrentUser"
+                       :menu="menu"
+                       :dark="false"
                        @editItem="$router.push(`/blog/edit/${post.link}`)"
                        @deleteDialog="deleteDialog = true"/>
 
