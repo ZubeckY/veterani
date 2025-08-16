@@ -1,20 +1,23 @@
 <template>
-  <article :class="className">
+  <article class="ourTeam-card">
     <div class="ourTeam-card__container">
-      <div class="d-flex justify-end">
-        <v-img class="ourTeam-card__image admin-image" width="calc(100% - 10px)" src="/placeholder_lk.jpg"/>
-        <div style="position: absolute; z-index: 1000;" v-if="showButtons">
-          <menu-button :menu="menu"
-                       :dark="false"
+      <div class="ourTeam-card__head">
+        <v-img class="ourTeam-card__image"
+               width="calc(100% - 10px)"
+               :src="userImage"/>
+        <div class="ourTeam-card__button" v-if="showButtons">
+          <menu-button :menu="menu" :dark="false"
                        @editItem="createEvent('editItem')"
-                       @deleteItem="createEvent('deleteItem')"
-          />
+                       @deleteItem="createEvent('deleteItem')"/>
         </div>
       </div>
-      <v-card-text class="ourTeam-card__name"
-                   v-text="fullName(item)"/>
-      <v-card-text class="ourTeam-card__memberLabel"
-                   v-text="item.memberRoleTitle"/>
+      <div class="ourTeam-card__body">
+        <v-card-text class="ourTeam-card__name"
+                     v-text="fullName(item)"/>
+        
+        <v-card-text class="ourTeam-card__memberLabel"
+                     v-text="item.memberRoleTitle"/>
+      </div>
     </div>
   </article>
 </template>
@@ -48,8 +51,9 @@ export default class OrgCard extends Vue {
     return item.firstName + ' ' + item.lastName
   }
 
-  get className(): string {
-    return `ourTeam-card ${this.showButtons ? 'main-card' : 'main-card'}`
+  get userImage() {
+    const image = this.item.file?.path
+    return image ? '/api/' + image : '/placeholder_lk.jpg'
   }
 }
 </script>

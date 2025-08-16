@@ -1,8 +1,8 @@
 <template>
-  <article class="news-card" @click="$router.push(`/blog/${post.link}`)">
-    <div class="news-card__container">
-      <div class="news-card__image" @click.stop>
-        <v-carousel class="news-card__image-carousel"
+  <article class="newsCard" @click="$router.push(`/blog/${post.link}`)">
+    <div class="newsCard__container">
+      <div class="newsCard-image" @click.stop>
+        <v-carousel class="newsCard-image__carousel"
                     height="280px"
                     show-arrows-on-hover
                     :cycle="false"
@@ -14,10 +14,10 @@
           </v-carousel-item>
         </v-carousel>
 
-        <div class="news-card__image-buttons">
+        <div class="newsCard-image__buttons">
           <v-card elevation="0"
                   v-text="post.headLine"
-                  class="news-card__image-title"
+                  class="newsCard-image__title"
                   @click="$router.push(`/blog/${post.link}`)"/>
           <menu-button v-if="isCurrentUser"
                        :menu="menu"
@@ -31,10 +31,10 @@
         </div>
 
       </div>
-      <div class="news-card__body mt-3">
-        <v-card-text class="news-card__text my-0 py-0" v-html="formattedText"/>
+      <div class="newsCard-body mt-3">
+        <v-card-text class="newsCard-text my-0 py-0" v-html="formattedText"/>
         <vertical-spacer/>
-        <v-card-text class="news-card__text d-flex align-center my0 py-0" @click.stop>
+        <v-card-text class="newsCard-text d-flex align-center my0 py-0" @click.stop>
           <div class="d-flex align-center my-1 py-1">
             <v-avatar class="primary darken-1 ma-0 pa-0 mr-3" size="35">
               <v-icon dark>mdi-account-circle</v-icon>

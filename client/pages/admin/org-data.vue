@@ -5,26 +5,26 @@
 
       <div class="d-flex justify-space-between flex-row flex-wrap">
         <div style="width: 350px">
-          <v-text-field class="authCard__input"
+          <v-text-field class="authCard-input"
                         v-mask="`+7 (###) ###-##-##`"
                         v-model="model.phone"
                         label="Телефон"
                         type="text"
                         dense
                         outlined/>
-          <v-text-field class="authCard__input"
+          <v-text-field class="authCard-input"
                         v-model="model.email"
                         label="Email"
                         type="email"
                         dense
                         outlined/>
-          <v-text-field class="authCard__input"
+          <v-text-field class="authCard-input"
                         v-model="model.address"
                         label="Адрес"
                         type="text"
                         dense
                         outlined/>
-          <v-text-field class="authCard__input"
+          <v-text-field class="authCard-input"
                         v-model="model.mapping"
                         label="Карта"
                         type="text"
@@ -40,7 +40,7 @@
       </div>
 
       <div class="d-flex flex-column align-center mt-4">
-        <v-btn class="authCard__button px-9"
+        <v-btn class="authCard-button px-9"
                width="fit-content"
                @click.prevent="save"
                outlined>

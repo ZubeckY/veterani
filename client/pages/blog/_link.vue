@@ -16,7 +16,7 @@
         <vertical-spacer/>
         <v-card-text class="newsItem-text pt-1 d-flex align-center ">
           <aside class="newsItem-chip">
-            <v-card-text class="news-card__text d-flex align-center py-0" v-if="model.user">
+            <v-card-text class="newsCard-text d-flex align-center py-0" v-if="model.user">
               <div class="d-flex align-center my-1 py-1">
                 <v-avatar class="primary darken-1 ma-0 pa-0 mr-3" size="35">
                   <v-icon dark>mdi-account-circle</v-icon>

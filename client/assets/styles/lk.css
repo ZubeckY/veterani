@@ -1,0 +1,34 @@
+/* lk */
+.lk {
+  margin-top: 40px;
+}
+
+.lk-container {
+  display: flex;
+  width: 100%;
+  margin: 0 auto;
+  max-width: 900px;
+  justify-content: center;
+}
+
+.lk-content {
+  width: 100%;
+}
+
+.lk-img {
+  border-radius: var(--borRad) !important;
+  box-shadow: var(--boxShL) !important;
+}
+
+.lk-info__group {
+  display: flex;
+}
+
+.lk-info__group + .lk-info__group {
+  margin-top: 10px;
+}
+
+.lk-info__title {
+  width: 100vw;
+  max-width: 130px;
+}

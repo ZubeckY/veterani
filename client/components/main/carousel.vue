@@ -1,10 +1,10 @@
 <template>
-  <section class="header-carousel">
+  <section class="headerCarousel">
     <v-carousel v-model="activeSlide"
                 :show-arrows="false"
                 height="100vh"
                 hide-delimiters>
-      <v-carousel-item class="header-carousel__item grey lighten-3"
+      <v-carousel-item class="headerCarousel-item grey lighten-3"
                        v-for="(item, i) in items" :key="i">
         <v-img class="d-block my-2 mx-auto"
                height="98%" contain
@@ -12,20 +12,20 @@
                :lazy-src="formattedPhoto(item)"/>
       </v-carousel-item>
     </v-carousel>
-    <div class="header-carousel__content">
-      <div class="header-carousel__content-container mainContainer">
+    <div class="headerCarousel-content">
+      <div class="headerCarousel-content__container mainContainer">
         <v-carousel v-model="activeSlide"
                     :cycle="false"
                     :continuous="false"
                     height="100%"
                     hide-delimiters>
           <v-carousel-item v-for="(item, i) in items" :key="i">
-            <v-card class="header-carousel__content-card flexCenter d-flex"
+            <v-card class="headerCarousel-content__card flexCenter d-flex"
                     color="mainBlueTransparent">
-              <div class="header-carousel__content-card-container">
-                <v-card-title class="header-carousel__content-title block-title" v-text="item.headLine"/>
-                <v-card-text class="header-carousel__content-text block-text" v-html="formattedText(item)"/>
-                <v-card-text class="header-carousel__content-text block-text">
+              <div class="headerCarousel-content__card-container">
+                <v-card-title class="headerCarousel-content-title block-title" v-text="item.headLine"/>
+                <v-card-text class="headerCarousel-content-text block-text" v-html="formattedText(item)"/>
+                <v-card-text class="headerCarousel-content-text block-text">
                   <date-normalizer :date="new Date(item.created)"></date-normalizer>
                 </v-card-text>
               </div>

@@ -13,7 +13,8 @@ memberOrgController.get("/admin/members/list", onlyAdmin, async (req: Request, r
         const membersListFromDB = await userRepository.find({
             where: {
                 memberRole: OrgRole.member
-            }
+            },
+            relations: ['file']
         })
 
         const users = membersListFromDB.map(user => new MemberUser({
@@ -22,6 +23,10 @@ memberOrgController.get("/admin/members/list", onlyAdmin, async (req: Request, r
             lastName: user.lastName,
             memberRole: user.memberRole,
             memberRoleTitle: user.memberRoleTitle,
+            file: {
+                id: user.file?.id ?? null,
+                path: user.file?.path ?? null
+            }
         }));
 
         return res
@@ -45,7 +50,8 @@ memberOrgController.get("/admin/members/users", onlyAdmin, async (req: Request, 
         const membersListFromDB = await userRepository.find({
             where: {
                 memberRole: OrgRole.user
-            }
+            },
+            relations: ['file']
         })
 
         const users = membersListFromDB.map(user => new MemberUser({
@@ -54,6 +60,10 @@ memberOrgController.get("/admin/members/users", onlyAdmin, async (req: Request, 
             lastName: user.lastName,
             memberRole: user.memberRole,
             memberRoleTitle: user.memberRoleTitle,
+            file: {
+                id: user.file?.id ?? null,
+                path: user.file?.path ?? null
+            }
         }));
 
         return res

@@ -8,28 +8,28 @@
   box-shadow: var(--boxSh) !important;
 }
 
-.authCard__container {
+.authCard-container {
   width: 520px;
 }
 
 /* header */
-.authCard__title {
+.authCard-title {
   font-size: 50px;
   font-weight: 300;
 }
 
 /* body */
-.authCard__body {
+.authCard-body {
   margin-top: 60px;
 }
 
-.authCard__input,
-.authCard__button {
+.authCard-input,
+.authCard-button {
   border-radius: 13px !important;
 }
 
 /* footer */
-.authCard__button {
+.authCard-button {
   width: fit-content;
 }
 
@@ -45,23 +45,23 @@
     border-radius: 35px !important;
   }
 
-  .authCard__container {
+  .authCard-container {
     width: 100%;
     max-width: 620px;
   }
 
   /* header */
-  .authCard__title {
+  .authCard-title {
     font-size: 40px;
   }
 
   /* body */
-  .authCard__body {
+  .authCard-body {
     margin-top: 20px;
   }
 
-  .authCard__input,
-  .authCard__button {
+  .authCard-input,
+  .authCard-button {
     border-radius: 10px !important;
   }
 }

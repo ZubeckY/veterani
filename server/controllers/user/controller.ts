@@ -609,7 +609,8 @@ userRouter.get("/user/our-team/", async (req: Request, res: Response): Promise<a
         const membersListFromDB = await userRepository.find({
             where: {
                 memberRole: OrgRole.member
-            }
+            },
+            relations: ['file']
         })
 
         const users = membersListFromDB.map(user => new MemberUser({
@@ -618,6 +619,10 @@ userRouter.get("/user/our-team/", async (req: Request, res: Response): Promise<a
             lastName: user.lastName,
             memberRole: user.memberRole,
             memberRoleTitle: user.memberRoleTitle,
+            file: {
+                id: user.file?.id ?? null,
+                path: user.file?.path ?? null
+            }
         }));
 
         return res

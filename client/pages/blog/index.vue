@@ -8,9 +8,9 @@
 
     <section v-else>
       <div class="news-container mainContainer">
-        <div class="news-console" v-if="showConsole">
-          <div class="news-console__group">
-            <v-card-text class="news-console__text">Кем опубликован</v-card-text>
+        <div class="newsConsole" v-if="showConsole">
+          <div class="newsConsole-group">
+            <v-card-text class="newsConsole-text">Кем опубликован</v-card-text>
 
             <v-item-group class="d-flex flex-row"
                           v-model="selectedParam"
@@ -21,17 +21,17 @@
                 <div @click="getData" class="ml-2">
                   <v-card @click="toggle"
                           v-text="obj.value"
-                          class="news-console__button"
+                          class="newsConsole-button"
                           :color="active ? 'primary white--text' : ''"/>
                 </div>
               </v-item>
             </v-item-group>
           </div>
 
-          <div class="news-console__group">
-            <v-card-text class="news-console__text">Действия</v-card-text>
+          <div class="newsConsole-group">
+            <v-card-text class="newsConsole-text">Действия</v-card-text>
             <v-card @click="$router.push('/blog/create/')"
-                    v-text="'Добавить пост'" class="news-console__button"/>
+                    v-text="'Добавить пост'" class="newsConsole-button"/>
           </div>
         </div>
 

@@ -1,0 +1,42 @@
+.uploader-card {
+  position: relative;
+  display: flex;
+  width: 150px;
+  height: 150px;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--boxShL);
+  border-radius: var(--borRad) !important;
+}
+
+.uploader-card + .uploader-card {
+  margin-left: 12px;
+}
+
+.uploader-card__deleteItem {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 100;
+}
+
+.uploader-card__img {
+  max-width: 150px !important;
+  max-height: 150px !important;
+  border-radius: var(--borRad) !important;
+}
+
+.uploader-card__big-img {
+  border-radius: var(--borRad) !important;
+}
+
+.uploader-card__info {
+  position: relative;
+}
+
+.uploader-card__dialogClose {
+  position: absolute;
+  right: 7px;
+  top: 7px;
+  z-index: 1000;
+}

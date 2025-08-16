@@ -10,13 +10,13 @@
                   :items="users">
     <template v-slot:selection="data">
       <v-chip v-bind="data.attrs"
+              :disabled="disabled"
               :input-value="data.selected"
               @click:close="remove(data.item)"
               @click="data.select"
-              :close="!disabled" small
-      >
+              :close="!disabled" small>
         <v-avatar left>
-          <v-img v-if="data.item.avatar" :src="data.item.avatar"></v-img>
+          <v-img v-if="userImage(data.item)" :src="userImage(data.item)"></v-img>
           <v-icon v-else>mdi-account-circle</v-icon>
         </v-avatar>
         {{ userFullName(data.item) }}
@@ -52,6 +52,11 @@ export default class selectUser extends Vue {
 
   userFullName(user: any): string {
     return user.firstName + ' ' + user.lastName
+  }
+
+  userImage(user: any) {
+    const image = user.file?.path
+    return image ? '/api/' + image : null
   }
 
   remove(item: any) {

@@ -1,0 +1,37 @@
+.adaptiveImage-item {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  background: var(--grayBox);
+}
+
+.adaptiveImage-item__container {
+  display: inline-block;
+  width: auto;
+  height: 100%;
+  padding: 5px;
+}
+
+.adaptiveImage-item__dialog {
+  position: relative;
+  display: flex;
+  width: auto;
+  height: 90vh;
+  align-items: center;
+  justify-content: center;
+}
+
+.adaptiveImage-item__dialogClose {
+  position: absolute;
+  right: 13px;
+  top: 13px;
+  z-index: 1000;
+}
+
+.adaptiveImage-item__image {
+  display: block;
+  height: 100%;
+  border-radius: var(--borRadS)
+}

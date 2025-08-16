@@ -1,14 +1,14 @@
 <template>
   <v-form v-model="form" @submit.prevent lazy-validation>
     <v-card class="authCard" :disabled="loading">
-      <div class="authCard__container">
+      <div class="authCard-container">
 
         <div class="authCard__header">
-          <v-card-title class="authCard__title justify-center px-0">Регистрация</v-card-title>
+          <v-card-title class="authCard-title justify-center px-0">Регистрация</v-card-title>
         </div>
 
-        <div class="authCard__body">
-          <v-text-field class="authCard__input"
+        <div class="authCard-body">
+          <v-text-field class="authCard-input"
                         v-model="model.firstName"
                         label="Имя"
                         type="text"
@@ -16,7 +16,7 @@
                         outlined
                         dense/>
 
-          <v-text-field class="authCard__input"
+          <v-text-field class="authCard-input"
                         v-model="model.lastName"
                         label="Фамилия"
                         type="text"
@@ -24,7 +24,7 @@
                         outlined
                         dense/>
 
-          <v-text-field class="authCard__input"
+          <v-text-field class="authCard-input"
                         v-model="model.middleName"
                         label="Отчество"
                         type="text"
@@ -32,7 +32,7 @@
                         outlined
                         dense/>
 
-          <v-text-field class="authCard__input"
+          <v-text-field class="authCard-input"
                         v-model="model.email"
                         label="Email"
                         type="email"
@@ -40,7 +40,7 @@
                         outlined
                         dense/>
 
-          <v-text-field class="authCard__input"
+          <v-text-field class="authCard-input"
                         v-model="model.password"
                         label="Пароль"
                         :rules="[rules.required]"
@@ -50,7 +50,7 @@
                         outlined
                         dense/>
 
-          <v-text-field class="authCard__input"
+          <v-text-field class="authCard-input"
                         v-model="model.repeatPassword"
                         label="Повторите пароль"
                         :rules="[rules.required]"
@@ -63,13 +63,13 @@
 
 
         <div class="authCard__footer d-flex align-center justify-center flex-column">
-          <v-btn class="authCard__button px-9 mb-2" outlined @click="register">Регистрация</v-btn>
-          <v-btn class="authCard__button my-0 pa-0"
+          <v-btn class="authCard-button px-9 mb-2" outlined @click="register">Регистрация</v-btn>
+          <v-btn class="authCard-button my-0 pa-0"
                  @click.prevent="$router.push('/auth/login')"
                  color="primary" small text>
             Авторизация
           </v-btn>
-          <v-btn class="authCard__button my-0 pa-0"
+          <v-btn class="authCard-button my-0 pa-0"
                  @click.prevent="$router.push('/')"
                  color="primary" small text>
             Перейти на сайт

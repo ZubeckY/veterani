@@ -46,7 +46,7 @@
         <v-card-title class="ourTeam-title block-title">Наша команда</v-card-title>
         <v-card-text class="ourTeam-text block-text">Познакомьтесь с нашей командой</v-card-text>
         <div class="ourTeam-members flexCenter">
-          <org-card v-for="(item, i) in team" :key="i" :item="item"/>
+          <org-card v-for="(item, i) in team" :key="'teamCard-'+i" :item="item"/>
         </div>
       </div>
     </section>
@@ -63,7 +63,7 @@
           </div>
 
           <div class="mx-auto" style="width: fit-content">
-            <v-btn class="news-card__button px-9 mt-5"
+            <v-btn class="newsCard-button px-9 mt-5"
                    @click.prevent="$router.push('/blog')"
                    outlined large>
               Смотреть еще
@@ -94,7 +94,29 @@
       </div>
     </section>
 
-    <iframe :src="mapping" width="100%" height="540" frameborder="0"/>
+    <section class="map">
+      <div class="map-container"
+           @mouseleave="showOverlayMap = true">
+        <v-fade-transition v-if="!showOverlayMap">
+          <div class="grey lighten-3 cursor-pointer text-center">Чтобы отключить карту, уведите мышь за её пределы </div>
+        </v-fade-transition>
+        <iframe :src="mapping"
+                loading="lazy"
+                width="100%" height="540"
+                referrerpolicy="no-referrer-when-downgrade"
+                style="border: 0; margin: 0; padding: 0"/>
+        <v-overlay v-model="showOverlayMap"
+                   absolute color="#9999">
+          <v-btn @click="showOverlayMap = false"
+                 elevation="20"
+                 color="black"
+                 outlined
+                 plain>
+            Посмотреть карту
+          </v-btn>
+        </v-overlay>
+      </div>
+    </section>
 
   </div>
 </template>
@@ -117,6 +139,8 @@ export default class Pages extends Vue {
   readonly bkgFlagImage: any = bkgFlagImage;
   posts: Array<any> = [];
   team: Array<any> = [];
+
+  showOverlayMap: boolean = false;
 
   async mounted() {
     await this.getData();
