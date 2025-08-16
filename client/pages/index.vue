@@ -140,7 +140,7 @@ export default class Pages extends Vue {
   posts: Array<any> = [];
   team: Array<any> = [];
 
-  showOverlayMap: boolean = false;
+  showOverlayMap: boolean = true;
 
   async mounted() {
     await this.getData();
