@@ -45,10 +45,16 @@
         <!-- Кнопки -->
         <template v-slot:item.actions="{ item }">
           <div class="d-flex">
-            <admin-blog-edit class="mr-2"
-                             :item="item"
-                             @saveEdit="getPostList"/>
-            <admin-blog-delete :item="item" @deletePost="deletePost"/>
+            <v-btn :href="'/blog/' + item.link"
+                   target="_blank" icon>
+              <v-icon color="primary"
+                      class="mx-2">
+                mdi-link
+              </v-icon>
+            </v-btn>
+            <admin-blog-edit @saveEdit="getPostList"
+                             :item="item" class="mr-2"/>
+            <admin-blog-delete @deletePost="deletePost" :item="item"/>
           </div>
         </template>
       </v-data-table>

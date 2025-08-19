@@ -11,8 +11,9 @@
     <v-card v-if="dialog">
       <v-form>
         <v-card-title>
-          <span class="text-h5 text-pre-wrap">{{ dialogName }}</span>
+          <span class="text-h5 text-pre-wrap">Редактирование публикации</span>
         </v-card-title>
+        <v-card-subtitle>{{item.headLine}}</v-card-subtitle>
 
         <v-card-text>
           <v-text-field v-model="itemEdit.headLine"
@@ -86,8 +87,6 @@ export default class Edit extends Vue {
   @Prop() item: any
 
   dialog: boolean = false;
-  dialogName: string = '';
-
   itemEdit: any = {}
 
   mounted() {
@@ -98,11 +97,8 @@ export default class Edit extends Vue {
   changeData() {
     if (!this.dialog) {
       this.itemEdit = {}
-      this.dialogName = ''
       return
     }
-
-    this.dialogName = `Редактирование публикации:\n${this.item.headLine}`
 
     this.itemEdit = JSON.parse(JSON.stringify(this.item))
     this.itemEdit.created = this.itemEdit.created.split('.')[0]

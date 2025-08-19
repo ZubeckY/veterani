@@ -149,10 +149,12 @@ export default class Admin extends Vue {
         this.visibleContent = true
 
         this.initUser()
-
       })
       .catch(error => {
         console.log(error)
+      })
+      .finally(() => {
+        this.tryLogin = false;
       })
   }
 }

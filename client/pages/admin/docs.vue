@@ -39,8 +39,15 @@
         <!-- Кнопки -->
         <template v-slot:item.actions="{ item }">
           <div class="d-flex">
-            <admin-docx-edit class="mr-2" :item="item" @saveEdit="getFileList"/>
-            <admin-docx-delete :item="item" @deleteDoc="deleteDoc"/>
+            <v-btn :href="'/api/' + item.path"
+                   target="_blank" icon>
+              <v-icon color="primary"
+                      class="mx-2">
+                mdi-link
+              </v-icon>
+            </v-btn>
+            <admin-docx-edit @saveEdit="getFileList" class="mr-2" :item="item"/>
+            <admin-docx-delete @deleteDoc="deleteDoc" :item="item"/>
           </div>
         </template>
 
